@@ -1,12 +1,16 @@
-apply plugin: 'java'
+plugins {
+    id 'java'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version "$ORG_GRADLE_PROJECT_shadow_version" apply false
+}
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    implementation("org.slf4j:slf4j-api:$ORG_GRADLE_PROJECT_slf4j_version")
 
-    testCompile 'junit:junit:4.12'
+    testCompile("junit:junit:$ORG_GRADLE_PROJECT_junit_version")
 }
 

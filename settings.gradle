@@ -1,1 +1,3 @@
 rootProject.name = '2020-04-otus-java-shirunova'
+include 'hw01-gradle'
+
