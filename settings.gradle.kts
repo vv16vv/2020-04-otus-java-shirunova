@@ -2,10 +2,12 @@ rootProject.name = "2020-04-otus-java-shirunova"
 include("hw01-gradle")
 pluginManagement {
     val shadowVersion: String by settings
+    val springDependencyManagementVersion: String by settings
     plugins {
-        java
-        idea
+//        java
+//        idea
         id ("com.github.johnrengelman.shadow") version shadowVersion apply false
+        id ("io.spring.dependency-management") version springDependencyManagementVersion
     }
 }
 
