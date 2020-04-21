@@ -7,9 +7,17 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
         try {
-//            Runner runner = new Runner(args[1]);
-//            Map<Runner.Status, Integer> tests = Runner.run("ru.otus.vsh.hw03.tests.TestTest");
-            Map<Runner.Status, Integer> tests = Runner.run("ru.otus.vsh.hw03.tests.ExceptionInBeforeTest");
+            if (args.length == 0)
+                throw new IllegalArgumentException("Not enough parameters. Specify a fully qualified name of the tested class." +
+                        "\nUse one of following:" +
+                        "\n\tru.otus.vsh.hw03.tests.ComplexTest" +
+                        "\n\tru.otus.vsh.hw03.tests.EmptyTest" +
+                        "\n\tru.otus.vsh.hw03.tests.EmptyWithBeforeAfterTest" +
+                        "\n\tru.otus.vsh.hw03.tests.ExceptionInAfterTest" +
+                        "\n\tru.otus.vsh.hw03.tests.ExceptionInBeforeTest" +
+                        "\n\tru.otus.vsh.hw03.tests.ExceptionInTestTest" +
+                        "\n\tru.otus.vsh.hw03.tests.SimpleTest");
+            Map<Runner.Status, Integer> tests = Runner.run(args[0]);
 
             System.out.println("Status: passed = " + tests.get(Runner.Status.SUCCESS) +
                     "; failed = " + tests.get(Runner.Status.FAILED) +
