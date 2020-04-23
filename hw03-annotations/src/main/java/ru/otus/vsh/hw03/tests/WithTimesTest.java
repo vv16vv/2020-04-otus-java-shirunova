@@ -7,7 +7,7 @@ import ru.otus.vsh.hw03.annotations.Times;
 
 import java.util.Random;
 
-public class ComplexTest {
+public class WithTimesTest {
     Random generator;
 
     @Before
