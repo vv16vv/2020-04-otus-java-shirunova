@@ -28,17 +28,25 @@ public class Runner {
     private final Map<TestStatus, Integer> result;
 
     /**
-     * @param className - FQN тестового класса
-     * @throws ClassNotFoundException если класс, заданный параметром, не находится
+     * @param aClass - Class тестового класса
      */
-    public Runner(String className) throws ClassNotFoundException {
-        aClass = Class.forName(className);
+    private Runner(Class<?> aClass) {
+        this.aClass = aClass;
         beforeMethods = getAnnotatedMethods(Before.class);
         afterMethods = getAnnotatedMethods(After.class);
         testMethods = getAnnotatedMethods(Test.class).stream().map(TestInfo::new).collect(Collectors.toList());
 
         result = Maps.newEnumMap(TestStatus.class);
         initializeResults();
+    }
+
+    /**
+     * @param className - FQN тестового класса
+     */
+    @Nonnull
+    public static Runner get(String className) throws ClassNotFoundException {
+        Class<?> aClass = Class.forName(className);
+        return new Runner(aClass);
     }
 
     /**
