@@ -20,7 +20,7 @@ public class Main {
                         "\n\tru.otus.vsh.hw03.tests.SeveralTestsTest" +
                         "\n\tru.otus.vsh.hw03.tests.WithTimesTest");
 
-            Runner runner = new Runner(args[0]);
+            Runner runner = Runner.get(args[0]);
             runner.run();
             Map<TestStatus, Integer> tests = runner.getResult();
 
