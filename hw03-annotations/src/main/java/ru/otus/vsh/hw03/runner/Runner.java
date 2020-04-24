@@ -37,7 +37,7 @@ public class Runner {
         testMethods = getAnnotatedMethods(Test.class).stream().map(TestInfo::new).collect(Collectors.toList());
 
         result = Maps.newEnumMap(TestStatus.class);
-        initializeResults();
+        resetResults();
     }
 
     /**
@@ -72,7 +72,7 @@ public class Runner {
         if (testMethods.isEmpty())
             throw new IllegalStateException("Test class does not contain any test method (with annotation @Test)");
 
-        initializeResults();
+        resetResults();
 
         for (TestInfo data : testMethods) {
             Map<TestStatus, Integer> result = executeTestSet(data);
@@ -133,7 +133,7 @@ public class Runner {
         return Map.of(TestStatus.SUCCESS, passed, TestStatus.FAILED, failed);
     }
 
-    private void initializeResults() {
+    private void resetResults() {
         for (TestStatus status : TestStatus.values()) {
             result.put(status, 0);
         }
