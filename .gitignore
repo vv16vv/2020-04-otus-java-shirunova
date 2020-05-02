@@ -29,6 +29,7 @@ hs_err_pid*
 hw01-gradle/build
 hw02-collections/build
 hw03-annotations/build
+hw04-gc/build
 hw05-instrumentation/build
 hw06-atm/build
 hw07-atm2/build
