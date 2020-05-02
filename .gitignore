@@ -26,3 +26,6 @@ hs_err_pid*
 
 .idea
 .gradle
+hw01-gradle/build
+hw02-collections/build
+hw03-annotations/build
