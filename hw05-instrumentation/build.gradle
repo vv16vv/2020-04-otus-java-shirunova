@@ -1,0 +1,16 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
+
+version '0.1'
+
+shadowJar {
+    archiveBaseName.set("hw05-instrumentation-vshirunova")
+    archiveVersion.set("$project.version")
+    archiveClassifier.set("")
+    manifest {
+        attributes "Main-Class": "ru.otus.vsh.hw05.Main"
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
