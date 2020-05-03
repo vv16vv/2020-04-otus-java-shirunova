@@ -4,6 +4,10 @@ plugins {
 
 version '0.1'
 
+dependencies {
+    implementation "org.ow2.asm:asm-commons:$ORG_GRADLE_PROJECT_asm_version"
+}
+
 shadowJar {
     archiveBaseName.set("hw05-instrumentation-vshirunova")
     archiveVersion.set("$project.version")
@@ -13,4 +17,13 @@ shadowJar {
     }
 }
 
-tasks.build.dependsOn tasks.shadowJar
+task shadowAgent(type: Jar, dependsOn: shadowJar) {
+    archiveBaseName.set('agent')
+    manifest {
+        attributes 'Main-Class': 'ru.otus.vsh.hw05.Main'
+        attributes 'Premain-Class': 'ru.otus.vsh.hw05.spy.Agent'
+    }
+    from zipTree(shadowJar.archiveFile)
+}
+
+tasks.build.dependsOn tasks.shadowAgent
