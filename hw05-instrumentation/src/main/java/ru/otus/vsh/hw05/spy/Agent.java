@@ -8,13 +8,8 @@ import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
 public class Agent {
-    // Т.к. классы, как агент, так и тесты находятся в обоих jar файлах (и агентском, и запускаемом)
-    // каждый класс загружается дважды - в том числе и Agent!
-    private volatile static Boolean alreadyRun = false;
 
-    public synchronized static void premain(String agentArgs, Instrumentation inst) {
-        if (alreadyRun) return;
-        alreadyRun = true;
+    public static void premain(String agentArgs, Instrumentation inst) {
         inst.addTransformer(new ClassFileTransformer() {
             @Override
             public byte[] transform(ClassLoader loader, String className,
