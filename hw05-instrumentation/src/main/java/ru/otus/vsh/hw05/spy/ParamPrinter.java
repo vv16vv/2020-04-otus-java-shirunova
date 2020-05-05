@@ -22,16 +22,16 @@ public class ParamPrinter {
             case "I":
             case "S":
             case "B":
-                callIntInsn(visitor, "I", paramOffset);
+                callVarInsn(visitor, Opcodes.ILOAD, "I", paramOffset);
                 break;
             case "J":
                 callVarInsn(visitor, Opcodes.LLOAD, "J", paramOffset);
                 break;
             case "C":
-                callIntInsn(visitor, "C", paramOffset);
+                callVarInsn(visitor, Opcodes.ILOAD, "C", paramOffset);
                 break;
             case "Z":
-                callIntInsn(visitor, "Z", paramOffset);
+                callVarInsn(visitor, Opcodes.ILOAD, "Z", paramOffset);
                 break;
             case "D":
                 callVarInsn(visitor, Opcodes.DLOAD, "D", paramOffset);
@@ -59,12 +59,6 @@ public class ParamPrinter {
 
     private void callPrintln(@Nonnull MethodVisitor visitor, String descriptor) {
         visitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", descriptor, false);
-    }
-
-    private void callIntInsn(@Nonnull MethodVisitor visitor, String descriptor, int paramOffset) {
-        preparePrintln(visitor);
-        visitor.visitIntInsn(Opcodes.ILOAD, paramOffset);
-        callPrintln(visitor, String.format("(%s)V", descriptor));
     }
 
     private void callVarInsn(@Nonnull MethodVisitor visitor, final int opcode, String descriptor, int paramOffset) {

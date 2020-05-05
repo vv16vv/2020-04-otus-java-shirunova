@@ -15,12 +15,12 @@ public enum ParamPrinterEnum {
     BOOLEAN {
         @Override
         public void print(@Nonnull MethodVisitor visitor, String typeDescriptor, int paramOffset) {
-            callIntInsn(visitor, typeDescriptor, paramOffset);
+            callVarInsn(visitor, Opcodes.ILOAD, typeDescriptor, paramOffset);
         }
     }, CHAR {
         @Override
         public void print(@Nonnull MethodVisitor visitor, String typeDescriptor, int paramOffset) {
-            callIntInsn(visitor, typeDescriptor, paramOffset);
+            callVarInsn(visitor, Opcodes.ILOAD, typeDescriptor, paramOffset);
         }
     }, DOUBLE {
         @Override
@@ -35,7 +35,7 @@ public enum ParamPrinterEnum {
     }, INT {
         @Override
         public void print(@Nonnull MethodVisitor visitor, String typeDescriptor, int paramOffset) {
-            callIntInsn(visitor, "I", paramOffset);
+            callVarInsn(visitor, Opcodes.ILOAD, "I", paramOffset);
         }
     }, LONG {
         @Override
@@ -102,12 +102,6 @@ public enum ParamPrinterEnum {
 
     private static void callPrintln(@Nonnull MethodVisitor visitor, String descriptor) {
         visitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", descriptor, false);
-    }
-
-    private static void callIntInsn(@Nonnull MethodVisitor visitor, String descriptor, int paramOffset) {
-        preparePrintln(visitor);
-        visitor.visitIntInsn(Opcodes.ILOAD, paramOffset);
-        callPrintln(visitor, String.format("(%s)V", descriptor));
     }
 
     private static void callVarInsn(@Nonnull MethodVisitor visitor, final int opcode, String descriptor, int paramOffset) {
