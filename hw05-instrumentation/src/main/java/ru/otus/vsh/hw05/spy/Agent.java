@@ -58,11 +58,9 @@ public class Agent {
                 if (params.length != 0) {
                     int offset = 1;
                     for (Type param : params) {
-//                        ParamPrinterEnum.fromType(param).print(this, param.getDescriptor(), offset);
-                        ParamPrinter printer = new ParamPrinter(this, param);
-                        printer.logParameter(offset);
+                        ParamPrinter printer = ParamPrinterContainer.fromType(param);
+                        printer.logParameter(this, offset);
                         if (printer.doubleOrLong()) offset++;
-//                        if (param.getDescriptor().equals("D") || param.getDescriptor().equals("J")) offset++;
                         offset++;
                     }
                 }
