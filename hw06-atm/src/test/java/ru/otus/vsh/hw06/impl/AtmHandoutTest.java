@@ -78,4 +78,19 @@ class AtmHandoutTest {
         Assertions.assertEquals(50, atm.currentValue());
     }
 
+    @Test
+    void changeMinimalBanknote(){
+        Atm atm = new AtmImpl();
+        atm.accept(Map.of(
+                Banknote.FIFTY, 1,
+                Banknote.TEN, 1
+        ));
+        var resultSuccess = atm.handout(10);
+        var expectedSuccess = Map.of(
+                Banknote.TEN, 1
+        );
+        Assertions.assertEquals(resultSuccess, expectedSuccess);
+        Assertions.assertThrows(CantHandOutMoneyException.class, () -> atm.handout(10));
+    }
+
 }
