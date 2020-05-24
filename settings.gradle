@@ -4,4 +4,5 @@ include 'hw02-collections'
 include 'hw03-annotations'
 include 'hw05-instrumentation'
 include 'hw06-atm'
+include 'hw07-atm2'
 
