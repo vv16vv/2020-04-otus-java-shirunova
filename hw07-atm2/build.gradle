@@ -1,0 +1,19 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
+
+group 'ru.otus.vsh'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+shadowJar {
+    archiveBaseName.set("hw07-atm2-vshirunova")
+    archiveVersion.set("$project.version")
+    archiveClassifier.set("")
+    manifest {
+        attributes "Main-Class": "ru.otus.vsh.hw07.Main"
+    }
+}
