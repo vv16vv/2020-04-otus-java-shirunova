@@ -1,16 +1,19 @@
 package ru.otus.vsh.hw07;
 
-
-import ru.otus.vsh.hw07.api.Atm;
-import ru.otus.vsh.hw07.api.Banknote;
-import ru.otus.vsh.hw07.api.CantHandOutMoneyException;
+import ru.otus.vsh.hw07.api.*;
 import ru.otus.vsh.hw07.impl.AtmImpl;
 import ru.otus.vsh.hw07.impl.Department;
 
+import javax.annotation.Nonnull;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class Main {
-    private final Department department = new Department();
+    private final Department department = new Department("Приморский");
+    private final String datePattern = "dd MMM yyyy";
+    private final DateFormat dateFormat = new SimpleDateFormat(datePattern);
 
     public static void main(String[] args) {
         var main = new Main();
@@ -24,28 +27,27 @@ public class Main {
         main.department.addAtm(emptyAtm);
         main.department.addAtm(atmWithMoney);
 
-        main.currentState();
+        AtmAction putSomeMoney = new AtmPutMoneyAction(Map.of(
+                Banknote.FIVE_HUNDRED, 100
+        )).next(new AtmGetValueAction());
+        AtmAction dayOpener = new AtmInitiateAction(String.format("Открыть день %s", main.dateFormat.format(new Date()))).next(putSomeMoney);
+        dayOpener.process(main.department);
 
         main.processOutput(emptyAtm, 1000);
         main.processOutput(atmWithMoney, 5000);
 
-        main.department.initiate("инкассация 24 мая");
-        main.currentState();
+        AtmAction dayCloser = new AtmGetValueAction().next(new AtmInitiateAction(String.format("Закрыть день %s", main.dateFormat.format(new Date()))));
+        dayCloser.process(main.department);
 
     }
 
-    private void currentState() {
-        System.out.println(String.format("Текущий остаток в отделении %d", department.currentValue()));
-    }
-
-    private void processOutput(Atm atm, long sum) {
+    private void processOutput(@Nonnull Atm atm, long sum) {
         try {
             var result = atm.handout(sum);
-            System.out.println(String.format("ATM '%s' выдал %d рублей следующими купюрами: %s", atm.id(), sum, result.toString()));
+            System.out.printf("ATM '%s' выдал %d рублей следующими купюрами: %s%n", atm.id(), sum, result.toString());
         } catch (CantHandOutMoneyException e) {
-            System.out.println(String.format("ATM '%s' не смог выдать сумму %d рублей", atm.id(), sum));
+            System.out.printf("ATM '%s' не смог выдать сумму %d рублей%n", atm.id(), sum);
         }
-        currentState();
     }
 
 }

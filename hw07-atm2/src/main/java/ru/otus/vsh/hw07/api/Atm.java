@@ -2,7 +2,7 @@ package ru.otus.vsh.hw07.api;
 
 import java.util.Map;
 
-public interface Atm extends AvailableValue, InitiateListener {
+public interface Atm {
     String id();
 
     /**
@@ -18,4 +18,9 @@ public interface Atm extends AvailableValue, InitiateListener {
      * @throws CantHandOutMoneyException if any problem with forming hand out occurs
      */
     Map<Banknote, Integer> handout(long sum);
+
+    /**
+     * @return money sum of all banknotes in the ATM at the moment
+     */
+    long currentValue();
 }
