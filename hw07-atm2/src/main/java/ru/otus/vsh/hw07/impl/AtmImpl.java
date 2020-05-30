@@ -8,7 +8,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AtmImpl implements Atm {
+public class AtmImpl implements Atm, AtmListener {
     private final AtmMemento initialState;
     private final String id;
     private AtmState state;
@@ -83,7 +83,6 @@ public class AtmImpl implements Atm {
         return result;
     }
 
-    @Override
     public long currentValue() {
         return state.getCells().values().stream()
                 .filter(cell -> !cell.isEmpty())
@@ -93,9 +92,9 @@ public class AtmImpl implements Atm {
 
     @Override
     public void onInitiate(String reason) {
-        System.out.println(String.format("%s: Возврат в исходное состояние по причине '%s'", id, reason));
+        System.out.printf("%s: Возврат в исходное состояние по причине '%s'%n", id, reason);
         state = initialState.getState();
-        System.out.println(String.format("%s: В наличие следующие купюры'%s'", id, state.getCells().toString()));
+        System.out.printf("%s: В наличии следующие купюры'%s'%n", id, state.getCells().toString());
     }
 
     private static class AtmStateImpl implements AtmState {
