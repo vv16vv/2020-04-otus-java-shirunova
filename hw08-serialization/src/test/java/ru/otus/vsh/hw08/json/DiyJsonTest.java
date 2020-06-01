@@ -3,15 +3,8 @@ package ru.otus.vsh.hw08.json;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 import ru.otus.vsh.hw08.json.classes.Colors;
-import ru.otus.vsh.hw08.json.classes.WithInheritance;
-import ru.otus.vsh.hw08.json.classes.arrays.*;
-import ru.otus.vsh.hw08.json.classes.collections.*;
-import ru.otus.vsh.hw08.json.classes.maps.MapFields;
 import ru.otus.vsh.hw08.json.classes.simples.*;
-
-import java.util.*;
 
 class DiyJsonTest {
     private Gson gson;
@@ -69,13 +62,6 @@ class DiyJsonTest {
     void simpleObjectFields() {
         var object = new SimpleObjectFields(new SimpleObject(1, "one"));
         var converted = test(object, SimpleObjectFields.class);
-        assert object.equals(converted);
-    }
-
-    @Test
-    void withInheritance() {
-        var object = new WithInheritance(1, "one", 987654321L);
-        var converted = test(object, WithInheritance.class);
         assert object.equals(converted);
     }
 

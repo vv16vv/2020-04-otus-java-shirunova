@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.otus.vsh.hw08.json.classes.Colors;
-import ru.otus.vsh.hw08.json.classes.WithInheritance;
-import ru.otus.vsh.hw08.json.classes.arrays.*;
 import ru.otus.vsh.hw08.json.classes.collections.*;
-import ru.otus.vsh.hw08.json.classes.maps.MapFields;
 import ru.otus.vsh.hw08.json.classes.simples.*;
 
 import java.util.*;
@@ -89,23 +86,6 @@ class DiyJsonCollectionsTest {
         aColorSet.add(Colors.Yellow);
         var object = new CollectionOfEnumFields(aColorSet);
         var converted = test(object, CollectionOfEnumFields.class);
-        assert object.equals(converted);
-    }
-
-    @Test
-    void collectionOfMapFields(){
-        var aStringIntegerMap1 = new HashMap<String, Integer>();
-        aStringIntegerMap1.put("excellent", 5);
-        var aStringIntegerMap2 = new HashMap<String, Integer>();
-        aStringIntegerMap2.put("good", 4);
-        aStringIntegerMap2.put("average", 3);
-        var aStringIntegerMapList =  new ArrayList<Map<String, Integer>>();
-        aStringIntegerMapList.add(aStringIntegerMap1);
-        aStringIntegerMapList.add(aStringIntegerMap2);
-        var object = new CollectionOfMapFields(
-                aStringIntegerMapList
-        );
-        var converted = test(object, CollectionOfMapFields.class);
         assert object.equals(converted);
     }
 }
