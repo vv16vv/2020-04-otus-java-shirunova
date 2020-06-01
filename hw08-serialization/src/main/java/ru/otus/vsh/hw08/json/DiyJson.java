@@ -36,7 +36,6 @@ public final class DiyJson {
             var type = field.getType();
             var genericType = field.getGenericType();
             var value = field.get(o);
-            System.out.println("name = " + name + "; type = " + type + "; genericType = " + genericType);
             if (field.get(o) == null) continue;
             if (type.isPrimitive()) {
                 addNamedPrimitiveValue(builder, value, type, name);
@@ -52,10 +51,6 @@ public final class DiyJson {
             }
             if (isCollection(type)) {
                 addNamedCollectionValue(builder, value, type, name, genericType);
-                continue;
-            }
-            if (isMap(type)) {
-                System.out.println("Map: name = " + name + "; type = " + type);
                 continue;
             }
             if (isEnum(type)) {
@@ -239,25 +234,14 @@ public final class DiyJson {
         return result;
     }
 
-    private static boolean isMap(@Nonnull Class<?> type) {
-        if (type.toString().equals("interface java.util.Map")) return true;
-        var result = false;
-        for (Class<?> anInterface : type.getInterfaces()) {
-            result = result || isMap(anInterface);
-        }
-        return result;
-    }
-
     private static boolean isEnum(@Nonnull Class<?> type) {
         return type.isEnum();
     }
 
-    @SuppressWarnings("rawtypes")
     private static void addArrayValue(@Nonnull JsonArrayBuilder builder,
                                       @Nonnull Object array,
                                       @Nonnull Class<?> arrayItemType,
                                       Type genericItemType) throws IllegalAccessException {
-        System.out.println("addArrayValue: array = " + array + ", arrayItemType = " + arrayItemType + ", genericItemType = " + genericItemType);
         if (arrayItemType.isPrimitive()) {
             final Object[] boxedObjects = new Object[Array.getLength(array)];
             for (int index = 0; index < boxedObjects.length; index++) {
@@ -340,29 +324,4 @@ public final class DiyJson {
         builder.add(name, arrayBuilder);
     }
 
-//    @SuppressWarnings({"rawtypes"})
-//    private static void addCollectionValue(@Nonnull JsonArrayBuilder builder, @Nonnull Object o, @Nonnull Class<?> objectType) throws IllegalAccessException {
-//        final var fieldValues = ((Collection) objectType.get(o)).toArray();
-//        var genericSignature = objectType.getGenericType().getTypeName();
-//        var genericParameterType = extractFirstGenericType(genericSignature);
-//        if (isPrimitiveWrapper(genericParameterType.toString()) || isEnum(genericParameterType)) {
-//            for (Object value : fieldValues) {
-//                addWrapperArrayValue(arrayBuilder, value, genericParameterType.toString());
-//            }
-//        } else if (isCollection(genericParameterType)) {
-////            addCollectionValue(arrayBuilder,);
-//
-//        } else if (genericParameterType.isArray()) {
-//
-//        } else if (isMap(genericParameterType)) {
-//
-//        } else {
-//            for (Object value : fieldValues) {
-//                var jsonObjectBuilder = Json.createObjectBuilder();
-//                addObject(jsonObjectBuilder, value);
-//                arrayBuilder.add(jsonObjectBuilder);
-//            }
-//        }
-//        builder.add(name, arrayBuilder);
-//    }
 }
