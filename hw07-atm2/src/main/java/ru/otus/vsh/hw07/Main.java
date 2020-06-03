@@ -1,7 +1,6 @@
 package ru.otus.vsh.hw07;
 
 import ru.otus.vsh.hw07.api.*;
-import ru.otus.vsh.hw07.impl.AtmImpl;
 import ru.otus.vsh.hw07.impl.Department;
 
 import javax.annotation.Nonnull;
@@ -17,13 +16,15 @@ public class Main {
 
     public static void main(String[] args) {
         var main = new Main();
-        Atm emptyAtm = new AtmImpl("first");
+        Atm emptyAtm = new AtmBuilder("first").build();
         emptyAtm.accept(Map.of(
                 Banknote.FIVE_THOUSAND, 100
         ));
-        Atm atmWithMoney = new AtmImpl("second", Map.of(
-                Banknote.THOUSAND, 100
-        ));
+        Atm atmWithMoney = new AtmBuilder("second")
+                .setInitialMoney(Map.of(
+                        Banknote.THOUSAND, 100
+                ))
+                .build();
         main.department.addAtm(emptyAtm);
         main.department.addAtm(atmWithMoney);
 
