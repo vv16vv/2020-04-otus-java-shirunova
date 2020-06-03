@@ -24,11 +24,11 @@ public class AtmImpl implements Atm, AtmInitiateListener {
         this.state = new AtmStateImpl();
     }
 
-    public void addToDepartment(AtmValueChangeListener listener){
+    public void addAtmValueChangeListener(AtmValueChangeListener listener){
         valueChangeListener = listener;
     }
 
-    public void removeFromDepartment(){
+    public void removeAtmValueChangeListener(){
         valueChangeListener = null;
     }
 
@@ -42,7 +42,7 @@ public class AtmImpl implements Atm, AtmInitiateListener {
         }
         atm.initiate();
         if(valueChangeListener != null)
-            atm.addToDepartment(valueChangeListener);
+            atm.addAtmValueChangeListener(valueChangeListener);
         return atm;
     }
 
