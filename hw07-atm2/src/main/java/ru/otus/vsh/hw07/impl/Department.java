@@ -1,6 +1,8 @@
 package ru.otus.vsh.hw07.impl;
 
 import ru.otus.vsh.hw07.api.*;
+import ru.otus.vsh.hw07.api.listeners.AtmInitiateListener;
+import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
