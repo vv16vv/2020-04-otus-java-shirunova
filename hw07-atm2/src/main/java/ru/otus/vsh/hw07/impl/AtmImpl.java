@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class AtmImpl implements Atm {
     private final String id;
-    private AtmMemento initialState;
+    private AtmState initialState;
     private AtmState state;
     private Banknote minimal = null;
     private AtmValueChangeListener valueChangeListener = null;
@@ -77,7 +77,7 @@ public class AtmImpl implements Atm {
 
     private void initiate() {
         if (isInitiated) return;
-        this.initialState = new AtmMemento(this.state);
+        this.initialState = this.state.copy();
         this.isInitiated = true;
     }
 
@@ -165,7 +165,7 @@ public class AtmImpl implements Atm {
         AtmStatus status;
         String message;
         try {
-            state = initialState.getState();
+            state = initialState.copy();
             status = AtmStatus.OK;
             message = String.format("ATM '%s': успешно вернулся в исходное состояние", id);
             System.out.printf("ATM '%s': В наличии следующие купюры'%s'%n", id, state.getCells().toString());
@@ -188,11 +188,7 @@ public class AtmImpl implements Atm {
             this.cells = new EnumMap<>(Banknote.class);
         }
 
-        public AtmStateImpl(AtmState cells) {
-            this.cells = cells.copy().getCells();
-        }
-
-        public AtmStateImpl(Map<Banknote, Cell> cells) {
+        public AtmStateImpl(@Nonnull Map<Banknote, Cell> cells) {
             this.cells = cells;
         }
 
@@ -206,18 +202,6 @@ public class AtmImpl implements Atm {
                     .stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy(), (a, b) -> b, () -> new EnumMap<>(Banknote.class)));
             return new AtmStateImpl(newCells);
-        }
-    }
-
-    private static class AtmMemento {
-        private final AtmState state;
-
-        public AtmMemento(AtmState state) {
-            this.state = new AtmStateImpl(state);
-        }
-
-        public AtmState getState() {
-            return state.copy();
         }
     }
 }
