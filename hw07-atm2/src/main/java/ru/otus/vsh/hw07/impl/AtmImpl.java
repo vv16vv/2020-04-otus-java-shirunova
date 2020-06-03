@@ -3,29 +3,35 @@ package ru.otus.vsh.hw07.impl;
 import ru.otus.vsh.hw07.api.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AtmImpl implements Atm, AtmListener {
-    private final AtmMemento initialState;
     private final String id;
+    private AtmMemento initialState;
     private AtmState state;
     private Banknote minimal = null;
 
-
-    public AtmImpl(String id) {
-        this.id = id;
-        this.state = new AtmStateImpl();
-        this.initialState = new AtmMemento(state);
+    @Nonnull
+    public static Atm AtmCreator(@Nonnull String id, @Nullable Map<Banknote, Integer> initialMoney){
+        var atm = new AtmImpl(id);
+        if(initialMoney != null && !initialMoney.isEmpty()){
+            atm.accept(initialMoney);
+        }
+        atm.initiate();
+        return atm;
     }
 
-    public AtmImpl(String id, Map<Banknote, Integer> initialMoney) {
+    private AtmImpl(String id) {
         this.id = id;
         this.state = new AtmStateImpl();
-        accept(initialMoney);
-        this.initialState = new AtmMemento(state);
+    }
+
+    private void initiate() {
+        this.initialState = new AtmMemento(this.state);
     }
 
     @Override

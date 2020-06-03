@@ -4,6 +4,7 @@ import ru.otus.vsh.hw07.api.Atm;
 import ru.otus.vsh.hw07.api.AtmListener;
 import ru.otus.vsh.hw07.api.Banknote;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class Department {
         atms.remove(atm);
     }
 
-    public void acceptMoney(Map<Banknote, Integer> sum) {
+    public void acceptMoney(@Nonnull Map<Banknote, Integer> sum) {
         sum.forEach((banknote, quantity) -> {
             if (atms.isEmpty())
                 throw new IllegalStateException(String.format("В отделении '%s' нет банкоматов!", id()));
