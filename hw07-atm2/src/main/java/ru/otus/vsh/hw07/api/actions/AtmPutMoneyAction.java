@@ -1,5 +1,6 @@
-package ru.otus.vsh.hw07.api;
+package ru.otus.vsh.hw07.api.actions;
 
+import ru.otus.vsh.hw07.api.Banknote;
 import ru.otus.vsh.hw07.impl.Department;
 
 import javax.annotation.Nonnull;
