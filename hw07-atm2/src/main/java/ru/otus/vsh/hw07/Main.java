@@ -1,6 +1,10 @@
 package ru.otus.vsh.hw07;
 
 import ru.otus.vsh.hw07.api.*;
+import ru.otus.vsh.hw07.api.actions.AtmAction;
+import ru.otus.vsh.hw07.api.actions.AtmGetValueAction;
+import ru.otus.vsh.hw07.api.actions.AtmInitiateAction;
+import ru.otus.vsh.hw07.api.actions.AtmPutMoneyAction;
 import ru.otus.vsh.hw07.impl.Department;
 
 import javax.annotation.Nonnull;
