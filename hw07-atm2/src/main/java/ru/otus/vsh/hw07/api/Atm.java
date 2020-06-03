@@ -1,5 +1,6 @@
 package ru.otus.vsh.hw07.api;
 
+import ru.otus.vsh.hw07.api.listeners.AtmRequestMoneyListener;
 import ru.otus.vsh.hw07.api.listeners.AtmResetListener;
 import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
 
@@ -28,6 +29,11 @@ public interface Atm {
     long currentValue();
 
     /**
+     * Initiate collecting of current values
+     * */
+    void calculateCurrentMoney();
+
+    /**
      * put the ATM to initial state
      */
     void reset(String reason);
@@ -45,4 +51,11 @@ public interface Atm {
     void addAtmResetListener(AtmResetListener listener);
 
     void removeAtmResetListener();
+
+    /**
+     * Add listener to catch returning the current money state
+     */
+    void addAtmRequestMoneyListener(AtmRequestMoneyListener listener);
+
+    void removeAtmRequestMoneyListener();
 }
