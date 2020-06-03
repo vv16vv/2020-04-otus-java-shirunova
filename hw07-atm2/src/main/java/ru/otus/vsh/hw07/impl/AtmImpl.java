@@ -1,10 +1,7 @@
 package ru.otus.vsh.hw07.impl;
 
 import ru.otus.vsh.hw07.api.*;
-import ru.otus.vsh.hw07.api.listeners.AtmResetListener;
-import ru.otus.vsh.hw07.api.listeners.AtmStatus;
-import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
-import ru.otus.vsh.hw07.api.listeners.ValueChangeOperation;
+import ru.otus.vsh.hw07.api.listeners.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,6 +17,7 @@ public class AtmImpl implements Atm {
     private Banknote minimal = null;
     private AtmValueChangeListener valueChangeListener = null;
     private AtmResetListener resetListener = null;
+    private AtmRequestMoneyListener requestMoneyListener = null;
     private boolean isInitiated = false;
 
     private AtmImpl(String id) {
@@ -31,7 +29,8 @@ public class AtmImpl implements Atm {
     public static Atm AtmCreator(@Nonnull String id,
                                  @Nullable Map<Banknote, Integer> initialMoney,
                                  @Nullable AtmValueChangeListener valueChangeListener,
-                                 @Nullable AtmResetListener resetListener) {
+                                 @Nullable AtmResetListener resetListener,
+                                 @Nullable AtmRequestMoneyListener requestMoneyListener) {
         var atm = new AtmImpl(id);
         if (initialMoney != null && !initialMoney.isEmpty()) {
             atm.accept(initialMoney);
@@ -41,7 +40,19 @@ public class AtmImpl implements Atm {
             atm.addAtmValueChangeListener(valueChangeListener);
         if (resetListener != null)
             atm.addAtmResetListener(resetListener);
+        if (requestMoneyListener != null)
+            atm.addAtmRequestMoneyListener(requestMoneyListener);
         return atm;
+    }
+
+    @Override
+    public void addAtmRequestMoneyListener(AtmRequestMoneyListener listener) {
+        this.requestMoneyListener = listener;
+    }
+
+    @Override
+    public void removeAtmRequestMoneyListener() {
+        this.requestMoneyListener = null;
     }
 
     @Override
@@ -142,6 +153,13 @@ public class AtmImpl implements Atm {
     }
 
     @Override
+    public void calculateCurrentMoney() {
+        if (requestMoneyListener != null) {
+            requestMoneyListener.onRequestMoney(currentValue());
+        }
+    }
+
+    @Override
     public void reset(String reason) {
         System.out.printf("ATM '%s': Возврат в исходное состояние по причине '%s'%n", id, reason);
         AtmStatus status;
@@ -156,8 +174,10 @@ public class AtmImpl implements Atm {
             message = String.format("ATM '%s': ошибка при возвращении в исходное состояние %s", id, e.getMessage());
         }
         if (resetListener != null) {
-            var moneyAfterReset = currentValue();
-            resetListener.onReset(status, message, moneyAfterReset);
+            resetListener.onReset(status, message);
+        }
+        if (requestMoneyListener != null) {
+            requestMoneyListener.onRequestMoney(currentValue());
         }
     }
 
