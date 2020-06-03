@@ -9,29 +9,45 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AtmImpl implements Atm, AtmListener {
+public class AtmImpl implements Atm, AtmInitiateListener {
     private final String id;
     private AtmMemento initialState;
     private AtmState state;
     private Banknote minimal = null;
-
-    @Nonnull
-    public static Atm AtmCreator(@Nonnull String id, @Nullable Map<Banknote, Integer> initialMoney){
-        var atm = new AtmImpl(id);
-        if(initialMoney != null && !initialMoney.isEmpty()){
-            atm.accept(initialMoney);
-        }
-        atm.initiate();
-        return atm;
-    }
+    private AtmValueChangeListener valueChangeListener = null;
+    private boolean isInitiated = false;
 
     private AtmImpl(String id) {
         this.id = id;
         this.state = new AtmStateImpl();
     }
 
+    public void addToDepartment(AtmValueChangeListener listener){
+        valueChangeListener = listener;
+    }
+
+    public void removeFromDepartment(){
+        valueChangeListener = null;
+    }
+
+    @Nonnull
+    public static Atm AtmCreator(@Nonnull String id,
+                                 @Nullable Map<Banknote, Integer> initialMoney,
+                                 @Nullable AtmValueChangeListener valueChangeListener) {
+        var atm = new AtmImpl(id);
+        if (initialMoney != null && !initialMoney.isEmpty()) {
+            atm.accept(initialMoney);
+        }
+        atm.initiate();
+        if(valueChangeListener != null)
+            atm.addToDepartment(valueChangeListener);
+        return atm;
+    }
+
     private void initiate() {
+        if (isInitiated) return;
         this.initialState = new AtmMemento(this.state);
+        this.isInitiated = true;
     }
 
     @Override
@@ -46,7 +62,13 @@ public class AtmImpl implements Atm, AtmListener {
             state.getCells().get(note).add(quantity);
         });
         calculateMinimalBanknote();
-        System.out.println(String.format("%s: принял следующие купюры %s", id, income.toString()));
+        if (isInitiated && valueChangeListener != null) {
+            var incomeMoney = income.entrySet().stream()
+                    .map(entry -> entry.getKey().getNominal() * entry.getValue())
+                    .reduce(0L, Long::sum);
+            valueChangeListener.onValueChange(incomeMoney, ValueChangeOperation.HAND_IN);
+        }
+        System.out.printf("%s: принял следующие купюры %s%n", id, income.toString());
     }
 
     private void calculateMinimalBanknote() {
@@ -84,6 +106,9 @@ public class AtmImpl implements Atm, AtmListener {
             throw new CantHandOutMoneyException(sum);
         } else {
             result.forEach((key, value) -> state.getCells().get(key).handout(value));
+            if (isInitiated && valueChangeListener != null) {
+                valueChangeListener.onValueChange(sum, ValueChangeOperation.HAND_OUT);
+            }
             calculateMinimalBanknote();
         }
         return result;
