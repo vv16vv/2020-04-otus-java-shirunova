@@ -2,7 +2,7 @@ package ru.otus.vsh.hw07.api.actions;
 
 import ru.otus.vsh.hw07.impl.Department;
 
-abstract public class AtmAction {
+public abstract class AtmAction {
     private AtmAction nextAction = null;
 
     public AtmAction next(AtmAction action) {

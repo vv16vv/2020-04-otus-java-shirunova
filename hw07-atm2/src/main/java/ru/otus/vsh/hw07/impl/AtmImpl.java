@@ -117,7 +117,7 @@ public class AtmImpl implements Atm {
         if (sum <= 0) {
             throw new IllegalArgumentException(String.format("ATM '%s': Не могу выдать отрицательную сумму %s", id, sum));
         }
-        if (sum % minimal.getNominal() != 0 || sum > currentValue())
+        if (sum % minimal.getNominal() != 0 || sum > currentMoney())
             throw new CantHandOutMoneyException(sum);
         Map<Banknote, Integer> result = new EnumMap<>(Banknote.class);
         long remainingSum = sum;
@@ -145,7 +145,7 @@ public class AtmImpl implements Atm {
         return result;
     }
 
-    public long currentValue() {
+    public long currentMoney() {
         return state.getCells().values().stream()
                 .filter(cell -> !cell.isEmpty())
                 .map(Cell::getSum)
@@ -155,7 +155,7 @@ public class AtmImpl implements Atm {
     @Override
     public void calculateCurrentMoney() {
         if (requestMoneyListener != null) {
-            requestMoneyListener.onRequestMoney(currentValue());
+            requestMoneyListener.onRequestMoney(currentMoney());
         }
     }
 
@@ -177,7 +177,7 @@ public class AtmImpl implements Atm {
             resetListener.onReset(status, message);
         }
         if (requestMoneyListener != null) {
-            requestMoneyListener.onRequestMoney(currentValue());
+            requestMoneyListener.onRequestMoney(currentMoney());
         }
     }
 
