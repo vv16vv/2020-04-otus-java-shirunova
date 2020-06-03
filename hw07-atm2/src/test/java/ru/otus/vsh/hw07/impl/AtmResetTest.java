@@ -16,7 +16,7 @@ public class AtmResetTest {
                 Banknote.TEN, 1
         ));
         atm.reset("reset to empty");
-        assert (atm.currentValue() == 0);
+        assert (atm.currentMoney() == 0);
     }
 
     @Test
@@ -33,6 +33,6 @@ public class AtmResetTest {
                 Banknote.HUNDRED, 1
         ));
         atm.reset("reset to with money");
-        assert (atm.currentValue() == 60);
+        assert (atm.currentMoney() == 60);
     }
 }

@@ -26,7 +26,7 @@ public interface Atm {
     /**
      * @return money sum of all banknotes in the ATM at the moment
      */
-    long currentValue();
+    long currentMoney();
 
     /**
      * Initiate collecting of current values
