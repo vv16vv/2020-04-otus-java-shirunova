@@ -1,17 +1,16 @@
 package ru.otus.vsh.hw07.impl;
 
-import ru.otus.vsh.hw07.api.Atm;
-import ru.otus.vsh.hw07.api.AtmListener;
-import ru.otus.vsh.hw07.api.Banknote;
+import ru.otus.vsh.hw07.api.*;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Department {
+public class Department implements AtmValueChangeListener, AtmInitiateListener {
     private final List<Atm> atms = new ArrayList<>();
     private final String id;
+    private volatile long currentMoney = 0;
 
     public Department(String id) {
         this.id = id;
@@ -41,19 +40,30 @@ public class Department {
 
     public void initiate(String reason) {
         atms.forEach(atm -> {
-            if (atm instanceof AtmListener) {
-                ((AtmListener) atm).onInitiate(reason);
+            if (atm instanceof AtmInitiateListener) {
+                ((AtmInitiateListener) atm).onInitiate(reason);
             }
         });
     }
 
-    public long getCurrentValue() {
-        return atms.stream()
-                .mapToLong(Atm::currentValue)
-                .reduce(0L, Long::sum);
+    public long getCurrentMoney() {
+        return currentMoney;
     }
 
     public String id() {
         return id;
+    }
+
+    @Override
+    public void onValueChange(long delta, ValueChangeOperation operation) {
+        synchronized (this) {
+            if (operation == ValueChangeOperation.HAND_OUT) currentMoney -= delta;
+            else currentMoney += delta;
+        }
+    }
+
+    @Override
+    public void onInitiate(String reason) {
+
     }
 }

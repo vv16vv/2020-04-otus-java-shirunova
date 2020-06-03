@@ -8,7 +8,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class AtmPutMoneyAction extends AtmAction {
-    private final Map<Banknote, Integer> sum = new EnumMap(Banknote.class);
+    private final Map<Banknote, Integer> sum = new EnumMap<>(Banknote.class);
 
     public AtmPutMoneyAction(Map<Banknote, Integer> sum) {
         this.sum.putAll(sum);

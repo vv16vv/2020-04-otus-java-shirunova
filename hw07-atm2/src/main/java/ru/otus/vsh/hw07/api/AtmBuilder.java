@@ -7,6 +7,7 @@ import ru.otus.vsh.hw07.impl.AtmImpl;
 public class AtmBuilder {
     private final String id;
     private Map<Banknote, Integer> initialMoney = null;
+    private AtmValueChangeListener valueChangeListener = null;
 
     public AtmBuilder(String id) {
         this.id = id;
@@ -17,8 +18,13 @@ public class AtmBuilder {
         return this;
     }
 
+    public AtmBuilder setDepartment(AtmValueChangeListener valueChangeListener){
+        this.valueChangeListener = valueChangeListener;
+        return this;
+    }
+
     public Atm build(){
-        return AtmImpl.AtmCreator(id, initialMoney);
+        return AtmImpl.AtmCreator(id, initialMoney, valueChangeListener);
     }
 
 }

@@ -20,17 +20,18 @@ public class Main {
 
     public static void main(String[] args) {
         var main = new Main();
-        Atm emptyAtm = new AtmBuilder("first").build();
+        Atm emptyAtm = new AtmBuilder("first")
+                .setDepartment(main.department)
+                .build();
         emptyAtm.accept(Map.of(
                 Banknote.FIVE_THOUSAND, 100
         ));
         Atm atmWithMoney = new AtmBuilder("second")
+                .setDepartment(main.department)
                 .setInitialMoney(Map.of(
                         Banknote.THOUSAND, 100
                 ))
                 .build();
-        main.department.addAtm(emptyAtm);
-        main.department.addAtm(atmWithMoney);
 
         AtmAction putSomeMoney = new AtmPutMoneyAction(Map.of(
                 Banknote.FIVE_HUNDRED, 100
