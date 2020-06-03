@@ -1,8 +1,10 @@
 package ru.otus.vsh.hw07.impl;
 
 import ru.otus.vsh.hw07.api.*;
-import ru.otus.vsh.hw07.api.listeners.AtmInitiateListener;
+import ru.otus.vsh.hw07.api.listeners.AtmResetListener;
+import ru.otus.vsh.hw07.api.listeners.AtmStatus;
 import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
+import ru.otus.vsh.hw07.api.listeners.ValueChangeOperation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -11,12 +13,13 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AtmImpl implements Atm, AtmInitiateListener {
+public class AtmImpl implements Atm {
     private final String id;
     private AtmMemento initialState;
     private AtmState state;
     private Banknote minimal = null;
     private AtmValueChangeListener valueChangeListener = null;
+    private AtmResetListener resetListener = null;
     private boolean isInitiated = false;
 
     private AtmImpl(String id) {
@@ -24,26 +27,41 @@ public class AtmImpl implements Atm, AtmInitiateListener {
         this.state = new AtmStateImpl();
     }
 
-    public void addAtmValueChangeListener(AtmValueChangeListener listener){
-        valueChangeListener = listener;
-    }
-
-    public void removeAtmValueChangeListener(){
-        valueChangeListener = null;
-    }
-
     @Nonnull
     public static Atm AtmCreator(@Nonnull String id,
                                  @Nullable Map<Banknote, Integer> initialMoney,
-                                 @Nullable AtmValueChangeListener valueChangeListener) {
+                                 @Nullable AtmValueChangeListener valueChangeListener,
+                                 @Nullable AtmResetListener resetListener) {
         var atm = new AtmImpl(id);
         if (initialMoney != null && !initialMoney.isEmpty()) {
             atm.accept(initialMoney);
         }
         atm.initiate();
-        if(valueChangeListener != null)
+        if (valueChangeListener != null)
             atm.addAtmValueChangeListener(valueChangeListener);
+        if (resetListener != null)
+            atm.addAtmResetListener(resetListener);
         return atm;
+    }
+
+    @Override
+    public void addAtmValueChangeListener(AtmValueChangeListener listener) {
+        this.valueChangeListener = listener;
+    }
+
+    @Override
+    public void removeAtmValueChangeListener() {
+        this.valueChangeListener = null;
+    }
+
+    @Override
+    public void addAtmResetListener(AtmResetListener listener) {
+        this.resetListener = listener;
+    }
+
+    @Override
+    public void removeAtmResetListener() {
+        this.resetListener = null;
     }
 
     private void initiate() {
@@ -124,10 +142,29 @@ public class AtmImpl implements Atm, AtmInitiateListener {
     }
 
     @Override
-    public void onInitiate(String reason) {
-        System.out.printf("%s: Возврат в исходное состояние по причине '%s'%n", id, reason);
-        state = initialState.getState();
-        System.out.printf("%s: В наличии следующие купюры'%s'%n", id, state.getCells().toString());
+    public void reset(String reason) {
+        System.out.printf("ATM '%s': Возврат в исходное состояние по причине '%s'%n", id, reason);
+        AtmStatus status;
+        String message;
+        try {
+            var moneyBeforeReset = currentValue();
+            state = initialState.getState();
+            var moneyAfterReset = currentValue();
+            status = AtmStatus.OK;
+            message = String.format("ATM '%s': успешно вернулся в исходное состояние", id);
+            if (valueChangeListener != null) {
+                var delta = moneyAfterReset - moneyBeforeReset;
+                var operation = delta > 0 ? ValueChangeOperation.HAND_IN : ValueChangeOperation.HAND_OUT;
+                valueChangeListener.onValueChange(Math.abs(delta), operation);
+            }
+            System.out.printf("ATM '%s': В наличии следующие купюры'%s'%n", id, state.getCells().toString());
+        } catch (Exception e) {
+            status = AtmStatus.FAILED;
+            message = String.format("ATM '%s': ошибка при возвращении в исходное состояние %s", id, e.getMessage());
+        }
+        if (resetListener != null) {
+            resetListener.onReset(status, message);
+        }
     }
 
     private static class AtmStateImpl implements AtmState {

@@ -1,5 +1,8 @@
 package ru.otus.vsh.hw07.api;
 
+import ru.otus.vsh.hw07.api.listeners.AtmResetListener;
+import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
+
 import java.util.Map;
 
 public interface Atm {
@@ -23,4 +26,23 @@ public interface Atm {
      * @return money sum of all banknotes in the ATM at the moment
      */
     long currentValue();
+
+    /**
+     * put the ATM to initial state
+     */
+    void reset(String reason);
+
+    /**
+     * Add listener to catch changes in money
+     */
+    void addAtmValueChangeListener(AtmValueChangeListener listener);
+
+    void removeAtmValueChangeListener();
+
+    /**
+     * Add listener to catch resetting the ATM to the initial state
+     */
+    void addAtmResetListener(AtmResetListener listener);
+
+    void removeAtmResetListener();
 }

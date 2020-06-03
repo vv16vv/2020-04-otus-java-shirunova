@@ -3,6 +3,7 @@ package ru.otus.vsh.hw07.api;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
+import ru.otus.vsh.hw07.api.listeners.AtmResetListener;
 import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
 import ru.otus.vsh.hw07.impl.AtmImpl;
 
@@ -10,6 +11,7 @@ public class AtmBuilder {
     private final String id;
     private Map<Banknote, Integer> initialMoney = null;
     private AtmValueChangeListener valueChangeListener = null;
+    private AtmResetListener resetListener = null;
 
     public AtmBuilder(String id) {
         this.id = id;
@@ -25,8 +27,13 @@ public class AtmBuilder {
         return this;
     }
 
+    public AtmBuilder setAtmResetListener(AtmResetListener resetListener){
+        this.resetListener = resetListener;
+        return this;
+    }
+
     public Atm build(){
-        return AtmImpl.AtmCreator(id, initialMoney, valueChangeListener);
+        return AtmImpl.AtmCreator(id, initialMoney, valueChangeListener, resetListener);
     }
 
 }
