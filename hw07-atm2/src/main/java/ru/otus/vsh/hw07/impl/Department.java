@@ -2,10 +2,7 @@ package ru.otus.vsh.hw07.impl;
 
 import ru.otus.vsh.hw07.api.Atm;
 import ru.otus.vsh.hw07.api.Banknote;
-import ru.otus.vsh.hw07.api.listeners.AtmResetListener;
-import ru.otus.vsh.hw07.api.listeners.AtmStatus;
-import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
-import ru.otus.vsh.hw07.api.listeners.ValueChangeOperation;
+import ru.otus.vsh.hw07.api.listeners.*;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -13,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Department implements AtmValueChangeListener, AtmResetListener {
+public class Department implements AtmValueChangeListener, AtmResetListener, AtmRequestMoneyListener {
     private final List<Atm> atms = new ArrayList<>();
     private final String id;
     private final AtomicLong currentMoney = new AtomicLong(0L);
@@ -26,11 +23,13 @@ public class Department implements AtmValueChangeListener, AtmResetListener {
         atms.add(atm);
         atm.addAtmValueChangeListener(this);
         atm.addAtmResetListener(this);
+        atm.addAtmRequestMoneyListener(this);
     }
 
     public void removeAtm(@Nonnull Atm atm) {
         atm.removeAtmResetListener();
         atm.removeAtmValueChangeListener();
+        atm.removeAtmRequestMoneyListener();
         atms.remove(atm);
     }
 
@@ -55,6 +54,13 @@ public class Department implements AtmValueChangeListener, AtmResetListener {
         }
     }
 
+    public void requestMoney(String reason) {
+        synchronized (this) {
+            currentMoney.set(0L);
+            atms.forEach(atm -> new Thread(atm::calculateCurrentMoney, atm.id()).start());
+        }
+    }
+
     public long getCurrentMoney() {
         return currentMoney.get();
     }
@@ -70,11 +76,10 @@ public class Department implements AtmValueChangeListener, AtmResetListener {
     }
 
     @Override
-    public void onReset(AtmStatus statusAfterReset, String message, Long moneyAfterReset) {
+    public void onReset(AtmStatus statusAfterReset, String message) {
         switch (statusAfterReset) {
             case OK: {
                 System.out.println(message);
-                currentMoney.getAndAdd(moneyAfterReset);
                 break;
             }
             case FAILED: {
@@ -82,5 +87,10 @@ public class Department implements AtmValueChangeListener, AtmResetListener {
                 break;
             }
         }
+    }
+
+    @Override
+    public void onRequestMoney(long moneyState) {
+        currentMoney.getAndAdd(moneyState);
     }
 }

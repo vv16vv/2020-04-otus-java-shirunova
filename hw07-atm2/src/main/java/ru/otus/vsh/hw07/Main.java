@@ -14,12 +14,12 @@ import java.util.Date;
 import java.util.Map;
 
 public class Main {
-    private final Department department = new Department("Приморский");
     private final String datePattern = "dd MMM yyyy";
     private final DateFormat dateFormat = new SimpleDateFormat(datePattern);
 
     public static void main(String[] args) {
         var main = new Main();
+        Department department = new Department("Приморский");
         Atm emptyAtm = new AtmBuilder("first").build();
         emptyAtm.accept(Map.of(
                 Banknote.FIVE_THOUSAND, 100
@@ -29,20 +29,22 @@ public class Main {
                         Banknote.THOUSAND, 100
                 ))
                 .build();
-        main.department.addAtm(emptyAtm);
-        main.department.addAtm(atmWithMoney);
+        department.addAtm(emptyAtm);
+        department.addAtm(atmWithMoney);
 
         AtmAction putSomeMoney = new AtmPutMoneyAction(Map.of(
                 Banknote.FIVE_HUNDRED, 100
         )).next(new AtmGetValueAction());
         AtmAction dayOpener = new AtmInitiateAction(String.format("Открыть день %s", main.dateFormat.format(new Date()))).next(putSomeMoney);
-        dayOpener.process(main.department);
+        dayOpener.process(department);
 
         main.processOutput(emptyAtm, 1000);
+        main.printCurrentMoneyState(department);
         main.processOutput(atmWithMoney, 5000);
+        main.printCurrentMoneyState(department);
 
         AtmAction dayCloser = new AtmGetValueAction().next(new AtmInitiateAction(String.format("Закрыть день %s", main.dateFormat.format(new Date()))));
-        dayCloser.process(main.department);
+        dayCloser.process(department);
 
     }
 
@@ -53,6 +55,10 @@ public class Main {
         } catch (CantHandOutMoneyException e) {
             System.out.printf("ATM '%s' не смог выдать сумму %d рублей%n", atm.id(), sum);
         }
+    }
+
+    private void printCurrentMoneyState(@Nonnull Department department){
+        System.out.printf("Отделение '%s': текущий остаток (без опроса всех банкоматов) %d рублей%n", department.id(), department.getCurrentMoney());
     }
 
 }
