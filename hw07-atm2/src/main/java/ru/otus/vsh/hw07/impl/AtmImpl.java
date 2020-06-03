@@ -88,7 +88,7 @@ public class AtmImpl implements Atm {
                     .reduce(0L, Long::sum);
             valueChangeListener.onValueChange(incomeMoney, ValueChangeOperation.HAND_IN);
         }
-        System.out.printf("%s: принял следующие купюры %s%n", id, income.toString());
+        System.out.printf("АТМ '%s': принял следующие купюры %s%n", id, income.toString());
     }
 
     private void calculateMinimalBanknote() {
@@ -102,9 +102,9 @@ public class AtmImpl implements Atm {
     @Override
     public Map<Banknote, Integer> handout(long sum) {
         if (minimal == null)
-            throw new IllegalStateException(String.format("Банкомат '%s' не загружен", id));
+            throw new IllegalStateException(String.format("ATM '%s' не загружен", id));
         if (sum <= 0) {
-            throw new IllegalArgumentException(String.format("%s: Не могу выдать отрицательную сумму %s", id, sum));
+            throw new IllegalArgumentException(String.format("ATM '%s': Не могу выдать отрицательную сумму %s", id, sum));
         }
         if (sum % minimal.getNominal() != 0 || sum > currentValue())
             throw new CantHandOutMoneyException(sum);
@@ -147,23 +147,17 @@ public class AtmImpl implements Atm {
         AtmStatus status;
         String message;
         try {
-            var moneyBeforeReset = currentValue();
             state = initialState.getState();
-            var moneyAfterReset = currentValue();
             status = AtmStatus.OK;
             message = String.format("ATM '%s': успешно вернулся в исходное состояние", id);
-            if (valueChangeListener != null) {
-                var delta = moneyAfterReset - moneyBeforeReset;
-                var operation = delta > 0 ? ValueChangeOperation.HAND_IN : ValueChangeOperation.HAND_OUT;
-                valueChangeListener.onValueChange(Math.abs(delta), operation);
-            }
             System.out.printf("ATM '%s': В наличии следующие купюры'%s'%n", id, state.getCells().toString());
         } catch (Exception e) {
             status = AtmStatus.FAILED;
             message = String.format("ATM '%s': ошибка при возвращении в исходное состояние %s", id, e.getMessage());
         }
         if (resetListener != null) {
-            resetListener.onReset(status, message);
+            var moneyAfterReset = currentValue();
+            resetListener.onReset(status, message, moneyAfterReset);
         }
     }
 
