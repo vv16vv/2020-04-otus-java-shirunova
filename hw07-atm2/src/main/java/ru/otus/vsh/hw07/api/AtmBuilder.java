@@ -20,7 +20,7 @@ public class AtmBuilder {
         return this;
     }
 
-    public AtmBuilder setDepartment(AtmValueChangeListener valueChangeListener){
+    public AtmBuilder setAtmValueChangeListener(AtmValueChangeListener valueChangeListener){
         this.valueChangeListener = valueChangeListener;
         return this;
     }
