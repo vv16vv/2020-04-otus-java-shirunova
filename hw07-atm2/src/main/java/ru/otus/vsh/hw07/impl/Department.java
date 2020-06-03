@@ -2,10 +2,10 @@ package ru.otus.vsh.hw07.impl;
 
 import ru.otus.vsh.hw07.api.Atm;
 import ru.otus.vsh.hw07.api.Banknote;
-import ru.otus.vsh.hw07.api.listeners.AtmStatus;
-import ru.otus.vsh.hw07.api.listeners.ValueChangeOperation;
 import ru.otus.vsh.hw07.api.listeners.AtmResetListener;
+import ru.otus.vsh.hw07.api.listeners.AtmStatus;
 import ru.otus.vsh.hw07.api.listeners.AtmValueChangeListener;
+import ru.otus.vsh.hw07.api.listeners.ValueChangeOperation;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -49,7 +49,10 @@ public class Department implements AtmValueChangeListener, AtmResetListener {
     }
 
     public void initiate(String reason) {
-        atms.forEach(atm -> atm.reset(reason));
+        synchronized (this) {
+            currentMoney.set(0L);
+            atms.forEach(atm -> new Thread(() -> atm.reset(reason), atm.id()).start());
+        }
     }
 
     public long getCurrentMoney() {
@@ -67,13 +70,16 @@ public class Department implements AtmValueChangeListener, AtmResetListener {
     }
 
     @Override
-    public void onReset(AtmStatus statusAfterReset, String message) {
-        switch (statusAfterReset){
+    public void onReset(AtmStatus statusAfterReset, String message, Long moneyAfterReset) {
+        switch (statusAfterReset) {
             case OK: {
                 System.out.println(message);
+                currentMoney.getAndAdd(moneyAfterReset);
+                break;
             }
-            case FAILED:{
+            case FAILED: {
                 System.out.println(message);
+                break;
             }
         }
     }
