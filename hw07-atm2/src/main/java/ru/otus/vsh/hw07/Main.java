@@ -20,14 +20,11 @@ public class Main {
 
     public static void main(String[] args) {
         var main = new Main();
-        Atm emptyAtm = new AtmBuilder("first")
-                .setAtmValueChangeListener(main.department)
-                .build();
+        Atm emptyAtm = new AtmBuilder("first").build();
         emptyAtm.accept(Map.of(
                 Banknote.FIVE_THOUSAND, 100
         ));
         Atm atmWithMoney = new AtmBuilder("second")
-                .setAtmValueChangeListener(main.department)
                 .setInitialMoney(Map.of(
                         Banknote.THOUSAND, 100
                 ))
