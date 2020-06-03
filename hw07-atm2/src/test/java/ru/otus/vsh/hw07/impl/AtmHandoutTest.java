@@ -45,7 +45,7 @@ class AtmHandoutTest {
                 Banknote.HUNDRED, 1
         ));
         Assertions.assertThrows(CantHandOutMoneyException.class, () -> atm.handout(60));
-        Assertions.assertEquals(150, atm.currentValue());
+        Assertions.assertEquals(150, atm.currentMoney());
     }
 
     @Test
@@ -56,7 +56,7 @@ class AtmHandoutTest {
                 Banknote.TEN, 1
         ));
         Assertions.assertThrows(CantHandOutMoneyException.class, () -> atm.handout(70));
-        Assertions.assertEquals(110, atm.currentValue());
+        Assertions.assertEquals(110, atm.currentMoney());
     }
 
     @Test
@@ -72,7 +72,7 @@ class AtmHandoutTest {
                 Banknote.TEN, 1
         );
         Assertions.assertEquals(result, expected);
-        Assertions.assertEquals(50, atm.currentValue());
+        Assertions.assertEquals(50, atm.currentMoney());
     }
 
     @Test
