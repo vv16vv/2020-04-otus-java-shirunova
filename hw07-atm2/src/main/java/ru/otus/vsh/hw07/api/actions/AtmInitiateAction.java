@@ -14,5 +14,6 @@ public class AtmInitiateAction extends AtmAction {
     @Override
     public void action(@Nonnull Department department) {
         department.initiate(reason);
+        department.waitAllAtmsPolled();
     }
 }
