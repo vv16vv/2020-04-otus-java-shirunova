@@ -61,7 +61,7 @@ public class Main {
     }
 
     private static void printCurrentMoneyState(@Nonnull Department department) {
-        System.out.printf("Отделение '%s': текущий остаток (без опроса всех банкоматов) %d рублей%n", department.id(), department.getCurrentMoney());
+        System.out.printf("Отделение '%s': текущий остаток (без опроса всех банкоматов) %d рублей%n", department.id(), department.getCurrentMoneyMomentary());
     }
 
 }

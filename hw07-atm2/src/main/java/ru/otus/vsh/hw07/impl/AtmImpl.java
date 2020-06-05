@@ -97,7 +97,7 @@ public class AtmImpl implements Atm {
             var incomeMoney = income.entrySet().stream()
                     .map(entry -> entry.getKey().getNominal() * entry.getValue())
                     .reduce(0L, Long::sum);
-            valueChangeListener.onValueChange(incomeMoney, ValueChangeOperation.HAND_IN);
+            valueChangeListener.onValueChange(incomeMoney, ValueChangeOperation.HAND_IN, id);
         }
         System.out.printf("АТМ '%s': принял следующие купюры %s%n", id, income.toString());
     }
@@ -138,7 +138,7 @@ public class AtmImpl implements Atm {
         } else {
             result.forEach((key, value) -> state.getCells().get(key).handout(value));
             if (isInitiated && valueChangeListener != null) {
-                valueChangeListener.onValueChange(sum, ValueChangeOperation.HAND_OUT);
+                valueChangeListener.onValueChange(sum, ValueChangeOperation.HAND_OUT, id);
             }
             calculateMinimalBanknote();
         }
@@ -155,7 +155,7 @@ public class AtmImpl implements Atm {
     @Override
     public void calculateCurrentMoney() {
         if (requestMoneyListener != null) {
-            requestMoneyListener.onRequestMoney(currentMoney());
+            requestMoneyListener.onRequestMoney(currentMoney(), id);
         }
     }
 
@@ -174,10 +174,10 @@ public class AtmImpl implements Atm {
             message = String.format("ATM '%s': ошибка при возвращении в исходное состояние %s", id, e.getMessage());
         }
         if (resetListener != null) {
-            resetListener.onReset(status, message);
+            resetListener.onReset(status, message, id);
         }
         if (requestMoneyListener != null) {
-            requestMoneyListener.onRequestMoney(currentMoney());
+            requestMoneyListener.onRequestMoney(currentMoney(), id);
         }
     }
 
