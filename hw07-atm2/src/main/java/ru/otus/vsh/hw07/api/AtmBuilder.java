@@ -19,22 +19,22 @@ public class AtmBuilder {
         this.id = id;
     }
 
-    public AtmBuilder setInitialMoney(@Nonnull Map<Banknote, Integer> initialMoney) {
+    public AtmBuilder withInitialMoney(@Nonnull Map<Banknote, Integer> initialMoney) {
         this.initialMoney = initialMoney;
         return this;
     }
 
-    public AtmBuilder setAtmValueChangeListener(AtmValueChangeListener valueChangeListener){
+    public AtmBuilder withAtmValueChangeListener(AtmValueChangeListener valueChangeListener){
         this.valueChangeListener = valueChangeListener;
         return this;
     }
 
-    public AtmBuilder setAtmResetListener(AtmResetListener resetListener){
+    public AtmBuilder withAtmResetListener(AtmResetListener resetListener){
         this.resetListener = resetListener;
         return this;
     }
 
-    public AtmBuilder setAtmRequestMoneyListener(AtmRequestMoneyListener requestMoneyListener){
+    public AtmBuilder withAtmRequestMoneyListener(AtmRequestMoneyListener requestMoneyListener){
         this.requestMoneyListener = requestMoneyListener;
         return this;
     }

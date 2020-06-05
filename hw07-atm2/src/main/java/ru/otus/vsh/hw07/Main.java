@@ -27,7 +27,7 @@ public class Main {
                 Banknote.FIVE_THOUSAND, 100
         ));
         Atm atmWithMoney = new AtmBuilder("second")
-                .setInitialMoney(Map.of(
+                .withInitialMoney(Map.of(
                         Banknote.THOUSAND, 100
                 ))
                 .build();

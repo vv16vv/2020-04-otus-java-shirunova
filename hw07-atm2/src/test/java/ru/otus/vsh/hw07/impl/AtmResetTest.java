@@ -26,7 +26,7 @@ public class AtmResetTest {
                 Banknote.TEN, 1
         );
         var atm = new AtmBuilder("first")
-                .setInitialMoney(initialState)
+                .withInitialMoney(initialState)
                 .build();
         atm.accept(Map.of(
                 Banknote.FIVE_HUNDRED, 1,
