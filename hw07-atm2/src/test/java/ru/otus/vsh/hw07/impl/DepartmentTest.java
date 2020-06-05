@@ -34,7 +34,7 @@ public class DepartmentTest {
                 Banknote.TEN, 1
         );
         var atm = new AtmBuilder("first")
-                .setInitialMoney(initialState)
+                .withInitialMoney(initialState)
                 .build();
         department.addAtm(atm);
         Assertions.assertEquals(60L, department.getCurrentMoneyMomentary());
@@ -48,7 +48,7 @@ public class DepartmentTest {
                 Banknote.TEN, 1
         );
         var atm = new AtmBuilder("first")
-                .setInitialMoney(initialState)
+                .withInitialMoney(initialState)
                 .build();
         department.addAtm(atm);
         department.removeAtm(atm);
@@ -63,7 +63,7 @@ public class DepartmentTest {
                 Banknote.TEN, 1
         );
         var atm = new AtmBuilder("first")
-                .setInitialMoney(initialState)
+                .withInitialMoney(initialState)
                 .build();
         department.addAtm(atm);
         atm.handout(50L);
@@ -78,7 +78,7 @@ public class DepartmentTest {
                 Banknote.TEN, 1
         );
         var atm = new AtmBuilder("first")
-                .setInitialMoney(initialState)
+                .withInitialMoney(initialState)
                 .build();
         department.addAtm(atm);
         atm.accept(Map.of(
@@ -124,14 +124,14 @@ public class DepartmentTest {
                 Banknote.TEN, 1
         );
         var atm1 = new AtmBuilder("first")
-                .setInitialMoney(initialState1)
+                .withInitialMoney(initialState1)
                 .build();
         var initialState2 = Map.of(
                 Banknote.HUNDRED, 1,
                 Banknote.TEN, 1
         );
         var atm2 = new AtmBuilder("second")
-                .setInitialMoney(initialState2)
+                .withInitialMoney(initialState2)
                 .build();
         department.addAtm(atm1);
         department.addAtm(atm2);
@@ -148,14 +148,14 @@ public class DepartmentTest {
                 Banknote.TEN, 1
         );
         var atm1 = new AtmBuilder("first")
-                .setInitialMoney(initialState1)
+                .withInitialMoney(initialState1)
                 .build();
         var initialState2 = Map.of(
                 Banknote.HUNDRED, 1,
                 Banknote.TEN, 1
         );
         var atm2 = new AtmBuilder("second")
-                .setInitialMoney(initialState2)
+                .withInitialMoney(initialState2)
                 .build();
         department.addAtm(atm1);
         department.addAtm(atm2);
@@ -175,14 +175,14 @@ public class DepartmentTest {
                 Banknote.TEN, 1
         );
         var atm1 = new AtmBuilder("first")
-                .setInitialMoney(initialState1)
+                .withInitialMoney(initialState1)
                 .build();
         var initialState2 = Map.of(
                 Banknote.HUNDRED, 1,
                 Banknote.TEN, 1
         );
         var atm2 = new AtmBuilder("second")
-                .setInitialMoney(initialState2)
+                .withInitialMoney(initialState2)
                 .build();
         department.addAtm(atm1);
         department.addAtm(atm2);
