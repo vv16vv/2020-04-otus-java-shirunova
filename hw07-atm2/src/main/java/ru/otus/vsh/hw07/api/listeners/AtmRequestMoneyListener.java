@@ -1,5 +1,5 @@
 package ru.otus.vsh.hw07.api.listeners;
 
 public interface AtmRequestMoneyListener {
-    void onRequestMoney(long moneyState);
+    void onRequestMoney(long moneyState, String atmId);
 }

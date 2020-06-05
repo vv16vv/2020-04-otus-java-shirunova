@@ -1,5 +1,6 @@
 package ru.otus.vsh.hw07.impl;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.otus.vsh.hw07.api.AtmBuilder;
 import ru.otus.vsh.hw07.api.Banknote;
@@ -14,7 +15,7 @@ public class DepartmentTest {
     @Test
     void emptyDepartment() {
         var department = new Department("store");
-        assert department.getCurrentMoney() == 0L;
+        Assertions.assertEquals(0L, department.getCurrentMoneyMomentary());
     }
 
     @Test
@@ -22,7 +23,7 @@ public class DepartmentTest {
         var department = new Department("store");
         var atm = new AtmBuilder("first").build();
         department.addAtm(atm);
-        assert department.getCurrentMoney() == 0L;
+        Assertions.assertEquals(0L, department.getCurrentMoneyMomentary());
     }
 
     @Test
@@ -36,9 +37,22 @@ public class DepartmentTest {
                 .setInitialMoney(initialState)
                 .build();
         department.addAtm(atm);
-        AtmAction getValueAction = new AtmGetValueAction();
-        getValueAction.process(department);
-        assert department.getCurrentMoney() == 60L;
+        Assertions.assertEquals(60L, department.getCurrentMoneyMomentary());
+    }
+
+    @Test
+    void removeAtm() {
+        var department = new Department("store");
+        var initialState = Map.of(
+                Banknote.FIFTY, 1,
+                Banknote.TEN, 1
+        );
+        var atm = new AtmBuilder("first")
+                .setInitialMoney(initialState)
+                .build();
+        department.addAtm(atm);
+        department.removeAtm(atm);
+        Assertions.assertEquals(0L, department.getCurrentMoneyMomentary());
     }
 
     @Test
@@ -52,10 +66,8 @@ public class DepartmentTest {
                 .setInitialMoney(initialState)
                 .build();
         department.addAtm(atm);
-        AtmAction getValueAction = new AtmGetValueAction();
-        getValueAction.process(department);
         atm.handout(50L);
-        assert department.getCurrentMoney() == 10L;
+        Assertions.assertEquals(10L, department.getCurrentMoneyMomentary());
     }
 
     @Test
@@ -69,12 +81,10 @@ public class DepartmentTest {
                 .setInitialMoney(initialState)
                 .build();
         department.addAtm(atm);
-        AtmAction getValueAction = new AtmGetValueAction();
-        getValueAction.process(department);
         atm.accept(Map.of(
                 Banknote.FIVE_HUNDRED, 1
         ));
-        assert department.getCurrentMoney() == 560L;
+        Assertions.assertEquals(560L, department.getCurrentMoneyMomentary());
     }
 
     @Test
@@ -88,11 +98,11 @@ public class DepartmentTest {
                 Banknote.FIVE_HUNDRED, 2
         )).next(new AtmGetValueAction());
         putMoneyAction.process(department);
-        assert department.getCurrentMoney() == 1000L;
+        Assertions.assertEquals(1000L, department.getCurrentMoneyMomentary());
     }
 
     @Test
-    void acceptMoneyResetAction() {
+    void acceptMoneyResetActionEmptyAtm() {
         var department = new Department("store");
         var atm1 = new AtmBuilder("first").build();
         var atm2 = new AtmBuilder("second").build();
@@ -103,6 +113,84 @@ public class DepartmentTest {
         )).next(new AtmGetValueAction());
         AtmAction initiateAction = new AtmInitiateAction("Сбросить к исходному состоянию").next(putMoneyAction);
         initiateAction.process(department);
-        assert department.getCurrentMoney() == 1000L;
+        Assertions.assertEquals(1000L, department.getCurrentMoneyMomentary());
+    }
+
+    @Test
+    void resetActionFullAtm() {
+        var department = new Department("store");
+        var initialState1 = Map.of(
+                Banknote.FIFTY, 1,
+                Banknote.TEN, 1
+        );
+        var atm1 = new AtmBuilder("first")
+                .setInitialMoney(initialState1)
+                .build();
+        var initialState2 = Map.of(
+                Banknote.HUNDRED, 1,
+                Banknote.TEN, 1
+        );
+        var atm2 = new AtmBuilder("second")
+                .setInitialMoney(initialState2)
+                .build();
+        department.addAtm(atm1);
+        department.addAtm(atm2);
+        AtmAction initiateAction = new AtmInitiateAction("Сбросить к исходному состоянию");
+        initiateAction.process(department);
+        Assertions.assertEquals(170L, department.getCurrentMoneyMomentary());
+    }
+
+    @Test
+    void addMoneyAfterResetActionFullAtmEvenNotes() {
+        var department = new Department("store");
+        var initialState1 = Map.of(
+                Banknote.FIFTY, 1,
+                Banknote.TEN, 1
+        );
+        var atm1 = new AtmBuilder("first")
+                .setInitialMoney(initialState1)
+                .build();
+        var initialState2 = Map.of(
+                Banknote.HUNDRED, 1,
+                Banknote.TEN, 1
+        );
+        var atm2 = new AtmBuilder("second")
+                .setInitialMoney(initialState2)
+                .build();
+        department.addAtm(atm1);
+        department.addAtm(atm2);
+        var putMoneyAction = new AtmPutMoneyAction(Map.of(
+                Banknote.FIVE_HUNDRED, 2
+        )).next(new AtmGetValueAction());
+        AtmAction initiateAction = new AtmInitiateAction("Сбросить к исходному состоянию").next(putMoneyAction);
+        initiateAction.process(department);
+        Assertions.assertEquals(1170L, department.getCurrentMoneyMomentary());
+    }
+
+    @Test
+    void addMoneyAfterResetActionFullAtmOddNotes() {
+        var department = new Department("store");
+        var initialState1 = Map.of(
+                Banknote.FIFTY, 1,
+                Banknote.TEN, 1
+        );
+        var atm1 = new AtmBuilder("first")
+                .setInitialMoney(initialState1)
+                .build();
+        var initialState2 = Map.of(
+                Banknote.HUNDRED, 1,
+                Banknote.TEN, 1
+        );
+        var atm2 = new AtmBuilder("second")
+                .setInitialMoney(initialState2)
+                .build();
+        department.addAtm(atm1);
+        department.addAtm(atm2);
+        var putMoneyAction = new AtmPutMoneyAction(Map.of(
+                Banknote.FIVE_HUNDRED, 3
+        )).next(new AtmGetValueAction());
+        AtmAction initiateAction = new AtmInitiateAction("Сбросить к исходному состоянию").next(putMoneyAction);
+        initiateAction.process(department);
+        Assertions.assertEquals(1670L, department.getCurrentMoneyMomentary());
     }
 }
