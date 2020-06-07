@@ -1,12 +1,12 @@
 package ru.otus.vsh.hw08.json.types;
 
-import ru.otus.vsh.hw08.json.SingleValueJsonify;
+import ru.otus.vsh.hw08.json.ValueJsonify;
 
 import javax.annotation.Nonnull;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 
-public class FloatType implements SingleValueJsonify {
+public class FloatType implements ValueJsonify {
     private final float aPrimitive;
 
     public FloatType(@Nonnull Object objectValue) {

@@ -1,6 +1,6 @@
 package ru.otus.vsh.hw08.json.types;
 
-import ru.otus.vsh.hw08.json.SingleValueJsonify;
+import ru.otus.vsh.hw08.json.ValueJsonify;
 
 import javax.annotation.Nonnull;
 import javax.json.Json;
@@ -12,7 +12,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-public class ArrayType implements SingleValueJsonify {
+public class ArrayType implements ValueJsonify {
     private final Object[] array;
     private final Type genericItemType;
     private final Class<?> arrayItemType;
@@ -71,7 +71,7 @@ public class ArrayType implements SingleValueJsonify {
     @Override
     public void addOnlyValue(@Nonnull JsonArrayBuilder builder) {
         for (Object item : array) {
-            SingleValueJsonify knownType = TypeFactory.recognizeType(arrayItemType, item, genericItemType);
+            ValueJsonify knownType = TypeFactory.recognizeType(arrayItemType, item, genericItemType);
             if (arrayItemType.isArray() || TypeFactory.isCollection(arrayItemType)) {
                 var arrayBuilder = Json.createArrayBuilder();
                 knownType.addOnlyValue(arrayBuilder);

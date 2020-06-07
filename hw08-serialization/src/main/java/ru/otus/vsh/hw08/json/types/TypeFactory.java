@@ -1,6 +1,6 @@
 package ru.otus.vsh.hw08.json.types;
 
-import ru.otus.vsh.hw08.json.SingleValueJsonify;
+import ru.otus.vsh.hw08.json.ValueJsonify;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,9 +24,9 @@ public final class TypeFactory {
     private TypeFactory() {
     }
 
-    public static SingleValueJsonify recognizeType(@Nonnull Class<?> objectType,
-                                                   @Nullable Object objectValue,
-                                                   @Nonnull Type genericType) {
+    public static ValueJsonify recognizeType(@Nonnull Class<?> objectType,
+                                             @Nullable Object objectValue,
+                                             @Nonnull Type genericType) {
         if (objectValue == null) return new NullType();
         if (objectType.isPrimitive() || isPrimitiveWrapper(objectType.toString()) || objectType.isEnum()) {
             return TypeFactory.recognizeSingleValue(objectType, objectValue);
@@ -41,8 +41,8 @@ public final class TypeFactory {
     }
 
     @Nonnull
-    public static SingleValueJsonify recognizeSingleValue(@Nonnull Class<?> objectType,
-                                                          @Nonnull Object objectValue) {
+    public static ValueJsonify recognizeSingleValue(@Nonnull Class<?> objectType,
+                                                    @Nonnull Object objectValue) {
         switch (objectType.toString()) {
             case "byte":
             case "class java.lang.Byte":

@@ -1,7 +1,7 @@
 package ru.otus.vsh.hw08.json.types;
 
 import ru.otus.vsh.hw08.json.ObjectValueJsonify;
-import ru.otus.vsh.hw08.json.SingleValueJsonify;
+import ru.otus.vsh.hw08.json.ValueJsonify;
 
 import javax.annotation.Nonnull;
 import javax.json.Json;
@@ -10,7 +10,7 @@ import javax.json.JsonObjectBuilder;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public class ObjectType implements SingleValueJsonify, ObjectValueJsonify {
+public class ObjectType implements ValueJsonify, ObjectValueJsonify {
     private final Class<?> objectType;
     private final Object objectValue;
 
