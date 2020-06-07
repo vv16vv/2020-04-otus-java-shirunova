@@ -73,7 +73,7 @@ class DiyJsonTest {
     }
 
     @Test
-    void simpleNullFields(){
+    void simpleNullFields() {
         var object = new SimpleNullFields(null);
         var converted = test(object, SimpleNullFields.class);
         assert object.equals(converted);

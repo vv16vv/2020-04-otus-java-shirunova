@@ -7,6 +7,10 @@ import java.util.Objects;
 public class CollectionOfMapFields {
     List<Map<String, Integer>> aStringIntegerMapList;
 
+    public CollectionOfMapFields(List<Map<String, Integer>> aStringIntegerMapList) {
+        this.aStringIntegerMapList = aStringIntegerMapList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -18,9 +22,5 @@ public class CollectionOfMapFields {
     @Override
     public int hashCode() {
         return Objects.hash(aStringIntegerMapList);
-    }
-
-    public CollectionOfMapFields(List<Map<String, Integer>> aStringIntegerMapList) {
-        this.aStringIntegerMapList = aStringIntegerMapList;
     }
 }

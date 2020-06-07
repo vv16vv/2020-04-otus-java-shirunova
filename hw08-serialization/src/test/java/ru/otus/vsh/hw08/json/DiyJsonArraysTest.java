@@ -106,7 +106,7 @@ class DiyJsonArraysTest {
         aStringList2.add("Good bye");
         var aStringLists = new List[]{aStringList1, aStringList2};
         var object = new ArrayOfCollectionFields(
-                (List<String>[])aStringLists
+                (List<String>[]) aStringLists
         );
         var converted = test(object, ArrayOfCollectionFields.class);
         assert object.equals(converted);

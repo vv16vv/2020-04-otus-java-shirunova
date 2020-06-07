@@ -4,10 +4,16 @@ import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.otus.vsh.hw08.json.classes.Colors;
-import ru.otus.vsh.hw08.json.classes.collections.*;
-import ru.otus.vsh.hw08.json.classes.simples.*;
+import ru.otus.vsh.hw08.json.classes.collections.CollectionOfCollectionFields;
+import ru.otus.vsh.hw08.json.classes.collections.CollectionOfEnumFields;
+import ru.otus.vsh.hw08.json.classes.collections.CollectionOfObjectFields;
+import ru.otus.vsh.hw08.json.classes.collections.CollectionOfWrapperFields;
+import ru.otus.vsh.hw08.json.classes.simples.SimpleObject;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 class DiyJsonCollectionsTest {
     private Gson gson;
