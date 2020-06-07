@@ -26,13 +26,14 @@ subprojects {
         dependencies {
             imports {
                 mavenBom("org.junit:junit-bom:$ORG_GRADLE_PROJECT_junit_version")
+                mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.6.RELEASE")
             }
         }
     }
 
     dependencies {
-        implementation "org.slf4j:slf4j-api:$ORG_GRADLE_PROJECT_slf4j_version"
         implementation "com.google.guava:guava:$ORG_GRADLE_PROJECT_guava_version"
+        implementation "ch.qos.logback:logback-classic"
         testImplementation "org.junit.jupiter:junit-jupiter"
     }
 
