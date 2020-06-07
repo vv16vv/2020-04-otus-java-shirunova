@@ -21,7 +21,7 @@ public class ByteType implements ValueJsonify {
     }
 
     @Override
-    public void addOnlyValue(@Nonnull JsonArrayBuilder builder) {
+    public void addArrayValue(@Nonnull JsonArrayBuilder builder) {
         builder.add(aPrimitive);
     }
 

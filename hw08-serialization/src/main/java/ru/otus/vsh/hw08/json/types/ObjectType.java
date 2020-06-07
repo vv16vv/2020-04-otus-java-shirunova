@@ -45,7 +45,7 @@ public class ObjectType implements ValueJsonify, ObjectValueJsonify {
     }
 
     @Override
-    public void addOnlyValue(@Nonnull JsonArrayBuilder builder) {
+    public void addArrayValue(@Nonnull JsonArrayBuilder builder) {
         var nestedObject = Json.createObjectBuilder();
         addAsObjectValue(nestedObject);
         builder.add(nestedObject);

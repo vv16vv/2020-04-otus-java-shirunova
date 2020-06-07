@@ -6,7 +6,7 @@ import javax.json.JsonObjectBuilder;
 public interface ValueJsonify {
     void addNamedObjectValue(JsonObjectBuilder builder, String name);
 
-    void addOnlyValue(JsonArrayBuilder builder);
+    void addArrayValue(JsonArrayBuilder builder);
 }
 
 

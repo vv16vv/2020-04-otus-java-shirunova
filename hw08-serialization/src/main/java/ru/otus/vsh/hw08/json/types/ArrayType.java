@@ -64,20 +64,20 @@ public class ArrayType implements ValueJsonify {
     public void addNamedObjectValue(@Nonnull JsonObjectBuilder builder,
                                     @Nonnull String name) {
         var arrayBuilder = Json.createArrayBuilder();
-        addOnlyValue(arrayBuilder);
+        addArrayValue(arrayBuilder);
         builder.add(name, arrayBuilder);
     }
 
     @Override
-    public void addOnlyValue(@Nonnull JsonArrayBuilder builder) {
+    public void addArrayValue(@Nonnull JsonArrayBuilder builder) {
         for (Object item : array) {
             ValueJsonify knownType = TypeFactory.recognizeType(arrayItemType, item, genericItemType);
             if (arrayItemType.isArray() || TypeFactory.isCollection(arrayItemType)) {
                 var arrayBuilder = Json.createArrayBuilder();
-                knownType.addOnlyValue(arrayBuilder);
+                knownType.addArrayValue(arrayBuilder);
                 builder.add(arrayBuilder);
             } else {
-                knownType.addOnlyValue(builder);
+                knownType.addArrayValue(builder);
             }
         }
 
