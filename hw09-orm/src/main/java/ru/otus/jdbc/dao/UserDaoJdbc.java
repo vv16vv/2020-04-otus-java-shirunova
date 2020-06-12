@@ -14,6 +14,8 @@ import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
+import static java.util.Optional.of;
+
 public class UserDaoJdbc implements UserDao {
     private static final Logger logger = LoggerFactory.getLogger(UserDaoJdbc.class);
 
@@ -37,12 +39,13 @@ public class UserDaoJdbc implements UserDao {
     @Override
     @Nonnull
     public Optional<User> findById(long id) {
-        return userMapper.findById(id);
+        return Optional.ofNullable(userMapper.findById(id)) ;
     }
 
     @Override
     public long insertUser(@Nonnull User user) {
-        return userMapper.insert(user);
+        userMapper.insert(user);
+        return user.getId();
     }
 
     @Override
@@ -51,8 +54,8 @@ public class UserDaoJdbc implements UserDao {
     }
 
     @Override
-    public long insertOrUpdate(@Nonnull User user) {
-        return userMapper.insertOrUpdate(user);
+    public void insertOrUpdate(@Nonnull User user) {
+        userMapper.insertOrUpdate(user);
     }
 
     @Override

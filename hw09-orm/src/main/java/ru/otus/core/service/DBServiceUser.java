@@ -6,7 +6,11 @@ import java.util.Optional;
 
 public interface DBServiceUser {
 
-    long saveUser(User user);
+    void editUser(User user);
+
+    long newUser(User user);
+
+    void saveUser(User user);
 
     Optional<User> getUser(long id);
 }
