@@ -2,6 +2,8 @@ package ru.otus.core.model;
 
 import ru.otus.jdbc.mapper.Id;
 
+import java.util.Objects;
+
 public class User {
     @Id
     private long id;
@@ -22,20 +24,20 @@ public class User {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
     public void setId(long id) {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getAge() {
+        return age;
     }
 
     public void setAge(int age) {
@@ -49,5 +51,20 @@ public class User {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                age == user.age &&
+                name.equals(user.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, age);
     }
 }
