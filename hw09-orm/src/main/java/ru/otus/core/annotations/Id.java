@@ -1,4 +1,4 @@
-package ru.otus.jdbc.mapper;
+package ru.otus.core.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
