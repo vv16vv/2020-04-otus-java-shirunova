@@ -14,8 +14,6 @@ import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static java.util.Optional.of;
-
 public class UserDaoJdbc implements UserDao {
     private static final Logger logger = LoggerFactory.getLogger(UserDaoJdbc.class);
 
@@ -23,7 +21,7 @@ public class UserDaoJdbc implements UserDao {
     private final JdbcMapper<User> userMapper;
 
     private UserDaoJdbc(
-            @Nonnull SessionManager sessionManager,
+            @Nonnull SessionManagerJdbc sessionManager,
             @Nonnull JdbcMapper<User> userMapper ) {
         this.sessionManager = sessionManager;
         this.userMapper = userMapper;
