@@ -8,7 +8,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private final String name;
@@ -45,7 +47,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
             } else otherFields.add(field);
         }
         if (id == null) throw new IllegalArgumentException(String.format("Table '%s' does not contain field id", name));
-        return new EntityClassMetaDataImpl<T>(name, constructor, id, otherFields);
+        return new EntityClassMetaDataImpl<T>(name, constructor, id, otherFields.stream().sorted(Comparator.comparing(Field::getName)).collect(Collectors.toList()));
     }
 
     @Override
