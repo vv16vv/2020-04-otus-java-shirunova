@@ -17,15 +17,49 @@ public class DbServiceUserImpl implements DBServiceUser {
     }
 
     @Override
-    public long saveUser(User user) {
+    public long newUser(User user) {
         try (var sessionManager = userDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
-                var userId = userDao.insertOrUpdate(user);
+                var userId = userDao.insertUser(user);
                 sessionManager.commitSession();
 
                 logger.info("created user: {}", userId);
                 return userId;
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+                throw new DbServiceException(e);
+            }
+        }
+    }
+
+    @Override
+    public void editUser(User user) {
+        try (var sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                userDao.updateUser(user);
+                sessionManager.commitSession();
+
+                logger.info("updated user: {}", user.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+                throw new DbServiceException(e);
+            }
+        }
+    }
+
+    @Override
+    public void saveUser(User user) {
+        try (var sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                userDao.insertOrUpdate(user);
+                sessionManager.commitSession();
+
+                logger.info("added or changed user: {}", user.getId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 sessionManager.rollbackSession();

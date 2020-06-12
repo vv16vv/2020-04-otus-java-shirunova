@@ -11,7 +11,6 @@ import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.annotation.Nonnull;
 import java.sql.Connection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JdbcMapperImpl<T> implements JdbcMapper<T> {
@@ -20,16 +19,16 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     private final SessionManagerJdbc sessionManager;
     private final DbExecutorImpl<T> dbExecutor;
     private final EntityClassMetaData<T> entity;
-    private final EntitySQLMetaData sqlMetaData;
+    private final EntitySQLMetaData sqlQueries;
 
     public JdbcMapperImpl(@Nonnull SessionManagerJdbc sessionManager,
                           @Nonnull DbExecutorImpl<T> dbExecutor,
                           @Nonnull EntityClassMetaData<T> entity,
-                          @Nonnull EntitySQLMetaData sqlMetaData) {
+                          @Nonnull EntitySQLMetaData sqlQueries) {
         this.sessionManager = sessionManager;
         this.dbExecutor = dbExecutor;
         this.entity = entity;
-        this.sqlMetaData = sqlMetaData;
+        this.sqlQueries = sqlQueries;
     }
 
     @Nonnull
@@ -37,13 +36,13 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                                                @Nonnull SessionManagerJdbc sessionManager,
                                                @Nonnull DbExecutorImpl<T> dbExecutor) {
         var entity = EntityClassMetaDataImpl.initialize(clazz);
-        var sqlMetaData = new EntitySQLMetaDataImpl(entity);
-        return new JdbcMapperImpl<>(sessionManager, dbExecutor, entity, sqlMetaData);
+        var sqlQueries = new EntitySQLMetaDataImpl(entity);
+        return new JdbcMapperImpl<>(sessionManager, dbExecutor, entity, sqlQueries);
     }
 
 
     @Override
-    public long insert(T objectData) {
+    public void insert(T objectData) {
         try {
             var values = entity.getFieldsWithoutId().stream()
                     .map(field -> {
@@ -55,7 +54,8 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                     })
                     .collect(Collectors.toUnmodifiableList());
 
-            return dbExecutor.executeInsert(getConnection(), sqlMetaData.getInsertSql(), values);
+            var newId = dbExecutor.executeInsert(getConnection(), sqlQueries.getInsertSql(), values);
+            entity.getIdField().set(objectData, newId);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
@@ -63,7 +63,7 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     }
 
     @Override
-    public long update(T objectData) {
+    public void update(T objectData) {
         try {
             var values = entity.getFieldsWithoutId().stream()
                     .map(field -> {
@@ -73,9 +73,10 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                             throw new IllegalStateException(shouldNotOccur);
                         }
                     })
-                    .collect(Collectors.toUnmodifiableList());
+                    .collect(Collectors.toList());
+            values.add(entity.getIdField().get(objectData));
 
-            return dbExecutor.executeInsert(getConnection(), sqlMetaData.getUpdateSql(), values);
+            dbExecutor.executeUpdate(getConnection(), sqlQueries.getUpdateSql(), values);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
@@ -83,23 +84,23 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     }
 
     @Override
-    public long insertOrUpdate(T objectData) {
+    public void insertOrUpdate(T objectData) {
         try {
             var id = entity.getIdField().getLong(objectData);
-            if(findById(id).isEmpty())
-                return insert(objectData);
-            else return update(objectData);
+            if (findById(id) == null)
+                insert(objectData);
+            else update(objectData);
         } catch (IllegalAccessException shouldNotOccur) {
             throw new IllegalStateException(shouldNotOccur);
         }
     }
 
     @Override
-    public Optional<T> findById(long id) {
+    public T findById(long id) {
         try {
             return dbExecutor.executeSelect(
                     getConnection(),
-                    sqlMetaData.getSelectByIdSql(),
+                    sqlQueries.getSelectByIdSql(),
                     id,
                     rs -> {
                         try {
@@ -115,6 +116,10 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                                         case "int":
                                             field.set(object, rs.getInt(columnLabel));
                                             break;
+                                        case "class java.lang.Long":
+                                        case "long":
+                                            field.set(object, rs.getLong(columnLabel));
+                                            break;
                                         // TODO all types
                                     }
                                 }
@@ -124,11 +129,11 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                             logger.error(e.getMessage(), e);
                         }
                         return null;
-                    });
+                    }).orElse(null);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return Optional.empty();
+        return null;
 
     }
 
