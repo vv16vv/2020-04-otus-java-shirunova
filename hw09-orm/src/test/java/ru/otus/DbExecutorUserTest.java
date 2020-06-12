@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
 import ru.otus.core.service.DBServiceUser;
 import ru.otus.core.service.DbServiceUserImpl;
@@ -21,8 +20,8 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
-public class DbExecutorTest {
-    private static final Logger logger = LoggerFactory.getLogger(DbExecutorTest.class);
+public class DbExecutorUserTest {
+    private static final Logger logger = LoggerFactory.getLogger(DbExecutorUserTest.class);
     private DataSource dataSource;
     private DBServiceUser dbServiceUser;
 
@@ -43,11 +42,11 @@ public class DbExecutorTest {
     }
 
     @BeforeEach
-    void init(){
+    void init() {
         dataSource = new DataSourceH2();
         var sessionManager = new SessionManagerJdbc(dataSource);
         var dbExecutor = new DbExecutorImpl<User>();
-        var userDao = UserDaoJdbc.initialize(sessionManager,dbExecutor);
+        var userDao = UserDaoJdbc.initialize(sessionManager, dbExecutor);
         dbServiceUser = new DbServiceUserImpl(userDao);
         try {
             createTable(dataSource);
@@ -57,7 +56,7 @@ public class DbExecutorTest {
     }
 
     @AfterEach
-    void clearUp(){
+    void clearUp() {
         try {
             deleteTable(dataSource);
         } catch (SQLException e) {
@@ -66,27 +65,27 @@ public class DbExecutorTest {
     }
 
     @Test
-    void searchUnexistingUser(){
+    void searchUnexistingUser() {
         Optional<User> user = dbServiceUser.getUser(0);
         Assertions.assertTrue(user.isEmpty());
     }
 
     @Test
-    void newUserInsert(){
+    void newUserInsert() {
         var user = new User(100500, "May Sue", 33);
         var id = dbServiceUser.newUser(user);
         Assertions.assertEquals(1L, id);
     }
 
     @Test
-    void newUserSave(){
+    void newUserSave() {
         var user = new User(100500, "May Sue", 33);
         dbServiceUser.saveUser(user);
         Assertions.assertEquals(1L, user.getId());
     }
 
     @Test
-    void searchForExistingUser(){
+    void searchForExistingUser() {
         var user = new User(100500, "May Sue", 33);
         var id = dbServiceUser.newUser(user);
         var newUser = dbServiceUser.getUser(id);
@@ -95,7 +94,7 @@ public class DbExecutorTest {
     }
 
     @Test
-    void editUserUpdate(){
+    void editUserUpdate() {
         var user = new User(100500, "May Sue", 33);
         var id = dbServiceUser.newUser(user);
         user.setAge(18);
@@ -106,7 +105,7 @@ public class DbExecutorTest {
     }
 
     @Test
-    void editUserSave(){
+    void editUserSave() {
         var user = new User(100500, "May Sue", 33);
         var id = dbServiceUser.newUser(user);
         user.setAge(18);

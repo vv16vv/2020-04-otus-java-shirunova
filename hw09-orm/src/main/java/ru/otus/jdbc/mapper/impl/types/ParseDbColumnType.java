@@ -14,6 +14,9 @@ public final class ParseDbColumnType {
             case "class java.lang.Long":
             case "long":
                 return new LongType();
+            case "class java.lang.Float":
+            case "float":
+                return new FloatType();
             // TODO all types
             default:
                 throw new UnsupportedOperationException(String.format("Unsupported column type %s", fieldType.toString()));
