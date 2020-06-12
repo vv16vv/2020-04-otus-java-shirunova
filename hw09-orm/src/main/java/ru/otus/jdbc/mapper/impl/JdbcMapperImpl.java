@@ -7,6 +7,7 @@ import ru.otus.jdbc.DbExecutorImpl;
 import ru.otus.jdbc.mapper.EntityClassMetaData;
 import ru.otus.jdbc.mapper.EntitySQLMetaData;
 import ru.otus.jdbc.mapper.JdbcMapper;
+import ru.otus.jdbc.mapper.impl.types.ParseDbColumnType;
 import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.annotation.Nonnull;
@@ -108,20 +109,10 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                                 var object = entity.getConstructor().newInstance();
                                 for (var field : entity.getAllFields()) {
                                     var columnLabel = field.getName();
-                                    switch (field.getType().toString()) {
-                                        case "class java.lang.String":
-                                            field.set(object, rs.getString(columnLabel));
-                                            break;
-                                        case "class java.lang.Integer":
-                                        case "int":
-                                            field.set(object, rs.getInt(columnLabel));
-                                            break;
-                                        case "class java.lang.Long":
-                                        case "long":
-                                            field.set(object, rs.getLong(columnLabel));
-                                            break;
-                                        // TODO all types
-                                    }
+                                    var value = ParseDbColumnType
+                                            .parse(field.getType())
+                                            .getValue(rs, columnLabel);
+                                    field.set(object, value);
                                 }
                                 return object;
                             }
