@@ -1,6 +1,6 @@
 package ru.otus.core.model;
 
-import ru.otus.jdbc.mapper.Id;
+import ru.otus.core.annotations.Id;
 
 import java.util.Objects;
 
