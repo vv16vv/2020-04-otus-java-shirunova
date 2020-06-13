@@ -2,6 +2,7 @@ package ru.otus.core.model;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -12,8 +13,16 @@ public class User {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @OneToOne(targetEntity = AddressDataSet.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
+    private AddressDataSet address;
+
+    @OneToMany(targetEntity = PhoneDataSet.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
+    private List<PhoneDataSet> phones;
 
     public User() {
     }
