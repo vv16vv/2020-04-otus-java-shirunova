@@ -4,30 +4,30 @@ package ru.otus.hibernate.dao;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.core.dao.UserDao;
-import ru.otus.core.dao.UserDaoException;
-import ru.otus.core.model.User;
+import ru.otus.core.dao.PhoneDao;
+import ru.otus.core.dao.PhoneDaoException;
+import ru.otus.core.model.PhoneDataSet;
 import ru.otus.core.sessionmanager.SessionManager;
 import ru.otus.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
 
 import java.util.Optional;
 
-public class UserDaoHibernate implements UserDao {
-    private static final Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
+public class PhoneDaoHibernate implements PhoneDao {
+    private static final Logger logger = LoggerFactory.getLogger(PhoneDaoHibernate.class);
 
     private final SessionManagerHibernate sessionManager;
 
-    public UserDaoHibernate(SessionManagerHibernate sessionManager) {
+    public PhoneDaoHibernate(SessionManagerHibernate sessionManager) {
         this.sessionManager = sessionManager;
     }
 
 
     @Override
-    public Optional<User> findById(long id) {
+    public Optional<PhoneDataSet> findById(long id) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
-            return Optional.ofNullable(currentSession.getHibernateSession().find(User.class, id));
+            return Optional.ofNullable(currentSession.getHibernateSession().find(PhoneDataSet.class, id));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -35,45 +35,45 @@ public class UserDaoHibernate implements UserDao {
     }
 
     @Override
-    public long insertUser(User user) {
+    public long insertPhone(PhoneDataSet phone) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.persist(user);
+            hibernateSession.persist(phone);
             hibernateSession.flush();
-            return user.getId();
+            return phone.getId();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
+            throw new PhoneDaoException(e);
         }
     }
 
     @Override
-    public void updateUser(User user) {
+    public void updatePhone(PhoneDataSet phone) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.merge(user);
+            hibernateSession.merge(phone);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
+            throw new PhoneDaoException(e);
         }
     }
 
     @Override
-    public void insertOrUpdate(User user) {
+    public void insertOrUpdate(PhoneDataSet phone) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            if (user.getId() > 0) {
-                hibernateSession.merge(user);
+            if (phone.getId() > 0) {
+                hibernateSession.merge(phone);
             } else {
-                hibernateSession.persist(user);
+                hibernateSession.persist(phone);
                 hibernateSession.flush();
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
+            throw new PhoneDaoException(e);
         }
     }
 
