@@ -11,6 +11,7 @@ import ru.otus.core.sessionmanager.SessionManager;
 import ru.otus.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class UserDaoHibernate implements UserDao {
@@ -40,6 +41,10 @@ public class UserDaoHibernate implements UserDao {
         try {
             Session hibernateSession = currentSession.getHibernateSession();
             hibernateSession.save(user);
+            var phoneDaoHibernate = new PhoneDaoHibernate(sessionManager);
+            for (var phone : user.getPhones()) {
+                phoneDaoHibernate.insertPhone(phone);
+            }
             return user.getId();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -52,7 +57,11 @@ public class UserDaoHibernate implements UserDao {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.merge(user);
+            hibernateSession.saveOrUpdate(user);
+            var phoneDaoHibernate = new PhoneDaoHibernate(sessionManager);
+            for (var phone : user.getPhones()) {
+                phoneDaoHibernate.insertOrUpdate(phone);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
@@ -60,19 +69,10 @@ public class UserDaoHibernate implements UserDao {
     }
 
     @Override
-    public void insertOrUpdate(User user) {
-        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
-        try {
-            Session hibernateSession = currentSession.getHibernateSession();
-            if (user.getId() > 0) {
-                hibernateSession.merge(user);
-            } else {
-                hibernateSession.save(user);
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
-        }
+    public void insertOrUpdate(@Nonnull User user) {
+        if (user.getId() > 0)
+            insertUser(user);
+        else updateUser(user);
     }
 
 

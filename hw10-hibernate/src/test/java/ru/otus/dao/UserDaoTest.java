@@ -10,10 +10,12 @@ import ru.otus.core.model.AddressDataSet;
 import ru.otus.core.model.PhoneDataSet;
 import ru.otus.core.model.User;
 import ru.otus.hibernate.HibernateUtils;
+import ru.otus.hibernate.dao.AddressDaoHibernate;
 import ru.otus.hibernate.dao.PhoneDaoHibernate;
 import ru.otus.hibernate.dao.UserDaoHibernate;
 import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -25,6 +27,8 @@ public class UserDaoTest {
     private SessionFactory sessionFactory;
     private SessionManagerHibernate sessionManagerHibernate;
     private UserDaoHibernate userDaoHibernate;
+    private PhoneDaoHibernate phoneDaoHibernate;
+    private AddressDaoHibernate addressDaoHibernate;
 
     @BeforeEach
     public void setUp() {
@@ -34,6 +38,8 @@ public class UserDaoTest {
                 User.class);
         sessionManagerHibernate = new SessionManagerHibernate(sessionFactory);
         userDaoHibernate = new UserDaoHibernate(sessionManagerHibernate);
+        phoneDaoHibernate = new PhoneDaoHibernate(sessionManagerHibernate);
+        addressDaoHibernate = new AddressDaoHibernate(sessionManagerHibernate);
     }
 
     @AfterEach
@@ -52,11 +58,7 @@ public class UserDaoTest {
 
     @Test
     void createNewUserInsert() {
-        var address = new AddressDataSet(0, "Avia");
-        var phones = new ArrayList<PhoneDataSet>();
-        phones.add(new PhoneDataSet(0, "+71234567890"));
-        phones.add(new PhoneDataSet(1, "+70987654321"));
-        var user = new User(0L, "Alice", address, phones);
+        var user = createTestUser();
 
         sessionManagerHibernate.beginSession();
         var newUserId = userDaoHibernate.insertUser(user);
@@ -68,11 +70,7 @@ public class UserDaoTest {
 
     @Test
     void createNewUserInsertOrUpdate() {
-        var address = new AddressDataSet(0, "Avia");
-        var phones = new ArrayList<PhoneDataSet>();
-        phones.add(new PhoneDataSet(0, "+71234567890"));
-        phones.add(new PhoneDataSet(1, "+70987654321"));
-        var user = new User(0L, "Alice", address, phones);
+        var user = createTestUser();
 
         sessionManagerHibernate.beginSession();
         userDaoHibernate.insertOrUpdate(user);
@@ -84,23 +82,29 @@ public class UserDaoTest {
 
     @Test
     void searchExistingUser() {
-        var address = new AddressDataSet(0, "Avia");
-        var phones = new ArrayList<PhoneDataSet>();
-        phones.add(new PhoneDataSet(0, "+71234567890"));
-        phones.add(new PhoneDataSet(1, "+70987654321"));
-        var user = new User(0L, "Alice", address, phones);
+        var user = createTestUser();
+        saveUserToDatabase(user);
 
-        sessionManagerHibernate.beginSession();
-        var newUserId = userDaoHibernate.insertUser(user);
-        sessionManagerHibernate.commitSession();
-        logger.info("User is created with id #{}", newUserId);
-
-        var phoneDaoHibernate = new PhoneDaoHibernate(sessionManagerHibernate);
         sessionManagerHibernate.beginSession();
         try {
-            var foundPhone = phoneDaoHibernate.findById(phones.get(0).getId());
+            var foundAddress = addressDaoHibernate.findById(user.getAddress().getId());
+            assertThat(foundAddress).isPresent();
+            logger.info("Found address is {}", foundAddress.get());
+            assertThat(foundAddress.get()).isEqualTo(user.getAddress());
 
-            var foundUser = userDaoHibernate.findById(newUserId);
+            var expectedPhone1 = user.getPhones().get(0);
+            var foundPhone1 = phoneDaoHibernate.findById(expectedPhone1.getId());
+            assertThat(foundPhone1).isPresent();
+            logger.info("Found phone #1 is {}", foundPhone1.get());
+            assertThat(foundPhone1.get()).isEqualTo(expectedPhone1);
+
+            var expectedPhone2 = user.getPhones().get(1);
+            var foundPhone2 = phoneDaoHibernate.findById(expectedPhone2.getId());
+            assertThat(foundPhone2).isPresent();
+            logger.info("Found phone #2 is {}", foundPhone2.get());
+            assertThat(foundPhone2.get()).isEqualTo(expectedPhone2);
+
+            var foundUser = userDaoHibernate.findById(user.getId());
 
             assertThat(foundUser).isPresent();
 
@@ -111,45 +115,133 @@ public class UserDaoTest {
         }
     }
 
-//    @Test
-//    void editUserUpdate() {
-//        var user = new User(100500L, "+71234567890");
-//        sessionManagerHibernate.beginSession();
-//        userDaoHibernate.insertUser(user);
-//        sessionManagerHibernate.commitSession();
-//
-//        user.setNumber("+70987654321");
-//        sessionManagerHibernate.beginSession();
-//        userDaoHibernate.updateUser(user);
-//        sessionManagerHibernate.commitSession();
-//
-//        sessionManagerHibernate.beginSession();
-//        var editedUser = userDaoHibernate.findById(user.getId());
-//        sessionManagerHibernate.commitSession();
-//
-//        assertThat(editedUser).isPresent();
-//        assertThat(editedUser.get().getNumber()).isEqualTo(user.getNumber());
-//    }
-//
-//    @Test
-//    void editUserInsertOrUpdate() {
-//        var user = new User(100500L, "+71234567890");
-//        sessionManagerHibernate.beginSession();
-//        userDaoHibernate.insertUser(user);
-//        sessionManagerHibernate.commitSession();
-//
-//        user.setNumber("+70987654321");
-//        sessionManagerHibernate.beginSession();
-//        userDaoHibernate.insertOrUpdate(user);
-//        sessionManagerHibernate.commitSession();
-//
-//        sessionManagerHibernate.beginSession();
-//        var editedUser = userDaoHibernate.findById(user.getId());
-//        sessionManagerHibernate.commitSession();
-//
-//        assertThat(editedUser).isPresent();
-//        assertThat(editedUser.get().getNumber()).isEqualTo(user.getNumber());
-//    }
-//
+    @Test
+    void editUserNameUpdate() {
+        var user = createTestUser();
+        saveUserToDatabase(user);
 
+        user.setName("Bob");
+        sessionManagerHibernate.beginSession();
+        userDaoHibernate.updateUser(user);
+        sessionManagerHibernate.commitSession();
+
+        sessionManagerHibernate.beginSession();
+        try {
+            var editedUser = userDaoHibernate.findById(user.getId());
+
+            assertThat(editedUser).isPresent();
+            assertThat(editedUser.get()).isEqualTo(user);
+        } finally {
+            sessionManagerHibernate.commitSession();
+        }
+    }
+
+    @Test
+    void editUserAddressUpdate() {
+        var user = createTestUser();
+        saveUserToDatabase(user);
+
+        user.getAddress().setStreet("221B, Baker Street");
+        sessionManagerHibernate.beginSession();
+        userDaoHibernate.updateUser(user);
+        sessionManagerHibernate.commitSession();
+
+        sessionManagerHibernate.beginSession();
+        try {
+            var editedUser = userDaoHibernate.findById(user.getId());
+
+            assertThat(editedUser).isPresent();
+            assertThat(editedUser.get()).isEqualTo(user);
+        } finally {
+            sessionManagerHibernate.commitSession();
+        }
+    }
+
+    @Test
+    void editUserPhoneUpdate() {
+        var user = createTestUser();
+        saveUserToDatabase(user);
+
+        user.getPhones().get(0).setNumber("+12345678900");
+        sessionManagerHibernate.beginSession();
+        userDaoHibernate.updateUser(user);
+        sessionManagerHibernate.commitSession();
+
+        sessionManagerHibernate.beginSession();
+        try {
+            var editedUser = userDaoHibernate.findById(user.getId());
+
+            assertThat(editedUser).isPresent();
+            assertThat(editedUser.get()).isEqualTo(user);
+        } finally {
+            sessionManagerHibernate.commitSession();
+        }
+    }
+
+    @Test
+    void editUserNewPhoneUpdate() {
+        var user = createTestUser();
+        saveUserToDatabase(user);
+
+        var newPhone = new PhoneDataSet(99, "+12345678900");
+        user.addPhone(newPhone);
+        sessionManagerHibernate.beginSession();
+        phoneDaoHibernate.insertPhone(newPhone);
+        userDaoHibernate.updateUser(user);
+        sessionManagerHibernate.commitSession();
+
+        sessionManagerHibernate.beginSession();
+        try {
+            var editedUser = userDaoHibernate.findById(user.getId());
+
+            assertThat(editedUser).isPresent();
+            assertThat(editedUser.get()).isEqualTo(user);
+        } finally {
+            sessionManagerHibernate.commitSession();
+        }
+    }
+
+    @Test
+    void editUserInsertOrUpdate() {
+        var user = createTestUser();
+        saveUserToDatabase(user);
+
+        user.setName("Bob");
+        user.getAddress().setStreet("221B, Baker Street");
+        user.getPhones().get(0).setNumber("+12345678900");
+        var newPhone = new PhoneDataSet(99, "+12345678900");
+        user.addPhone(newPhone);
+
+        sessionManagerHibernate.beginSession();
+        userDaoHibernate.insertOrUpdate(user);
+        sessionManagerHibernate.commitSession();
+
+        sessionManagerHibernate.beginSession();
+        try {
+            var editedUser = userDaoHibernate.findById(user.getId());
+
+            assertThat(editedUser).isPresent();
+            assertThat(editedUser.get()).isEqualTo(user);
+        }
+        finally {
+            sessionManagerHibernate.commitSession();
+        }
+    }
+
+    @Nonnull
+    private User createTestUser() {
+        var address = new AddressDataSet(0, "Avia");
+        var phones = new ArrayList<PhoneDataSet>();
+        var user = new User(0L, "Alice", address, phones);
+        user.addPhone(new PhoneDataSet(0, "+71234567890"));
+        user.addPhone(new PhoneDataSet(1, "+70987654321"));
+
+        return user;
+    }
+
+    private void saveUserToDatabase(@Nonnull User user) {
+        sessionManagerHibernate.beginSession();
+        userDaoHibernate.insertUser(user);
+        sessionManagerHibernate.commitSession();
+    }
 }

@@ -1,6 +1,7 @@
 package ru.otus.core.model;
 
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -66,6 +67,11 @@ public class User {
         this.phones = phones;
     }
 
+    public void addPhone(@Nonnull PhoneDataSet phone){
+        phone.setUser(this);
+        phones.add(phone);
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -84,7 +90,7 @@ public class User {
         return id == user.id &&
                 name.equals(user.name) &&
                 Objects.equals(address, user.address) &&
-                phones.equals(user.phones);
+                phones.containsAll(user.phones) && user.phones.containsAll(phones);
     }
 
     @Override

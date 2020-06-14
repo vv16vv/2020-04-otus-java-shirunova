@@ -14,7 +14,7 @@ public class PhoneDataSet {
     @Column(name = "number", nullable = false)
     private String number;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -42,12 +42,12 @@ public class PhoneDataSet {
         this.number = number;
     }
 
-    @Override
-    public String toString() {
-        return "PhoneDataSet{" +
-                "id=" + id +
-                ", number='" + number + '\'' +
-                '}';
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -56,11 +56,21 @@ public class PhoneDataSet {
         if (o == null || getClass() != o.getClass()) return false;
         PhoneDataSet that = (PhoneDataSet) o;
         return id == that.id &&
-                number.equals(that.number);
+                number.equals(that.number) &&
+                user.getId() == that.user.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number);
+        return Objects.hash(id, number, user.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "PhoneDataSet{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", user=" + user.getName() +
+                '}';
     }
 }
