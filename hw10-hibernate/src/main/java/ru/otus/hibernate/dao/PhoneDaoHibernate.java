@@ -39,8 +39,7 @@ public class PhoneDaoHibernate implements PhoneDao {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.persist(phone);
-            hibernateSession.flush();
+            hibernateSession.save(phone);
             return phone.getId();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

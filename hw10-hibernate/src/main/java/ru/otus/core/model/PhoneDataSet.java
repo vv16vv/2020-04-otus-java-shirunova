@@ -14,6 +14,10 @@ public class PhoneDataSet {
     @Column(name = "number", nullable = false)
     private String number;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public PhoneDataSet() {
     }
 

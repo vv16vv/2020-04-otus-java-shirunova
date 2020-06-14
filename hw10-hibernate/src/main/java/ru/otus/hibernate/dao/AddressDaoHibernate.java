@@ -39,8 +39,7 @@ public class AddressDaoHibernate implements AddressDao {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.persist(address);
-            hibernateSession.flush();
+            hibernateSession.save(address);
             return address.getId();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

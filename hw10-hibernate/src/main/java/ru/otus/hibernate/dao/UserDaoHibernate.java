@@ -39,8 +39,7 @@ public class UserDaoHibernate implements UserDao {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.persist(user);
-            hibernateSession.flush();
+            hibernateSession.save(user);
             return user.getId();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -68,8 +67,7 @@ public class UserDaoHibernate implements UserDao {
             if (user.getId() > 0) {
                 hibernateSession.merge(user);
             } else {
-                hibernateSession.persist(user);
-                hibernateSession.flush();
+                hibernateSession.save(user);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

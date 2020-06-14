@@ -3,6 +3,7 @@ package ru.otus.core.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -17,19 +18,20 @@ public class User {
     private String name;
 
     @OneToOne(targetEntity = AddressDataSet.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "address_id")
     private AddressDataSet address;
 
-    @OneToMany(targetEntity = PhoneDataSet.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
+    @OneToMany(mappedBy = "user")
     private List<PhoneDataSet> phones;
 
     public User() {
     }
 
-    public User(long id, String name) {
+    public User(long id, String name, AddressDataSet address, List<PhoneDataSet> phones) {
         this.id = id;
         this.name = name;
+        this.address = address;
+        this.phones = phones;
     }
 
     public long getId() {
@@ -48,11 +50,45 @@ public class User {
         this.name = name;
     }
 
+    public AddressDataSet getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDataSet address) {
+        this.address = address;
+    }
+
+    public List<PhoneDataSet> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<PhoneDataSet> phones) {
+        this.phones = phones;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", address=" + address +
+                ", phones=" + phones +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                name.equals(user.name) &&
+                Objects.equals(address, user.address) &&
+                phones.equals(user.phones);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, address, phones);
     }
 }
