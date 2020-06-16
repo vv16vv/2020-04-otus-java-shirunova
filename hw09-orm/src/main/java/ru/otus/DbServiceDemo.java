@@ -32,7 +32,7 @@ public class DbServiceDemo {
         logger.info("Test for new user");
         var sessionManager = new SessionManagerJdbc(dataSource);
         DbExecutorImpl<User> dbExecutor = new DbExecutorImpl<>();
-        var userDao = UserDaoJdbc.initialize(sessionManager, dbExecutor);
+        var userDao = UserDaoJdbc.create(sessionManager, dbExecutor);
 
         var dbServiceUser = new DbServiceUserImpl(userDao);
         var id = dbServiceUser.newUser(new User(0, "dbServiceUser", 55));

@@ -27,7 +27,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     }
 
     @Nonnull
-    public static <T> EntityClassMetaData<T> initialize(@Nonnull Class<T> tableType) {
+    public static <T> EntityClassMetaData<T> create(@Nonnull Class<T> tableType) {
         var name = tableType.getSimpleName();
         Constructor<T> constructor;
         try {
