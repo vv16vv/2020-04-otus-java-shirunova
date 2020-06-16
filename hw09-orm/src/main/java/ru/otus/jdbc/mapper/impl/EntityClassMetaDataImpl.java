@@ -1,7 +1,7 @@
 package ru.otus.jdbc.mapper.impl;
 
-import ru.otus.jdbc.mapper.EntityClassMetaData;
 import ru.otus.core.annotations.Id;
+import ru.otus.jdbc.mapper.EntityClassMetaData;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;

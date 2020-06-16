@@ -32,7 +32,7 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
         var quantity = entity.getFieldsWithoutId().size();
         var values = new StringBuilder();
         for (int i = 0; i < quantity; i++) {
-            if(i > 0) values.append(", ");
+            if (i > 0) values.append(", ");
             values.append("?");
         }
         return String.format("INSERT INTO %s(%s) values(%s)",

@@ -7,7 +7,7 @@
 
 
     <logger name="ru.otus" level="debug">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </logger>
 
 </configuration>
