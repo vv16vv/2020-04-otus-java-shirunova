@@ -22,7 +22,7 @@ public class UserDaoJdbc implements UserDao {
 
     private UserDaoJdbc(
             @Nonnull SessionManagerJdbc sessionManager,
-            @Nonnull JdbcMapper<User> userMapper ) {
+            @Nonnull JdbcMapper<User> userMapper) {
         this.sessionManager = sessionManager;
         this.userMapper = userMapper;
     }
@@ -30,14 +30,14 @@ public class UserDaoJdbc implements UserDao {
     @Nonnull
     public static UserDao initialize(
             @Nonnull SessionManagerJdbc sessionManager,
-            @Nonnull DbExecutorImpl<User> dbExecutor){
+            @Nonnull DbExecutorImpl<User> dbExecutor) {
         return new UserDaoJdbc(sessionManager, JdbcMapperImpl.initialize(User.class, sessionManager, dbExecutor));
     }
 
     @Override
     @Nonnull
     public Optional<User> findById(long id) {
-        return Optional.ofNullable(userMapper.findById(id)) ;
+        return Optional.ofNullable(userMapper.findById(id));
     }
 
     @Override
