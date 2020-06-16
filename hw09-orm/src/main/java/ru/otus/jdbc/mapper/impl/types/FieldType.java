@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface DbColumnType {
+public interface FieldType {
 
     @Nullable
     Object getValue(@Nonnull ResultSet rs, @Nonnull String columnName) throws SQLException;
