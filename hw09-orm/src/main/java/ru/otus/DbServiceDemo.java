@@ -37,9 +37,9 @@ public class DbServiceDemo {
         var dbServiceUser = new DbServiceUserImpl(userDao);
         var id = dbServiceUser.newUser(new User(0, "dbServiceUser", 55));
 
-        var user = demo.searchById(dbServiceUser,id);
+        var user = demo.searchById(dbServiceUser, id);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             logger.info("Test for edit user");
             user.ifPresent(demo::changeUser);
             dbServiceUser.editUser(user.get());
@@ -66,18 +66,18 @@ public class DbServiceDemo {
 
 
     @Nonnull
-    private Optional<User> searchById(@Nonnull DBServiceUser dbServiceUser, long id){
+    private Optional<User> searchById(@Nonnull DBServiceUser dbServiceUser, long id) {
         logger.info("Test for get user");
         Optional<User> user = dbServiceUser.getUser(id);
 
         user.ifPresentOrElse(
-                crUser -> logger.info("found user with id #{}: name='{}'",id, crUser.getName()),
+                crUser -> logger.info("found user with id #{}: name='{}'", id, crUser.getName()),
                 () -> logger.info("user with id #{} does not exist", id)
         );
         return user;
     }
 
-    private void changeUser(@Nonnull User user){
+    private void changeUser(@Nonnull User user) {
         user.setName("New name");
         user.setAge(33);
     }
