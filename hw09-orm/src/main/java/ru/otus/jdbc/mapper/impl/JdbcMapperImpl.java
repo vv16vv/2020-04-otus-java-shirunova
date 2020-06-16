@@ -11,7 +11,9 @@ import ru.otus.jdbc.mapper.impl.types.ParseDbColumnType;
 import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class JdbcMapperImpl<T> implements JdbcMapper<T> {
@@ -45,16 +47,7 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     @Override
     public void insert(T objectData) {
         try {
-            var values = entity.getFieldsWithoutId().stream()
-                    .map(field -> {
-                        try {
-                            return field.get(objectData);
-                        } catch (IllegalAccessException shouldNotOccur) {
-                            throw new IllegalStateException(shouldNotOccur);
-                        }
-                    })
-                    .collect(Collectors.toUnmodifiableList());
-
+            var values = getValues(entity.getFieldsWithoutId(), objectData);
             var newId = dbExecutor.executeInsert(getConnection(), sqlQueries.getInsertSql(), values);
             entity.getIdField().set(objectData, newId);
         } catch (Exception e) {
@@ -66,16 +59,8 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     @Override
     public void update(T objectData) {
         try {
-            var values = entity.getFieldsWithoutId().stream()
-                    .map(field -> {
-                        try {
-                            return field.get(objectData);
-                        } catch (IllegalAccessException shouldNotOccur) {
-                            throw new IllegalStateException(shouldNotOccur);
-                        }
-                    })
-                    .collect(Collectors.toList());
-            values.add(entity.getIdField().get(objectData));
+            var values = getValues(entity.getFieldsWithoutId(), objectData);
+            values.add(getValue(entity.getIdField(), objectData));
 
             dbExecutor.executeUpdate(getConnection(), sqlQueries.getUpdateSql(), values);
         } catch (Exception e) {
@@ -126,6 +111,22 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
         }
         return null;
 
+    }
+
+    @Nonnull
+    private List<Object> getValues(@Nonnull List<Field> fields, @Nonnull T objectData) {
+        return fields.stream()
+                .map(field -> getValue(field, objectData))
+                .collect(Collectors.toList());
+    }
+
+    @Nonnull
+    private Object getValue(@Nonnull Field field, @Nonnull T objectData) {
+        try {
+            return field.get(objectData);
+        } catch (IllegalAccessException shouldNotOccur) {
+            throw new IllegalStateException(shouldNotOccur);
+        }
     }
 
     private Connection getConnection() {
