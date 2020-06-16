@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class StringType implements DbColumnType {
+public class StringType implements FieldType {
     @Override
     @Nullable
     public Object getValue(@Nonnull ResultSet rs, @Nonnull String columnName) throws SQLException {

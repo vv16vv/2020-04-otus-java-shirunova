@@ -2,9 +2,9 @@ package ru.otus.jdbc.mapper.impl.types;
 
 import javax.annotation.Nonnull;
 
-public final class ParseDbColumnType {
+public final class ParseFieldType {
     @Nonnull
-    public static DbColumnType parse(@Nonnull Class<?> fieldType) {
+    public static FieldType parse(@Nonnull Class<?> fieldType) {
         switch (fieldType.toString()) {
             case "class java.lang.String":
                 return new StringType();
