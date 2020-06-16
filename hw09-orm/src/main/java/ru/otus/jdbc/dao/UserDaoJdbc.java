@@ -28,10 +28,10 @@ public class UserDaoJdbc implements UserDao {
     }
 
     @Nonnull
-    public static UserDao initialize(
+    public static UserDao create(
             @Nonnull SessionManagerJdbc sessionManager,
             @Nonnull DbExecutorImpl<User> dbExecutor) {
-        return new UserDaoJdbc(sessionManager, JdbcMapperImpl.initialize(User.class, sessionManager, dbExecutor));
+        return new UserDaoJdbc(sessionManager, JdbcMapperImpl.create(User.class, sessionManager, dbExecutor));
     }
 
     @Override

@@ -46,7 +46,7 @@ public class DbExecutorUserTest {
         dataSource = new DataSourceH2();
         var sessionManager = new SessionManagerJdbc(dataSource);
         var dbExecutor = new DbExecutorImpl<User>();
-        var userDao = UserDaoJdbc.initialize(sessionManager, dbExecutor);
+        var userDao = UserDaoJdbc.create(sessionManager, dbExecutor);
         dbServiceUser = new DbServiceUserImpl(userDao);
         try {
             createTable(dataSource);

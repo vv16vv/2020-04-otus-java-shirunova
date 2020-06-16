@@ -31,7 +31,7 @@ public class AccountDaoJdbc implements AccountDao {
     public static AccountDao initialize(
             @Nonnull SessionManagerJdbc sessionManager,
             @Nonnull DbExecutorImpl<Account> dbExecutor) {
-        return new AccountDaoJdbc(sessionManager, JdbcMapperImpl.initialize(Account.class, sessionManager, dbExecutor));
+        return new AccountDaoJdbc(sessionManager, JdbcMapperImpl.create(Account.class, sessionManager, dbExecutor));
     }
 
     @Override
