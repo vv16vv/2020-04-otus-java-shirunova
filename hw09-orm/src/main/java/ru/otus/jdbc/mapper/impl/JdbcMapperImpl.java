@@ -33,10 +33,10 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     }
 
     @Nonnull
-    public static <T> JdbcMapper<T> initialize(@Nonnull Class<T> clazz,
-                                               @Nonnull SessionManagerJdbc sessionManager,
-                                               @Nonnull DbExecutorImpl<T> dbExecutor) {
-        var entity = EntityClassMetaDataImpl.initialize(clazz);
+    public static <T> JdbcMapper<T> create(@Nonnull Class<T> clazz,
+                                           @Nonnull SessionManagerJdbc sessionManager,
+                                           @Nonnull DbExecutorImpl<T> dbExecutor) {
+        var entity = EntityClassMetaDataImpl.create(clazz);
         var sqlQueries = new EntitySQLMetaDataImpl(entity);
         return new JdbcMapperImpl<>(sessionManager, dbExecutor, entity, sqlQueries);
     }
