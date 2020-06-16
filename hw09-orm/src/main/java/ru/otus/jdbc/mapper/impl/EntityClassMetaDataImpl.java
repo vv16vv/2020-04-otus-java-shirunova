@@ -29,25 +29,45 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     @Nonnull
     public static <T> EntityClassMetaData<T> create(@Nonnull Class<T> tableType) {
         var name = tableType.getSimpleName();
+        var constructor = getConstructor(tableType);
+        var otherFields = new ArrayList<Field>();
+        var id = extractFields(tableType, otherFields);
+        return new EntityClassMetaDataImpl<T>(
+                name,
+                constructor,
+                id,
+                otherFields.stream().sorted(Comparator.comparing(Field::getName)).collect(Collectors.toList())
+        );
+    }
+
+    @Nonnull
+    private static <T> Field extractFields(@Nonnull Class<T> tableType,
+                                           @Nonnull List<Field> otherFields) {
+        Field id = null;
+        for (var field : tableType.getDeclaredFields()) {
+            if (!Modifier.isPublic(field.getModifiers())) {
+                field.setAccessible(true);
+            }
+            if (field.isAnnotationPresent(Id.class)) {
+                id = field;
+            } else otherFields.add(field);
+        }
+        if (id == null)
+            throw new IllegalArgumentException(String.format("Table '%s' does not contain field id", tableType.getSimpleName()));
+        return id;
+    }
+
+    @Nonnull
+    private static <T> Constructor<T> getConstructor(@Nonnull Class<T> tableType) {
         Constructor<T> constructor;
         try {
             constructor = tableType.getDeclaredConstructor();
             if (!Modifier.isPublic(constructor.getModifiers()))
                 constructor.setAccessible(true);
         } catch (NoSuchMethodException notFound) {
-            throw new IllegalArgumentException(String.format("Table '%s' does not contain default constructor", name));
+            throw new IllegalArgumentException(String.format("Table '%s' does not contain default constructor", tableType.getSimpleName()));
         }
-        Field id = null;
-        var otherFields = new ArrayList<Field>();
-        for (var field : tableType.getDeclaredFields()) {
-            if (!Modifier.isPublic(field.getModifiers()))
-                field.setAccessible(true);
-            if (field.isAnnotationPresent(Id.class)) {
-                id = field;
-            } else otherFields.add(field);
-        }
-        if (id == null) throw new IllegalArgumentException(String.format("Table '%s' does not contain field id", name));
-        return new EntityClassMetaDataImpl<T>(name, constructor, id, otherFields.stream().sorted(Comparator.comparing(Field::getName)).collect(Collectors.toList()));
+        return constructor;
     }
 
     @Override
