@@ -21,7 +21,7 @@ public class DbServiceDemo {
 
     public static void main(String[] args) {
         // Все главное см в тестах
-        SessionFactory sessionFactory = HibernateUtils.buildSessionFactory("hibernate.cfg.xml", User.class);
+        SessionFactory sessionFactory = HibernateUtils.buildSessionFactory("hibernate.cfg.xml", User.class, AddressDataSet.class, PhoneDataSet.class);
 
         SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
         UserDao userDao = new UserDaoHibernate(sessionManager);
@@ -30,8 +30,9 @@ public class DbServiceDemo {
 
         var address = new AddressDataSet(0, "Avia");
         var phones = new ArrayList<PhoneDataSet>();
-        phones.add(new PhoneDataSet(0,"+71234567890"));
-        long id = dbServiceUser.saveUser(new User(0, "Вася", address, phones));
+        User user = new User(0, "Вася", address, phones);
+        user.addPhone(new PhoneDataSet(0, "+71234567890"));
+        long id = dbServiceUser.saveUser(user);
         Optional<User> mayBeCreatedUser = dbServiceUser.getUser(id);
 
         id = dbServiceUser.saveUser(new User(1L, "А! Нет. Это же совсем не Вася", address, phones));
