@@ -22,6 +22,10 @@ subprojects {
         }
     }
 
+    test {
+        useJUnitPlatform()
+    }
+
     dependencyManagement {
         dependencies {
             imports {
