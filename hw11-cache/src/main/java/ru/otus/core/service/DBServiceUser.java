@@ -13,4 +13,6 @@ public interface DBServiceUser {
     void saveUser(User user);
 
     Optional<User> getUser(long id);
+
+    Optional<User> getUserCached(long id);
 }

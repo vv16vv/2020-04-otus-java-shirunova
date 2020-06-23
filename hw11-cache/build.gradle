@@ -3,4 +3,6 @@ version '0.1'
 
 dependencies {
     implementation 'com.h2database:h2'
+
+    testImplementation group: 'org.assertj', name: 'assertj-core'
 }
