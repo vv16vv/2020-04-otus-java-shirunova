@@ -1,16 +1,2 @@
-plugins {
-    id 'com.github.johnrengelman.shadow'
-}
-
 version '0.1'
 
-shadowJar {
-    archiveBaseName.set("hw04-gc-vshirunova")
-    archiveVersion.set("$project.version")
-    archiveClassifier.set("")
-    manifest {
-        attributes "Main-Class": "ru.otus.vsh.hw04.Main"
-    }
-}
-
-tasks.build.dependsOn tasks.shadowJar
