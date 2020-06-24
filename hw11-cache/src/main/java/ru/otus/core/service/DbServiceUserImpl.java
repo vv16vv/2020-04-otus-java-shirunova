@@ -18,6 +18,10 @@ public class DbServiceUserImpl implements DBServiceUser {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<MyCache<String, User>> optionalCache;
 
+    public DbServiceUserImpl(@Nonnull UserDao userDao){
+        this(userDao, null);
+    }
+
     public DbServiceUserImpl(@Nonnull UserDao userDao, @Nullable MyCache<String, User> cache) {
         this.userDao = userDao;
         this.optionalCache = Optional.ofNullable(cache);
