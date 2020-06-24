@@ -1,10 +1,10 @@
 package ru.otus.core.service;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.cachehw.MyCache;
 import ru.otus.core.model.User;
 import ru.otus.h2.DataSourceH2;
 import ru.otus.jdbc.DbExecutorImpl;
@@ -12,6 +12,7 @@ import ru.otus.jdbc.dao.UserDaoJdbc;
 import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
@@ -38,13 +39,12 @@ public class StressCacheTest {
         logger.info("table USER deleted");
     }
 
-    @BeforeEach
-    void init() {
+    private void init(@Nullable MyCache<String, User> cache) {
         dataSource = new DataSourceH2();
         var sessionManager = new SessionManagerJdbc(dataSource);
         var dbExecutor = new DbExecutorImpl<User>();
         var userDao = UserDaoJdbc.create(sessionManager, dbExecutor);
-        dbServiceUser = new DbServiceUserImpl(userDao);
+        dbServiceUser = new DbServiceUserImpl(userDao, cache);
         try {
             createTable(dataSource);
             logger.info("Add {} users", n);
@@ -71,6 +71,7 @@ public class StressCacheTest {
      */
     @Test
     void readManyUsers() {
+        init(null);
         logger.info("Read {} users", n);
         for (int i = 0; i < n; i++) {
             var newUser = dbServiceUser.getUser(i + 1);
@@ -83,33 +84,12 @@ public class StressCacheTest {
      */
     @Test
     void readManyCachedUsers() {
+        init(new MyCache<>());
         logger.info("Read {} cached users", n);
         for (int i = 0; i < n; i++) {
-            var newUser = dbServiceUser.getUserCached(i + 1);
+            var newUser = dbServiceUser.getUser(i + 1);
             System.out.println("newUser = " + newUser);
         }
     }
 
-//
-//    @Test
-//    void editUserUpdate() {
-//        var user = new User(100500, "May Sue", 33);
-//        var id = dbServiceUser.newUser(user);
-//        user.setAge(18);
-//        dbServiceUser.editUser(user);
-//        var newUser = dbServiceUser.getUser(id);
-//        Assertions.assertTrue(newUser.isPresent());
-//        Assertions.assertEquals(user.getAge(), newUser.get().getAge());
-//    }
-//
-//    @Test
-//    void editUserSave() {
-//        var user = new User(100500, "May Sue", 33);
-//        var id = dbServiceUser.newUser(user);
-//        user.setAge(18);
-//        dbServiceUser.saveUser(user);
-//        var newUser = dbServiceUser.getUser(id);
-//        Assertions.assertTrue(newUser.isPresent());
-//        Assertions.assertEquals(user.getAge(), newUser.get().getAge());
-//    }
 }
