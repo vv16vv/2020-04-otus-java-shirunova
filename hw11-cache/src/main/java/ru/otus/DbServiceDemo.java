@@ -2,6 +2,7 @@ package ru.otus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.cachehw.MyCache;
 import ru.otus.core.model.User;
 import ru.otus.core.service.DBServiceUser;
 import ru.otus.core.service.DbServiceUserImpl;
@@ -34,7 +35,7 @@ public class DbServiceDemo {
         DbExecutorImpl<User> dbExecutor = new DbExecutorImpl<>();
         var userDao = UserDaoJdbc.create(sessionManager, dbExecutor);
 
-        var dbServiceUser = new DbServiceUserImpl(userDao);
+        var dbServiceUser = new DbServiceUserImpl(userDao, new MyCache<>());
         var id = dbServiceUser.newUser(new User(0, "dbServiceUser", 55));
 
         var user = demo.searchById(dbServiceUser, id);

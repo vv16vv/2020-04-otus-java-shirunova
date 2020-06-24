@@ -8,23 +8,28 @@ import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class DbServiceUserImpl implements DBServiceUser {
     private static final Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
 
     private final UserDao userDao;
-    private final MyCache<String, User> cache = new MyCache<>();
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private final Optional<MyCache<String, User>> optionalCache;
 
-    public DbServiceUserImpl(@Nonnull UserDao userDao) {
+    public DbServiceUserImpl(@Nonnull UserDao userDao, @Nullable MyCache<String, User> cache) {
         this.userDao = userDao;
-        HwListener<String, User> listener = new HwListener<>() {
-            @Override
-            public void notify(String key, User value, String action) {
-                logger.info("DbServiceUser: action {} on key {} with value {}", action, key, value);
-            }
-        };
-        cache.addListener(listener);
+        this.optionalCache = Optional.ofNullable(cache);
+        if (this.optionalCache.isPresent()) {
+            HwListener<String, User> listener = new HwListener<>() {
+                @Override
+                public void notify(String key, User value, String action) {
+                    logger.info("DbServiceUser: action {} on key {} with value {}", action, key, value);
+                }
+            };
+            this.optionalCache.get().addListener(listener);
+        }
     }
 
     @Override
@@ -34,7 +39,7 @@ public class DbServiceUserImpl implements DBServiceUser {
             try {
                 var userId = userDao.insertUser(user);
                 sessionManager.commitSession();
-                cache.put(String.valueOf(userId), user);
+                optionalCache.ifPresent(cache -> cache.put(String.valueOf(userId), user));
 
                 logger.info("created user: {}", userId);
                 return userId;
@@ -53,7 +58,7 @@ public class DbServiceUserImpl implements DBServiceUser {
             try {
                 userDao.updateUser(user);
                 sessionManager.commitSession();
-                cache.put(String.valueOf(user.getId()), user);
+                optionalCache.ifPresent(cache -> cache.put(String.valueOf(user.getId()), user));
 
                 logger.info("updated user: {}", user.getId());
             } catch (Exception e) {
@@ -71,7 +76,7 @@ public class DbServiceUserImpl implements DBServiceUser {
             try {
                 userDao.insertOrUpdate(user);
                 sessionManager.commitSession();
-                cache.put(String.valueOf(user.getId()), user);
+                optionalCache.ifPresent(cache -> cache.put(String.valueOf(user.getId()), user));
 
                 logger.info("added or changed user: {}", user.getId());
             } catch (Exception e) {
@@ -82,8 +87,7 @@ public class DbServiceUserImpl implements DBServiceUser {
         }
     }
 
-    @Override
-    public Optional<User> getUser(long id) {
+    private Optional<User> getUserFromDatabase(long id) {
         try (var sessionManager = userDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
@@ -100,10 +104,9 @@ public class DbServiceUserImpl implements DBServiceUser {
     }
 
     @Override
-    public Optional<User> getUserCached(long id) {
-        var user = cache.get(String.valueOf(id));
-        if (user == null) {
-            return getUser(id);
-        } else return Optional.of(user);
+    public Optional<User> getUser(long id) {
+        return optionalCache
+                .flatMap(cache -> Optional.ofNullable(cache.get(String.valueOf(id))))
+                .or(() -> getUserFromDatabase(id));
     }
 }
