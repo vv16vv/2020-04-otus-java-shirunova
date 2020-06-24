@@ -1,5 +1,6 @@
 package ru.otus.core.service;
 
+import com.sun.management.GarbageCollectionNotificationInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -13,8 +14,14 @@ import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.management.NotificationEmitter;
+import javax.management.NotificationListener;
+import javax.management.openmbean.CompositeData;
 import javax.sql.DataSource;
+import java.lang.management.GarbageCollectorMXBean;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
 public class StressCacheTest {
@@ -22,6 +29,8 @@ public class StressCacheTest {
     private final int n = 10000;
     private DataSource dataSource;
     private DBServiceUser dbServiceUser;
+
+    private final AtomicLong gctime = new AtomicLong(0);
 
     private void createTable(@Nonnull DataSource dataSource) throws SQLException {
         try (var connection = dataSource.getConnection();
@@ -39,7 +48,30 @@ public class StressCacheTest {
         logger.info("table USER deleted");
     }
 
+    private void switchOnMonitoring() {
+        List<GarbageCollectorMXBean> gcbeans = java.lang.management.ManagementFactory.getGarbageCollectorMXBeans();
+        for (GarbageCollectorMXBean gcbean : gcbeans) {
+            logger.info("GC name: {}", gcbean.getName());
+            NotificationEmitter emitter = (NotificationEmitter) gcbean;
+            NotificationListener listener = (notification, handback) -> {
+                if (notification.getType().equals(GarbageCollectionNotificationInfo.GARBAGE_COLLECTION_NOTIFICATION)) {
+                    synchronized (this) {
+                        GarbageCollectionNotificationInfo info = GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
+
+                        long duration = info.getGcInfo().getDuration();
+                        gctime.getAndAdd(duration);
+
+                        logger.info("GC working time {} ms (accumulating). Duration {} ms", gctime.get(), duration);
+                    }
+                }
+            };
+            emitter.addNotificationListener(listener, null, null);
+        }
+    }
+
     private void init(@Nullable MyCache<String, User> cache) {
+        gctime.set(0);
+        switchOnMonitoring();
         dataSource = new DataSourceH2();
         var sessionManager = new SessionManagerJdbc(dataSource);
         var dbExecutor = new DbExecutorImpl<User>();
@@ -59,6 +91,7 @@ public class StressCacheTest {
 
     @AfterEach
     void clearUp() {
+        logger.info("Final GC working time {} ms", gctime.get());
         try {
             deleteTable(dataSource);
         } catch (SQLException e) {
@@ -66,29 +99,23 @@ public class StressCacheTest {
         }
     }
 
-    /**
-     * time: 16s 318ms
-     */
     @Test
     void readManyUsers() {
         init(null);
         logger.info("Read {} users", n);
         for (int i = 0; i < n; i++) {
             var newUser = dbServiceUser.getUser(i + 1);
-            System.out.println("newUser = " + newUser);
+            logger.info("newUser = " + newUser);
         }
     }
 
-    /**
-     * time: 12s 546ms
-     */
     @Test
     void readManyCachedUsers() {
         init(new MyCache<>());
         logger.info("Read {} cached users", n);
         for (int i = 0; i < n; i++) {
             var newUser = dbServiceUser.getUser(i + 1);
-            System.out.println("newUser = " + newUser);
+            logger.info("newUser = " + newUser);
         }
     }
 
