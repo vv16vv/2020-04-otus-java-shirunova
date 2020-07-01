@@ -1,83 +1,75 @@
 package ru.otus.hibernate.dao;
 
-
-import org.hibernate.Session;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.core.dao.UserDao;
-import ru.otus.core.dao.UserDaoException;
-import ru.otus.core.model.User;
-import ru.otus.core.sessionmanager.SessionManager;
-import ru.otus.hibernate.sessionmanager.DatabaseSessionHibernate;
+import ru.otus.dbCore.dao.UserDao;
+import ru.otus.dbCore.model.User;
 import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 
-public class UserDaoHibernate implements UserDao {
-    private static final Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
-
-    private final SessionManagerHibernate sessionManager;
+public class UserDaoHibernate extends AbstractDaoHibernate<User> implements UserDao {
+    private final static Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
 
     public UserDaoHibernate(SessionManagerHibernate sessionManager) {
-        this.sessionManager = sessionManager;
+        super(sessionManager, User.class);
     }
 
-
     @Override
-    public Optional<User> findById(long id) {
-        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
+    public Optional<User> findByLogin(String login) {
         try {
-            return Optional.ofNullable(currentSession.getHibernateSession().find(User.class, id));
+            var entityManager = sessionManager.getEntityManager();
+            List<User> users = entityManager
+                    .createNamedQuery(User.GET_USER_BY_LOGIN, User.class)
+                    .setParameter("login", login)
+                    .getResultList();
+            if (users.isEmpty()) return Optional.empty();
+            else return Optional.of(users.get(0));
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            getLogger().error(e.getMessage(), e);
         }
         return Optional.empty();
     }
 
     @Override
-    public long insertUser(User user) {
-        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
+    public List<User> findAll() {
         try {
-            Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.save(user);
-            var phoneDaoHibernate = new PhoneDaoHibernate(sessionManager);
-            for (var phone : user.getPhones()) {
-                phoneDaoHibernate.insertPhone(phone);
-            }
-            return user.getId();
+            var entityManager = sessionManager.getEntityManager();
+            return entityManager
+                    .createNamedQuery(User.GET_ALL_USERS, User.class)
+                    .getResultList();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
+            getLogger().error(e.getMessage(), e);
         }
+        return Lists.newArrayList();
     }
 
     @Override
-    public void updateUser(User user) {
-        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
+    public List<User> findByRole(String role) {
         try {
-            Session hibernateSession = currentSession.getHibernateSession();
-            hibernateSession.saveOrUpdate(user);
-            var phoneDaoHibernate = new PhoneDaoHibernate(sessionManager);
-            for (var phone : user.getPhones()) {
-                phoneDaoHibernate.insertOrUpdate(phone);
-            }
+            var entityManager = sessionManager.getEntityManager();
+            return entityManager
+                    .createNamedQuery(User.GET_USER_BY_ROLE, User.class)
+                    .setParameter("role", role)
+                    .getResultList();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
+            getLogger().error(e.getMessage(), e);
         }
+        return Lists.newArrayList();
     }
 
     @Override
     public void insertOrUpdate(@Nonnull User user) {
         if (user.getId() > 0)
-            insertUser(user);
-        else updateUser(user);
+            insert(user);
+        else update(user);
     }
 
-
     @Override
-    public SessionManager getSessionManager() {
-        return sessionManager;
+    protected Logger getLogger() {
+        return logger;
     }
 }

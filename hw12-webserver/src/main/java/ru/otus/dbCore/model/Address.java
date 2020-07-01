@@ -1,11 +1,11 @@
-package ru.otus.core.model;
+package ru.otus.dbCore.model;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "addresses")
-public class AddressDataSet {
+public class Address implements Model {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
@@ -14,18 +14,20 @@ public class AddressDataSet {
     @Column(name = "street", nullable = false)
     private String street;
 
-    public AddressDataSet() {
+    public Address() {
     }
 
-    public AddressDataSet(long id, String street) {
+    public Address(long id, String street) {
         this.id = id;
         this.street = street;
     }
 
+    @Override
     public long getId() {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
@@ -50,7 +52,7 @@ public class AddressDataSet {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AddressDataSet that = (AddressDataSet) o;
+        Address that = (Address) o;
         return id == that.id &&
                 street.equals(that.street);
     }

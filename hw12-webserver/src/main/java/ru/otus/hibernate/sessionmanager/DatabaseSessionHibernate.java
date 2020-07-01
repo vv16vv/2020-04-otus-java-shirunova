@@ -2,7 +2,7 @@ package ru.otus.hibernate.sessionmanager;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import ru.otus.core.sessionmanager.DatabaseSession;
+import ru.otus.dbCore.sessionmanager.DatabaseSession;
 
 
 public class DatabaseSessionHibernate implements DatabaseSession {
