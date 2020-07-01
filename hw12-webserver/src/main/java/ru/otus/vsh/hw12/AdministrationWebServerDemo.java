@@ -33,7 +33,7 @@ import java.util.Optional;
     // REST сервис
     http://localhost:8080/api/user/3
 */
-public class WebServerSimpleDemo {
+public class AdministrationWebServerDemo {
     private static final int WEB_SERVER_PORT = 8080;
     private static final String TEMPLATES_DIR = "/templates/";
 
@@ -41,7 +41,8 @@ public class WebServerSimpleDemo {
         SessionFactory sessionFactory = HibernateUtils.buildSessionFactory("hibernate.cfg.xml", User.class, Address.class, Phone.class, Role.class);
         SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
         UserDao userDao = new UserDaoHibernate(sessionManager);
-        initiateData(userDao);
+        RoleDao roleDao = new RoleDaoHibernate(sessionManager);
+        initiateData(userDao, roleDao);
 
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
 
@@ -51,7 +52,16 @@ public class WebServerSimpleDemo {
         usersWebServer.join();
     }
 
-    private static void initiateData(UserDao userDao){
+    private static void initiateData(UserDao userDao, RoleDao roleDao){
+        DBService<Role> dbServiceRole = new DbServiceRoleImpl(roleDao);
+        var role1 = new Role(1,"user");
+        var role2 = new Role(2,"admin");
+        var role3 = new Role(3,"guest");
+
+        dbServiceRole.saveObject(role1);
+        dbServiceRole.saveObject(role2);
+        dbServiceRole.saveObject(role3);
+
         DBService<User> dbServiceUser = new DbServiceUserImpl(userDao);
 
         var address1 = new Address(1, "Планерная улица");
@@ -63,21 +73,13 @@ public class WebServerSimpleDemo {
         var phone3 = new Phone(3, "+7(111)222-33-44");
         var phone4 = new Phone(4, "+7(098)124-63-74");
 
-        var phoneList1 = new ArrayList<Phone>();
-        phoneList1.add(phone1);
-        phoneList1.add(phone2);
-        var phoneList2 = new ArrayList<Phone>();
-        phoneList2.add(phone3);
-        var phoneList3 = new ArrayList<Phone>();
-        phoneList3.add(phone4);
-
-        var role1 = new Role(1,"user");
-        var role2 = new Role(2,"admin");
-        var role3 = new Role(3,"guest");
-
-        var user1 = new User(1, "vitkus", "Виктория", "12345", address1, role2, phoneList1);
-        var user2 = new User(2, "sevantius", "Всеволод", "32321", address2, role3, phoneList2);
-        var user3 = new User(3, "koshir", "Константин", "91929", address3, role1, phoneList3);
+        var user1 = new User(1, "vitkus", "Виктория", "12345", address1, role2, new ArrayList<>());
+        user1.addPhone(phone1);
+        user1.addPhone(phone2);
+        var user2 = new User(2, "sevantius", "Всеволод", "32321", address2, role3, new ArrayList<>());
+        user2.addPhone(phone3);
+        var user3 = new User(3, "koshir", "Константин", "91929", address3, role1, new ArrayList<>());
+        user3.addPhone(phone4);
 
         dbServiceUser.saveObject(user1);
         dbServiceUser.saveObject(user2);
