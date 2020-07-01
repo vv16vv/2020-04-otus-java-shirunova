@@ -1,25 +1,25 @@
-package ru.otus;
+package ru.otus.vsh.hw12;
 
-import com.google.common.collect.Lists;
 import org.hibernate.SessionFactory;
-import ru.otus.dbCore.dao.UserDao;
-import ru.otus.dbCore.dbService.DBServiceUser;
-import ru.otus.dbCore.dbService.DbServiceUserImpl;
-import ru.otus.dbCore.dbService.api.DBService;
-import ru.otus.dbCore.model.Address;
-import ru.otus.dbCore.model.Phone;
-import ru.otus.dbCore.model.Role;
-import ru.otus.dbCore.model.User;
-import ru.otus.hibernate.HibernateUtils;
-import ru.otus.hibernate.dao.UserDaoHibernate;
-import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
-import ru.otus.webCore.server.AdministrationWebServer;
-import ru.otus.webCore.server.WebServer;
-import ru.otus.webCore.services.TemplateProcessor;
-import ru.otus.webCore.services.TemplateProcessorImpl;
+import ru.otus.vsh.hw12.dbCore.dao.RoleDao;
+import ru.otus.vsh.hw12.dbCore.dao.UserDao;
+import ru.otus.vsh.hw12.dbCore.dbService.DbServiceRoleImpl;
+import ru.otus.vsh.hw12.dbCore.dbService.DbServiceUserImpl;
+import ru.otus.vsh.hw12.dbCore.dbService.api.DBService;
+import ru.otus.vsh.hw12.dbCore.model.Address;
+import ru.otus.vsh.hw12.dbCore.model.Phone;
+import ru.otus.vsh.hw12.dbCore.model.Role;
+import ru.otus.vsh.hw12.dbCore.model.User;
+import ru.otus.vsh.hw12.hibernate.HibernateUtils;
+import ru.otus.vsh.hw12.hibernate.dao.RoleDaoHibernate;
+import ru.otus.vsh.hw12.hibernate.dao.UserDaoHibernate;
+import ru.otus.vsh.hw12.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.vsh.hw12.webCore.server.AdministrationWebServer;
+import ru.otus.vsh.hw12.webCore.server.WebServer;
+import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
+import ru.otus.vsh.hw12.webCore.services.TemplateProcessorImpl;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 /*
     Полезные для демо ссылки

@@ -1,7 +1,0 @@
-package ru.otus.dbCore.dbService.api;
-
-public class DbServiceException extends RuntimeException {
-    public DbServiceException(Exception e) {
-        super(e);
-    }
-}
