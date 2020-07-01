@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Administration</title>
+</head>
+
+<body>
+<h4>Существующие пользователи</h4>
+<table style="width: 400px">
+    <thead>
+        <tr>
+            <td style="width: 50px">Id</td>
+            <td style="width: 100px">Логин</td>
+            <td style="width: 100px">Пароль</td>
+            <td style="width: 100px">Роль</td>
+            <td style="width: 150px">Имя</td>
+            <td style="width: 100px">Адрес</td>
+            <td style="width: 100px">Телефоны</td>
+        </tr>
+    </thead>
+    <tbody>
+    <#list users as user>
+        <tr>
+            <td>${user.id}</td>
+            <td>${user.login}</td>
+            <td>${user.password}</td>
+            <td>${user.role}</td>
+            <td>${user.name}</td>
+            <td>${user.address}</td>
+            <td>
+                <ul>
+                    <#list user.phone as phone>
+                    <li>${phone}</li>
+                    </#list>
+                </ul>
+            </td>
+        </tr>
+    </#list>
+    </tbody>
+</table>
+</body>
+</html>
