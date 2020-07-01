@@ -63,7 +63,7 @@ public class UserDaoHibernate extends AbstractDaoHibernate<User> implements User
 
     @Override
     public void insertOrUpdate(@Nonnull User user) {
-        if (user.getId() > 0)
+        if (user.getId() == 0)
             insert(user);
         else update(user);
     }
