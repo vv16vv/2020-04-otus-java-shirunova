@@ -1,4 +1,4 @@
-package ru.otus.core.dao;
+package ru.otus.dbCore.dao;
 
 public class PhoneDaoException extends RuntimeException {
     public PhoneDaoException(Exception ex) {

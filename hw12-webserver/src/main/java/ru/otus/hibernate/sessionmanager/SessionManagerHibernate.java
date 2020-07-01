@@ -3,8 +3,10 @@ package ru.otus.hibernate.sessionmanager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import ru.otus.core.sessionmanager.SessionManager;
-import ru.otus.core.sessionmanager.SessionManagerException;
+import ru.otus.dbCore.sessionmanager.SessionManager;
+import ru.otus.dbCore.sessionmanager.SessionManagerException;
+
+import javax.persistence.EntityManager;
 
 public class SessionManagerHibernate implements SessionManager {
 
@@ -76,6 +78,12 @@ public class SessionManagerHibernate implements SessionManager {
     public DatabaseSessionHibernate getCurrentSession() {
         checkSessionAndTransaction();
         return databaseSession;
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        checkSessionAndTransaction();
+        return sessionFactory.createEntityManager();
     }
 
     private void checkSessionAndTransaction() {

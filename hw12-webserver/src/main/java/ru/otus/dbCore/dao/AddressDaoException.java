@@ -1,4 +1,4 @@
-package ru.otus.core.dao;
+package ru.otus.dbCore.dao;
 
 public class AddressDaoException extends RuntimeException {
     public AddressDaoException(Exception ex) {
