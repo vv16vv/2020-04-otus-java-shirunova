@@ -30,17 +30,6 @@ public class DbServiceUserImpl extends AbstractDbServiceImpl<User> implements DB
     }
 
     @Override
-    public List<User> findAll() {
-        return executeInSession((sm, notUsed) -> {
-            var users = userDao.findAll();
-            sm.commitSession();
-
-            getLogger().info("found all users {}", users.toString());
-            return users;
-        }, "");
-    }
-
-    @Override
     public List<User> findByRole(String role) {
         return executeInSession((sm, roleName) -> {
             var users = userDao.findByRole(roleName);

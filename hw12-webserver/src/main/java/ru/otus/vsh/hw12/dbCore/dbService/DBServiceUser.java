@@ -9,7 +9,5 @@ import java.util.Optional;
 public interface DBServiceUser extends DBService<User> {
     Optional<User> findByLogin(String login);
 
-    List<User> findAll();
-
     List<User> findByRole(String role);
 }
