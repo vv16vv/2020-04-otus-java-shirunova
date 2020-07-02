@@ -3,10 +3,11 @@ package ru.otus.vsh.hw12.hibernate.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.vsh.hw12.dbCore.dao.PhoneDao;
 import ru.otus.vsh.hw12.dbCore.model.Phone;
 import ru.otus.vsh.hw12.hibernate.sessionmanager.SessionManagerHibernate;
 
-public class PhoneDaoHibernate extends AbstractDaoHibernate<Phone> {
+public class PhoneDaoHibernate extends AbstractDaoHibernate<Phone> implements PhoneDao {
     private final static Logger logger = LoggerFactory.getLogger(PhoneDaoHibernate.class);
 
     public PhoneDaoHibernate(SessionManagerHibernate sessionManager) {

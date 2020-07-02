@@ -14,10 +14,6 @@ import java.util.Objects;
         @NamedQuery(
                 name = User.GET_USER_BY_ROLE,
                 query = "select u from User u where role = :role"
-        ),
-        @NamedQuery(
-                name = User.GET_ALL_USERS,
-                query = "select u from User u"
         )
 })
 @Entity
