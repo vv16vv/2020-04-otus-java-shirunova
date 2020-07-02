@@ -49,8 +49,7 @@ public class AdministrationWebServer implements WebServer {
         server.stop();
     }
 
-    private Server initContext() {
-
+    private void initContext() {
         ResourceHandler resourceHandler = createResourceHandler();
         ServletContextHandler servletContextHandler = createServletContextHandler();
 
@@ -58,9 +57,7 @@ public class AdministrationWebServer implements WebServer {
         handlers.addHandler(resourceHandler);
         handlers.addHandler(applySecurity(servletContextHandler, "/users/", "/user/", "/actions/"));
 
-
         server.setHandler(handlers);
-        return server;
     }
 
     protected Handler applySecurity(ServletContextHandler servletContextHandler, String... paths) {
