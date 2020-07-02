@@ -42,7 +42,7 @@ public class AdministrationWebServerDemo {
 
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
 
-        WebServer usersWebServer = new AdministrationWebServer(WEB_SERVER_PORT, dbServiceUser, templateProcessor);
+        WebServer usersWebServer = new AdministrationWebServer(WEB_SERVER_PORT, dbServiceUser, dbServiceRole, templateProcessor);
 
         usersWebServer.start();
         usersWebServer.join();
