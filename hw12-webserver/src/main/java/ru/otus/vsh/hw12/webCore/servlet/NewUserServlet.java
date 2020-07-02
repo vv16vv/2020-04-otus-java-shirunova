@@ -33,9 +33,6 @@ public class NewUserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String name = req.getParameter(PARAM_LOGIN);
-//        String password = req.getParameter(PARAM_PASSWORD);
-
         HttpSession session = req.getSession();
 //        session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
         resp.sendRedirect("/actions");
