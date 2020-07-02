@@ -7,6 +7,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import ru.otus.vsh.hw12.dbCore.dbService.DBServiceRole;
 import ru.otus.vsh.hw12.dbCore.dbService.DBServiceUser;
 import ru.otus.vsh.hw12.webCore.helpers.FileSystemHelper;
 import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
@@ -21,11 +22,13 @@ public class AdministrationWebServer implements WebServer {
     private static final String COMMON_RESOURCES_DIR = "static";
     protected final TemplateProcessor templateProcessor;
     private final DBServiceUser dbServiceUser;
+    private final DBServiceRole dbServiceRole;
     private final Server server;
     private final UserAuthService userAuthService;
 
-    public AdministrationWebServer(int port, DBServiceUser dbServiceUser, TemplateProcessor templateProcessor) {
+    public AdministrationWebServer(int port, DBServiceUser dbServiceUser, DBServiceRole dbServiceRole, TemplateProcessor templateProcessor) {
         this.dbServiceUser = dbServiceUser;
+        this.dbServiceRole = dbServiceRole;
         this.templateProcessor = templateProcessor;
         this.userAuthService = new UserAuthServiceImpl(dbServiceUser);
         server = new Server(port);
@@ -78,7 +81,7 @@ public class AdministrationWebServer implements WebServer {
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, dbServiceUser)), "/users/");
-        servletContextHandler.addServlet(new ServletHolder(new NewUserServlet(templateProcessor, dbServiceUser)), "/user/");
+        servletContextHandler.addServlet(new ServletHolder(new NewUserServlet(templateProcessor, dbServiceUser, dbServiceRole)), "/user/");
         servletContextHandler.addServlet(new ServletHolder(new ActionsServlet(templateProcessor)), "/actions/");
         return servletContextHandler;
     }
