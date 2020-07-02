@@ -5,6 +5,7 @@ import ru.otus.vsh.hw12.dbCore.dao.Dao;
 import ru.otus.vsh.hw12.dbCore.model.Model;
 import ru.otus.vsh.hw12.dbCore.sessionmanager.SessionManager;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -82,6 +83,17 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
 
         getLogger().info("object: {}", optional.orElse(null));
         return optional;
+    }
+
+    @Override
+    public List<T> findAll() {
+        return executeInSession((sm, notUsed) -> {
+            var objects = dao.findAll();
+            sm.commitSession();
+
+            getLogger().info("found all objects {}", objects.toString());
+            return objects;
+        }, "");
     }
 
     abstract protected Logger getLogger();
