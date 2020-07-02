@@ -3,9 +3,10 @@ package ru.otus.vsh.hw12;
 import org.hibernate.SessionFactory;
 import ru.otus.vsh.hw12.dbCore.dao.RoleDao;
 import ru.otus.vsh.hw12.dbCore.dao.UserDao;
+import ru.otus.vsh.hw12.dbCore.dbService.DBServiceRole;
+import ru.otus.vsh.hw12.dbCore.dbService.DBServiceUser;
 import ru.otus.vsh.hw12.dbCore.dbService.DbServiceRoleImpl;
 import ru.otus.vsh.hw12.dbCore.dbService.DbServiceUserImpl;
-import ru.otus.vsh.hw12.dbCore.dbService.api.DBService;
 import ru.otus.vsh.hw12.dbCore.model.Address;
 import ru.otus.vsh.hw12.dbCore.model.Phone;
 import ru.otus.vsh.hw12.dbCore.model.Role;
@@ -42,27 +43,27 @@ public class AdministrationWebServerDemo {
         SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
         UserDao userDao = new UserDaoHibernate(sessionManager);
         RoleDao roleDao = new RoleDaoHibernate(sessionManager);
-        initiateData(userDao, roleDao);
+        DBServiceRole dbServiceRole = new DbServiceRoleImpl(roleDao);
+        DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
+        initiateData(dbServiceUser, dbServiceRole);
 
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
 
-        WebServer usersWebServer = new AdministrationWebServer(WEB_SERVER_PORT, userDao, templateProcessor);
+        WebServer usersWebServer = new AdministrationWebServer(WEB_SERVER_PORT, dbServiceUser, templateProcessor);
 
         usersWebServer.start();
         usersWebServer.join();
     }
 
-    private static void initiateData(UserDao userDao, RoleDao roleDao){
-        DBService<Role> dbServiceRole = new DbServiceRoleImpl(roleDao);
-        var roleUser = new Role(0,"user");
-        var roleAdmin = new Role(0,"admin");
-        var roleGuest = new Role(0,"guest");
+    private static void initiateData(DBServiceUser dbServiceUser, DBServiceRole dbServiceRole) {
+        var roleUser = new Role(0, "user");
+        var roleAdmin = new Role(0, "admin");
+        var roleGuest = new Role(0, "guest");
 
         dbServiceRole.saveObject(roleUser);
         dbServiceRole.saveObject(roleAdmin);
         dbServiceRole.saveObject(roleGuest);
 
-        DBService<User> dbServiceUser = new DbServiceUserImpl(userDao);
 
         var address1 = new Address(0, "Планерная улица");
         var address2 = new Address(0, "Проспект Авиаконструкторов");

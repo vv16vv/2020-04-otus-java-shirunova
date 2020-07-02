@@ -6,6 +6,7 @@ import ru.otus.vsh.hw12.dbCore.model.Model;
 import ru.otus.vsh.hw12.dbCore.sessionmanager.SessionManager;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 abstract public class AbstractDbServiceImpl<T extends Model> implements DBService<T> {
     private final Dao<T> dao;
@@ -14,12 +15,11 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         this.dao = dao;
     }
 
-    @Override
-    public long newObject(T t) {
+    protected <P, R> R executeInSession(BiFunction<SessionManager, P, R> actions, P p) {
         try (SessionManager sessionManager = dao.getSessionManager()) {
             sessionManager.beginSession();
             try {
-                return doNewObject(sessionManager,t);
+                return actions.apply(sessionManager, p);
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);
                 sessionManager.rollbackSession();
@@ -29,8 +29,13 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
     }
 
     @Override
-    public long doNewObject(SessionManager sessionManager, T t) {
-        long id = dao.insert(t);
+    public Long newObject(T t) {
+        return executeInSession(this::doNewObject, t);
+    }
+
+    @Override
+    public Long doNewObject(SessionManager sessionManager, T t) {
+        Long id = dao.insert(t);
         sessionManager.commitSession();
 
         getLogger().info("created object with id = {}", id);
@@ -39,44 +44,27 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
 
     @Override
     public void editObject(T t) {
-        try (SessionManager sessionManager = dao.getSessionManager()) {
-            sessionManager.beginSession();
-            try {
-                doEditObject(sessionManager, t);
-            } catch (Exception e) {
-                getLogger().error(e.getMessage(), e);
-                sessionManager.rollbackSession();
-                throw new DbServiceException(e);
-            }
-        }
+        executeInSession(this::doEditObject, t);
     }
 
     @Override
-    public void doEditObject(SessionManager sessionManager, T t) {
+    public T doEditObject(SessionManager sessionManager, T t) {
         dao.update(t);
         sessionManager.commitSession();
 
         getLogger().info("edited object with id = {}", t.getId());
+        return null;
     }
 
     @Override
-    public long saveObject(T t) {
-        try (SessionManager sessionManager = dao.getSessionManager()) {
-            sessionManager.beginSession();
-            try {
-                return doSaveObject(sessionManager,t);
-            } catch (Exception e) {
-                getLogger().error(e.getMessage(), e);
-                sessionManager.rollbackSession();
-                throw new DbServiceException(e);
-            }
-        }
+    public Long saveObject(T t) {
+        return executeInSession(this::doSaveObject, t);
     }
 
     @Override
-    public long doSaveObject(SessionManager sessionManager, T t) {
+    public Long doSaveObject(SessionManager sessionManager, T t) {
         dao.insertOrUpdate(t);
-        long id = t.getId();
+        Long id = t.getId();
         sessionManager.commitSession();
 
         getLogger().info("created or edited object with id = {}", id);
@@ -84,21 +72,12 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
     }
 
     @Override
-    public Optional<T> getObject(long id) {
-        try (SessionManager sessionManager = dao.getSessionManager()) {
-            sessionManager.beginSession();
-            try {
-                return doGetObject(sessionManager,id);
-            } catch (Exception e) {
-                getLogger().error(e.getMessage(), e);
-                sessionManager.rollbackSession();
-            }
-            return Optional.empty();
-        }
+    public Optional<T> getObject(Long id) {
+        return executeInSession(this::doGetObject, id);
     }
 
     @Override
-    public Optional<T> doGetObject(SessionManager sessionManager, long id) {
+    public Optional<T> doGetObject(SessionManager sessionManager, Long id) {
         Optional<T> optional = dao.findById(id);
 
         getLogger().info("object: {}", optional.orElse(null));

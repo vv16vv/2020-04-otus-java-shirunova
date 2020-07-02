@@ -6,7 +6,7 @@ import ru.otus.vsh.hw12.dbCore.dao.PhoneDao;
 import ru.otus.vsh.hw12.dbCore.dbService.api.AbstractDbServiceImpl;
 import ru.otus.vsh.hw12.dbCore.model.Phone;
 
-public class DbServicePhoneImpl extends AbstractDbServiceImpl<Phone> {
+public class DbServicePhoneImpl extends AbstractDbServiceImpl<Phone> implements DBServicePhone {
     private static final Logger logger = LoggerFactory.getLogger(DbServicePhoneImpl.class);
 
     public DbServicePhoneImpl(PhoneDao phoneDao) {
