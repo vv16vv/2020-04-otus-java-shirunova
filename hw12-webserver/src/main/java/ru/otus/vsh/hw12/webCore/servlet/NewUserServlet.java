@@ -1,6 +1,6 @@
 package ru.otus.vsh.hw12.webCore.servlet;
 
-import ru.otus.vsh.hw12.dbCore.dao.UserDao;
+import ru.otus.vsh.hw12.dbCore.dbService.DBServiceUser;
 import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
 
 import javax.servlet.ServletException;
@@ -17,12 +17,12 @@ public class NewUserServlet extends HttpServlet {
     private static final int ID_PATH_PARAM_POSITION = 1;
     private static final String USER_PAGE_TEMPLATE = "new-user.html";
 
-    private final UserDao userDao;
+    private final DBServiceUser dbServiceUser;
     private final TemplateProcessor templateProcessor;
 
-    public NewUserServlet(TemplateProcessor templateProcessor, UserDao userDao) {
+    public NewUserServlet(TemplateProcessor templateProcessor, DBServiceUser dbServiceUser) {
         this.templateProcessor = templateProcessor;
-        this.userDao = userDao;
+        this.dbServiceUser = dbServiceUser;
     }
 
     @Override

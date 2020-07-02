@@ -7,20 +7,20 @@ import java.util.Optional;
 
 public interface DBService<T extends Model> {
 
-    long saveObject(T t);
+    Long saveObject(T t);
 
-    long newObject(T t);
+    Long newObject(T t);
 
     void editObject(T t);
 
-    Optional<T> getObject(long id);
+    Optional<T> getObject(Long id);
 
-    long doSaveObject(SessionManager sessionManager, T t);
+    Long doSaveObject(SessionManager sessionManager, T t);
 
-    long doNewObject(SessionManager sessionManager, T t);
+    Long doNewObject(SessionManager sessionManager, T t);
 
-    void doEditObject(SessionManager sessionManager, T t);
+    T doEditObject(SessionManager sessionManager, T t);
 
-    Optional<T> doGetObject(SessionManager sessionManager, long id);
+    Optional<T> doGetObject(SessionManager sessionManager, Long id);
 
 }
