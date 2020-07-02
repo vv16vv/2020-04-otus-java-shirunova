@@ -1,15 +1,17 @@
 package ru.otus.vsh.hw12.hibernate.dao;
 
 
+import com.google.common.collect.Lists;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import ru.otus.vsh.hw12.dbCore.dao.AddressDaoException;
 import ru.otus.vsh.hw12.dbCore.dao.Dao;
-import ru.otus.vsh.hw12.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.otus.vsh.hw12.dbCore.model.Model;
 import ru.otus.vsh.hw12.dbCore.sessionmanager.SessionManager;
 import ru.otus.vsh.hw12.hibernate.sessionmanager.DatabaseSessionHibernate;
+import ru.otus.vsh.hw12.hibernate.sessionmanager.SessionManagerHibernate;
 
+import java.util.List;
 import java.util.Optional;
 
 abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
@@ -31,6 +33,20 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
             getLogger().error(e.getMessage(), e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public List<T> findAll() {
+        var query = String.format("select u from %s u", modelClass.getSimpleName());
+        try {
+            var entityManager = sessionManager.getEntityManager();
+            return entityManager
+                    .createQuery(query, modelClass)
+                    .getResultList();
+        } catch (Exception e) {
+            getLogger().error(e.getMessage(), e);
+        }
+        return Lists.newArrayList();
     }
 
     @Override

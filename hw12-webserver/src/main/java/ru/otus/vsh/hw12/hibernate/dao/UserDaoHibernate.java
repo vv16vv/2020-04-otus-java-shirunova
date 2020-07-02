@@ -1,9 +1,12 @@
 package ru.otus.vsh.hw12.hibernate.dao;
 
 import com.google.common.collect.Lists;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.vsh.hw12.dbCore.dao.AddressDaoException;
 import ru.otus.vsh.hw12.dbCore.dao.UserDao;
+import ru.otus.vsh.hw12.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.otus.vsh.hw12.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.otus.vsh.hw12.dbCore.model.User;
 
@@ -35,19 +38,6 @@ public class UserDaoHibernate extends AbstractDaoHibernate<User> implements User
     }
 
     @Override
-    public List<User> findAll() {
-        try {
-            var entityManager = sessionManager.getEntityManager();
-            return entityManager
-                    .createNamedQuery(User.GET_ALL_USERS, User.class)
-                    .getResultList();
-        } catch (Exception e) {
-            getLogger().error(e.getMessage(), e);
-        }
-        return Lists.newArrayList();
-    }
-
-    @Override
     public List<User> findByRole(String role) {
         try {
             var entityManager = sessionManager.getEntityManager();
@@ -59,6 +49,39 @@ public class UserDaoHibernate extends AbstractDaoHibernate<User> implements User
             getLogger().error(e.getMessage(), e);
         }
         return Lists.newArrayList();
+    }
+
+    @Override
+    public long insert(User user) {
+        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
+        try {
+            Session hibernateSession = currentSession.getHibernateSession();
+            hibernateSession.save(user);
+            var phoneDaoHibernate = new PhoneDaoHibernate(sessionManager);
+            for (var phone : user.getPhones()) {
+                phoneDaoHibernate.insert(phone);
+            }
+            return user.getId();
+        } catch (Exception e) {
+            getLogger().error(e.getMessage(), e);
+            throw new AddressDaoException(e);
+        }
+    }
+
+    @Override
+    public void update(User user) {
+        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
+        try {
+            Session hibernateSession = currentSession.getHibernateSession();
+            hibernateSession.merge(user);
+            var phoneDaoHibernate = new PhoneDaoHibernate(sessionManager);
+            for (var phone : user.getPhones()) {
+                phoneDaoHibernate.insertOrUpdate(phone);
+            }
+        } catch (Exception e) {
+            getLogger().error(e.getMessage(), e);
+            throw new AddressDaoException(e);
+        }
     }
 
     @Override
