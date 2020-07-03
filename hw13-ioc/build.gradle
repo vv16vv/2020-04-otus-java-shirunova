@@ -2,7 +2,15 @@ group 'ru.otus.vsh'
 version '0.1'
 
 dependencies {
-    implementation 'com.h2database:h2'
+    implementation("org.reflections:reflections:${ORG_GRADLE_PROJECT_reflections_version}")
 
     testImplementation group: 'org.assertj', name: 'assertj-core'
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.with {
+        encoding = 'UTF-8'
+    }
 }
