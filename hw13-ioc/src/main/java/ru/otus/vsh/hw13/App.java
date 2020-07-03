@@ -11,12 +11,14 @@ PS Приложение представляет из себя тренажер 
 import ru.otus.vsh.hw13.appcontainer.AppComponentsContainerImpl;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponentsContainer;
 import ru.otus.vsh.hw13.config.AppConfig;
+import ru.otus.vsh.hw13.config.AppConfig2;
 import ru.otus.vsh.hw13.services.GameProcessor;
 
 public class App {
 
     public static void main(String[] args) throws Exception {
-        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class);
+//        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class);
+        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class, AppConfig2.class);
         GameProcessor gameProcessor = container.getAppComponent(GameProcessor.class);
 //        GameProcessor gameProcessor = container.getAppComponent("gameProcessor");
         gameProcessor.startGame();

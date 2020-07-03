@@ -3,7 +3,6 @@ package ru.otus.vsh.hw13.appcontainer;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponent;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponentsContainer;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponentsContainerConfig;
-import ru.otus.vsh.hw13.config.AppConfig;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -14,64 +13,64 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, Object> appComponentsByName = new HashMap<>();
 
-    public AppComponentsContainerImpl(Class<?> initialConfigClass) {
+    public AppComponentsContainerImpl(@Nonnull Class<?> initialConfigClass) {
         processConfig(initialConfigClass);
     }
 
-    private void processConfig(Class<?> configClass) {
-        checkConfigClass(configClass);
-        var structures = Arrays.stream(configClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(AppComponent.class))
-                .map(method -> {
-                    var compAnnotation = method.getAnnotation(AppComponent.class);
-                    return new ComponentStructure(
-                            compAnnotation.order(),
-                            compAnnotation.name(),
-                            method.getReturnType().getName(),
-                            method
-                    );
-                })
+    public AppComponentsContainerImpl(@Nonnull Class<?>... initialConfigClasses) {
+        processConfig(initialConfigClasses);
+    }
+
+    private void processConfig(@Nonnull Class<?>... configClasses) {
+        checkConfigClass(configClasses);
+        var structures = Arrays.stream(configClasses)
+                .map(this::fillUpStructure)
+                .flatMap(Collection::stream)
                 .sorted()
                 .collect(Collectors.toList());
 
-        // create object of AppConfig
-        var appConfigObject = new AppConfig();
-
         structures.forEach(cs -> {
-            if (cs.getOrder() == 0) {
-                try {
-                    var object = cs.getCreator().invoke(appConfigObject, null);
-                    appComponents.add(object);
-                    appComponentsByName.put(cs.getName(), object);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    var params = cs.getCreator().getParameterTypes();
-                    var paramObjects = new ArrayList<>();
-                    for (var param : params) {
-                        var paramObjectName = structures.stream()
-                                .filter(csp -> csp.getComponentClassName().equals(param.getName()))
-                                .findFirst()
-                                .orElseThrow(RuntimeException::new)
-                                .getName();
-                        paramObjects.add(appComponentsByName.get(paramObjectName));
-                    }
-                    var object = cs.getCreator().invoke(appConfigObject, paramObjects.toArray());
-                    appComponents.add(object);
-                    appComponentsByName.put(cs.getName(), object);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            var paramObjectList = cs
+                    .getParamList(structures).stream()
+                    .map(appComponentsByName::get)
+                    .collect(Collectors.toList());
+            var object = cs.createComponent(paramObjectList);
+            appComponents.add(object);
+            appComponentsByName.put(cs.getName(), object);
         });
 
     }
 
-    private void checkConfigClass(Class<?> configClass) {
-        if (!configClass.isAnnotationPresent(AppComponentsContainerConfig.class)) {
-            throw new IllegalArgumentException(String.format("Given class is not config %s", configClass.getName()));
+    private List<ComponentStructure> fillUpStructure(@Nonnull Class<?> configClass) {
+        try {
+            var configClassObject = configClass.getConstructor().newInstance();
+            return Arrays.stream(configClass.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(AppComponent.class))
+                    .map(method -> {
+                        var compAnnotation = method.getAnnotation(AppComponent.class);
+                        return new ComponentStructure(
+                                compAnnotation.order(),
+                                compAnnotation.name(),
+                                method.getReturnType().getName(),
+                                configClassObject,
+                                method
+                        );
+                    })
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("'%s' either does not have a default constructor or cannot create instance by it", configClass.getName()));
+        }
+    }
+
+    private void checkConfigClass(@Nonnull Class<?>... configClasses) {
+        var incorrectConfigs = Arrays.stream(configClasses)
+                .filter(config -> !config.isAnnotationPresent(AppComponentsContainerConfig.class))
+                .map(Class::getName)
+                .collect(Collectors.toUnmodifiableList())
+                .toArray();
+
+        if (incorrectConfigs.length > 0) {
+            throw new IllegalArgumentException(String.format("Given classes are not config %s", Arrays.toString(incorrectConfigs)));
         }
     }
 
