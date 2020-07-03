@@ -1,12 +1,13 @@
 package ru.otus.vsh.hw13.appcontainer;
 
+import ru.otus.vsh.hw13.appcontainer.api.AppComponent;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponentsContainer;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponentsContainerConfig;
+import ru.otus.vsh.hw13.config.AppConfig;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
@@ -19,7 +20,53 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
-        // You code here...
+        var structures = Arrays.stream(configClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(AppComponent.class))
+                .map(method -> {
+                    var compAnnotation = method.getAnnotation(AppComponent.class);
+                    return new ComponentStructure(
+                            compAnnotation.order(),
+                            compAnnotation.name(),
+                            method.getReturnType().getName(),
+                            method
+                    );
+                })
+                .sorted()
+                .collect(Collectors.toList());
+
+        // create object of AppConfig
+        var appConfigObject = new AppConfig();
+
+        structures.forEach(cs -> {
+            if (cs.getOrder() == 0) {
+                try {
+                    var object = cs.getCreator().invoke(appConfigObject, null);
+                    appComponents.add(object);
+                    appComponentsByName.put(cs.getName(), object);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    var params = cs.getCreator().getParameterTypes();
+                    var paramObjects = new ArrayList<>();
+                    for (var param : params) {
+                        var paramObjectName = structures.stream()
+                                .filter(csp -> csp.getComponentClassName().equals(param.getName()))
+                                .findFirst()
+                                .orElseThrow(RuntimeException::new)
+                                .getName();
+                        paramObjects.add(appComponentsByName.get(paramObjectName));
+                    }
+                    var object = cs.getCreator().invoke(appConfigObject, paramObjects.toArray());
+                    appComponents.add(object);
+                    appComponentsByName.put(cs.getName(), object);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     private void checkConfigClass(Class<?> configClass) {
@@ -29,12 +76,24 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     @Override
-    public <C> C getAppComponent(Class<C> componentClass) {
-        return null;
+    public <C> C getAppComponent(@Nonnull Class<C> componentClass) {
+        return componentClass.cast(
+                appComponents.stream()
+                        .filter(c -> {
+                            try {
+                                componentClass.cast(c);
+                                return true;
+                            } catch (ClassCastException cannotBeCast) {
+                                return false;
+                            }
+                        })
+                        .findFirst()
+                        .orElseThrow()
+        );
     }
 
     @Override
     public <C> C getAppComponent(String componentName) {
-        return null;
+        return (C) appComponentsByName.get(componentName);
     }
 }
