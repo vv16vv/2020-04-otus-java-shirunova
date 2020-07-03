@@ -1,10 +1,12 @@
 package ru.otus.vsh.hw13.appcontainer;
 
+import com.google.common.reflect.ClassPath;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponent;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponentsContainer;
 import ru.otus.vsh.hw13.appcontainer.api.AppComponentsContainerConfig;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,7 +20,23 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     public AppComponentsContainerImpl(@Nonnull Class<?>... initialConfigClasses) {
+        if (initialConfigClasses.length == 0) throw new IllegalArgumentException("No config classes are provided");
         processConfig(initialConfigClasses);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    @Nonnull
+    public static AppComponentsContainer from(@Nonnull String packName) {
+        try {
+            var classPath = ClassPath.from(AppComponentsContainerImpl.class.getClassLoader());
+            return new AppComponentsContainerImpl(classPath
+                    .getTopLevelClassesRecursive(packName).stream()
+                    .map(ClassPath.ClassInfo::load)
+                    .filter(cls -> cls.isAnnotationPresent(AppComponentsContainerConfig.class))
+                    .toArray(Class<?>[]::new));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not find classloader for 'AppComponentsContainerImpl'");
+        }
     }
 
     private void processConfig(@Nonnull Class<?>... configClasses) {

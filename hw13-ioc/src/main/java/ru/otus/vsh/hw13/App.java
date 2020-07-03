@@ -18,7 +18,8 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 //        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class);
-        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class, AppConfig2.class);
+//        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class, AppConfig2.class);
+        AppComponentsContainer container = AppComponentsContainerImpl.from("ru.otus.vsh.hw13");
         GameProcessor gameProcessor = container.getAppComponent(GameProcessor.class);
 //        GameProcessor gameProcessor = container.getAppComponent("gameProcessor");
         gameProcessor.startGame();

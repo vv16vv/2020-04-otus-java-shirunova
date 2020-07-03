@@ -2,8 +2,6 @@ group 'ru.otus.vsh'
 version '0.1'
 
 dependencies {
-    implementation("org.reflections:reflections:${ORG_GRADLE_PROJECT_reflections_version}")
-
     testImplementation group: 'org.assertj', name: 'assertj-core'
 }
 
