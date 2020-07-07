@@ -20,7 +20,9 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     public AppComponentsContainerImpl(@Nonnull Class<?>... initialConfigClasses) {
-        if (initialConfigClasses.length == 0) throw new IllegalArgumentException("No config classes are provided");
+        if (initialConfigClasses.length == 0) {
+            throw new IllegalArgumentException("No config classes are provided");
+        }
         processConfig(initialConfigClasses);
     }
 

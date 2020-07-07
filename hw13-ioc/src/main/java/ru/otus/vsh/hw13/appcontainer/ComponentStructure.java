@@ -2,10 +2,7 @@ package ru.otus.vsh.hw13.appcontainer;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ComponentStructure implements Comparable<ComponentStructure> {
@@ -50,7 +47,7 @@ public class ComponentStructure implements Comparable<ComponentStructure> {
     @Nonnull
     public List<String> getParamList(@Nonnull List<ComponentStructure> other) {
         if (order == 0) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         } else {
             var params = creator.getParameterTypes();
             return Arrays.stream(params)
