@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
-    private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, Object> appComponentsByName = new HashMap<>();
+    private final Map<Class<?>, Object> appComponentsByClass = new HashMap<>();
 
     public AppComponentsContainerImpl(@Nonnull Class<?> initialConfigClass) {
         processConfig(initialConfigClass);
@@ -49,15 +49,18 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 .sorted()
                 .collect(Collectors.toList());
 
-        structures.forEach(cs -> {
+        for (var cs : structures) {
             var paramObjectList = cs
                     .getParamList(structures).stream()
                     .map(appComponentsByName::get)
                     .collect(Collectors.toList());
             var object = cs.createComponent(paramObjectList);
-            appComponents.add(object);
+            appComponentsByClass.put(object.getClass(), object);
+            for (var iface : object.getClass().getInterfaces()) {
+                appComponentsByClass.put(iface, object);
+            }
             appComponentsByName.put(cs.getName(), object);
-        });
+        }
 
     }
 
@@ -96,19 +99,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     @Override
     public <C> C getAppComponent(@Nonnull Class<C> componentClass) {
-        return componentClass.cast(
-                appComponents.stream()
-                        .filter(c -> {
-                            try {
-                                componentClass.cast(c);
-                                return true;
-                            } catch (ClassCastException cannotBeCast) {
-                                return false;
-                            }
-                        })
-                        .findFirst()
-                        .orElseThrow()
-        );
+        return componentClass.cast(appComponentsByClass.get(componentClass));
     }
 
     @Override
