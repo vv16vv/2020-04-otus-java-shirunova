@@ -19,6 +19,7 @@ import ru.otus.vsh.hw12.webCore.server.AdministrationWebServer;
 import ru.otus.vsh.hw12.webCore.server.WebServer;
 import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
 import ru.otus.vsh.hw12.webCore.services.TemplateProcessorImpl;
+import ru.otus.vsh.hw12.webCore.services.UserAuthServiceImpl;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,11 @@ public class AdministrationWebServerDemo {
 
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
 
-        WebServer usersWebServer = new AdministrationWebServer(WEB_SERVER_PORT, dbServiceUser, dbServiceRole, templateProcessor);
+        WebServer usersWebServer = new AdministrationWebServer(WEB_SERVER_PORT,
+                dbServiceUser,
+                dbServiceRole,
+                new UserAuthServiceImpl(dbServiceUser),
+                templateProcessor);
 
         usersWebServer.start();
         usersWebServer.join();
