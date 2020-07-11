@@ -12,7 +12,6 @@ import ru.otus.vsh.hw12.dbCore.dbService.DBServiceUser;
 import ru.otus.vsh.hw12.webCore.helpers.FileSystemHelper;
 import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
 import ru.otus.vsh.hw12.webCore.services.UserAuthService;
-import ru.otus.vsh.hw12.webCore.services.UserAuthServiceImpl;
 import ru.otus.vsh.hw12.webCore.servlet.*;
 
 import java.util.Arrays;
@@ -26,11 +25,11 @@ public class AdministrationWebServer implements WebServer {
     private final Server server;
     private final UserAuthService userAuthService;
 
-    public AdministrationWebServer(int port, DBServiceUser dbServiceUser, DBServiceRole dbServiceRole, TemplateProcessor templateProcessor) {
+    public AdministrationWebServer(int port, DBServiceUser dbServiceUser, DBServiceRole dbServiceRole, UserAuthService userAuthService, TemplateProcessor templateProcessor) {
         this.dbServiceUser = dbServiceUser;
         this.dbServiceRole = dbServiceRole;
         this.templateProcessor = templateProcessor;
-        this.userAuthService = new UserAuthServiceImpl(dbServiceUser);
+        this.userAuthService = userAuthService;
         server = new Server(port);
     }
 
