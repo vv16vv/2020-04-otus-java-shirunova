@@ -1,40 +1,39 @@
-package ru.otus.vsh.hw12.webCore.servlet;
+package ru.otus.vsh.hw12.webCore.servlets.api;
 
+import com.google.gson.Gson;
 import ru.otus.vsh.hw12.dbCore.dbService.DBServiceRole;
 import ru.otus.vsh.hw12.dbCore.dbService.DBServiceUser;
 import ru.otus.vsh.hw12.dbCore.model.Address;
 import ru.otus.vsh.hw12.dbCore.model.Phone;
 import ru.otus.vsh.hw12.dbCore.model.User;
-import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
+import ru.otus.vsh.hw12.webCore.server.Routes;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-public class NewUserServlet extends HttpServlet {
-    public static final String TEMPLATE_ROLES = "roles";
-    private static final String USER_PAGE_TEMPLATE = "new-user.html";
+
+public class ApiUserServlet extends HttpServlet {
+
     private final DBServiceUser dbServiceUser;
     private final DBServiceRole dbServiceRole;
-    private final TemplateProcessor templateProcessor;
+    private final Gson gson;
 
-    public NewUserServlet(TemplateProcessor templateProcessor, DBServiceUser dbServiceUser, DBServiceRole dbServiceRole) {
-        this.templateProcessor = templateProcessor;
+    public ApiUserServlet(DBServiceUser dbServiceUser, DBServiceRole dbServiceRole, Gson gson) {
         this.dbServiceUser = dbServiceUser;
         this.dbServiceRole = dbServiceRole;
+        this.gson = gson;
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Map<String, Object> paramsMap = new HashMap<>();
-        paramsMap.put(TEMPLATE_ROLES, dbServiceRole.findAll());
-        response.setContentType("text/html");
-        response.getWriter().println(templateProcessor.getPage(USER_PAGE_TEMPLATE, paramsMap));
+    protected void doGet(HttpServletRequest req, HttpServletResponse response) throws IOException, ServletException {
+        response.setContentType("application/json;charset=UTF-8");
+        ServletOutputStream out = response.getOutputStream();
+        out.print(gson.toJson(dbServiceUser.findAll()));
     }
 
     @Override
@@ -52,6 +51,7 @@ public class NewUserServlet extends HttpServlet {
         var phone2 = req.getParameter("phone2");
         if (!phone2.isEmpty()) user.addPhone(new Phone(0, phone2));
         dbServiceUser.saveObject(user);
-        resp.sendRedirect("/actions/");
+        resp.sendRedirect(Routes.pageActions);
     }
+
 }
