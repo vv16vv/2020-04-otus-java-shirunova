@@ -13,7 +13,12 @@ import ru.otus.vsh.hw12.dbCore.dbService.DBServiceUser;
 import ru.otus.vsh.hw12.webCore.helpers.FileSystemHelper;
 import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
 import ru.otus.vsh.hw12.webCore.services.UserAuthService;
-import ru.otus.vsh.hw12.webCore.servlet.*;
+import ru.otus.vsh.hw12.webCore.servlets.api.ApiLoginServlet;
+import ru.otus.vsh.hw12.webCore.servlets.api.ApiRoleServlet;
+import ru.otus.vsh.hw12.webCore.servlets.api.ApiUserServlet;
+import ru.otus.vsh.hw12.webCore.servlets.page.PageActionsServlet;
+import ru.otus.vsh.hw12.webCore.servlets.page.PageNewUserServlet;
+import ru.otus.vsh.hw12.webCore.servlets.page.PageUsersServlet;
 
 import java.util.Arrays;
 
@@ -60,13 +65,19 @@ public class AdministrationWebServer implements WebServer {
 
         HandlerList handlers = new HandlerList();
         handlers.addHandler(resourceHandler);
-        handlers.addHandler(applySecurity(servletContextHandler, "/users/", "/user/", "/actions/"));
+        handlers.addHandler(applySecurity(servletContextHandler,
+                Routes.apiUser,
+                Routes.apiRole,
+                Routes.pageUsers,
+                Routes.pageNewUser,
+                Routes.pageActions
+        ));
 
         server.setHandler(handlers);
     }
 
     protected Handler applySecurity(ServletContextHandler servletContextHandler, String... paths) {
-        servletContextHandler.addServlet(new ServletHolder(new LoginServlet(templateProcessor, userAuthService)), "/");
+        servletContextHandler.addServlet(new ServletHolder(new ApiLoginServlet(userAuthService)), Routes.apiLogin);
         AuthorizationFilter authorizationFilter = new AuthorizationFilter();
         Arrays.stream(paths).forEachOrdered(path -> servletContextHandler.addFilter(new FilterHolder(authorizationFilter), path, null));
         return servletContextHandler;
@@ -82,9 +93,12 @@ public class AdministrationWebServer implements WebServer {
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, dbServiceUser)), "/users/");
-        servletContextHandler.addServlet(new ServletHolder(new NewUserServlet(templateProcessor, dbServiceUser, dbServiceRole)), "/user/");
-        servletContextHandler.addServlet(new ServletHolder(new ActionsServlet(templateProcessor)), "/actions/");
+        servletContextHandler.addServlet(new ServletHolder(new ApiUserServlet(dbServiceUser, dbServiceRole, gson)), Routes.apiUser);
+        servletContextHandler.addServlet(new ServletHolder(new ApiRoleServlet(dbServiceRole, gson)), Routes.apiRole);
+
+        servletContextHandler.addServlet(new ServletHolder(new PageActionsServlet(templateProcessor)), Routes.pageActions);
+        servletContextHandler.addServlet(new ServletHolder(new PageUsersServlet(templateProcessor, dbServiceUser)), Routes.pageUsers);
+        servletContextHandler.addServlet(new ServletHolder(new PageNewUserServlet(templateProcessor, dbServiceRole)), Routes.pageNewUser);
         return servletContextHandler;
     }
 }
