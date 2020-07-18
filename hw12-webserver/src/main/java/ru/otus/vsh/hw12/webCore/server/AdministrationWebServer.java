@@ -1,5 +1,6 @@
 package ru.otus.vsh.hw12.webCore.server;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -24,12 +25,14 @@ public class AdministrationWebServer implements WebServer {
     private final DBServiceRole dbServiceRole;
     private final Server server;
     private final UserAuthService userAuthService;
+    private final Gson gson;
 
-    public AdministrationWebServer(int port, DBServiceUser dbServiceUser, DBServiceRole dbServiceRole, UserAuthService userAuthService, TemplateProcessor templateProcessor) {
+    public AdministrationWebServer(int port, DBServiceUser dbServiceUser, DBServiceRole dbServiceRole, UserAuthService userAuthService, TemplateProcessor templateProcessor, Gson gson) {
         this.dbServiceUser = dbServiceUser;
         this.dbServiceRole = dbServiceRole;
         this.templateProcessor = templateProcessor;
         this.userAuthService = userAuthService;
+        this.gson = gson;
         server = new Server(port);
     }
 
