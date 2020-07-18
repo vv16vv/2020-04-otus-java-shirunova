@@ -1,3 +1,7 @@
+plugins{
+    id 'war'
+}
+
 group 'ru.otus.vsh'
 version '0.1'
 
@@ -8,6 +12,13 @@ dependencies {
     implementation("org.hibernate:hibernate-core")
 
     implementation("com.google.code.gson:gson:${ORG_GRADLE_PROJECT_gson_version}")
+
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework:spring-webmvc")
+    implementation("org.springframework:spring-web")
+    implementation("org.thymeleaf:thymeleaf")
+    implementation("org.thymeleaf:thymeleaf-spring5")
+    providedCompile("javax.servlet:javax.servlet-api")
 
     implementation("org.eclipse.jetty:jetty-server:${ORG_GRADLE_PROJECT_jetty_version}")
     implementation("org.eclipse.jetty:jetty-webapp:${ORG_GRADLE_PROJECT_jetty_version}")
