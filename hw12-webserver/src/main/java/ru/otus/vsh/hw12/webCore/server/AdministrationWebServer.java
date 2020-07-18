@@ -10,6 +10,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.otus.vsh.hw12.dbCore.dbService.DBServiceRole;
 import ru.otus.vsh.hw12.dbCore.dbService.DBServiceUser;
+import ru.otus.vsh.hw12.webCore.filters.AuthorizationFilter;
 import ru.otus.vsh.hw12.webCore.helpers.FileSystemHelper;
 import ru.otus.vsh.hw12.webCore.services.TemplateProcessor;
 import ru.otus.vsh.hw12.webCore.services.UserAuthService;

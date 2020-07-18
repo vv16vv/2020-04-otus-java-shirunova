@@ -1,4 +1,4 @@
-package ru.otus.vsh.hw12.webCore.servlet;
+package ru.otus.vsh.hw12.webCore.filters;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
