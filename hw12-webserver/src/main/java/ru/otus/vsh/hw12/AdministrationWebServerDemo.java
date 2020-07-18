@@ -1,5 +1,7 @@
 package ru.otus.vsh.hw12;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.hibernate.SessionFactory;
 import ru.otus.vsh.hw12.dbCore.dao.RoleDao;
 import ru.otus.vsh.hw12.dbCore.dao.UserDao;
@@ -11,6 +13,7 @@ import ru.otus.vsh.hw12.dbCore.model.Address;
 import ru.otus.vsh.hw12.dbCore.model.Phone;
 import ru.otus.vsh.hw12.dbCore.model.Role;
 import ru.otus.vsh.hw12.dbCore.model.User;
+import ru.otus.vsh.hw12.gson.PhoneJsonSerializer;
 import ru.otus.vsh.hw12.hibernate.HibernateUtils;
 import ru.otus.vsh.hw12.hibernate.dao.RoleDaoHibernate;
 import ru.otus.vsh.hw12.hibernate.dao.UserDaoHibernate;
@@ -42,12 +45,16 @@ public class AdministrationWebServerDemo {
         initiateData(dbServiceUser, dbServiceRole);
 
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
+        var builder = new GsonBuilder();
+        builder.registerTypeAdapter(Phone.class, new PhoneJsonSerializer());
+        Gson gson = builder.create();
 
         WebServer usersWebServer = new AdministrationWebServer(WEB_SERVER_PORT,
                 dbServiceUser,
                 dbServiceRole,
                 new UserAuthServiceImpl(dbServiceUser),
-                templateProcessor);
+                templateProcessor,
+                gson);
 
         usersWebServer.start();
         usersWebServer.join();
