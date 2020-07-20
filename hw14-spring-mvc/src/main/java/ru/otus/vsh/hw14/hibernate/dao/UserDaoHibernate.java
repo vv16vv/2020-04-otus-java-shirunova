@@ -4,7 +4,8 @@ import com.google.common.collect.Lists;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.vsh.hw14.dbCore.dao.AddressDaoException;
+import org.springframework.stereotype.Component;
+import ru.otus.vsh.hw14.dbCore.dao.DaoException;
 import ru.otus.vsh.hw14.dbCore.dao.UserDao;
 import ru.otus.vsh.hw14.dbCore.model.User;
 import ru.otus.vsh.hw14.hibernate.sessionmanager.DatabaseSessionHibernate;
@@ -14,6 +15,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class UserDaoHibernate extends AbstractDaoHibernate<User> implements UserDao {
     private final static Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
 
@@ -64,7 +66,7 @@ public class UserDaoHibernate extends AbstractDaoHibernate<User> implements User
             return user.getId();
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
-            throw new AddressDaoException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -80,7 +82,7 @@ public class UserDaoHibernate extends AbstractDaoHibernate<User> implements User
             }
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
-            throw new AddressDaoException(e);
+            throw new DaoException(e);
         }
     }
 

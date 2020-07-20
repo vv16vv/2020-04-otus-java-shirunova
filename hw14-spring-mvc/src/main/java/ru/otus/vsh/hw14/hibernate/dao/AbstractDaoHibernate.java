@@ -4,8 +4,8 @@ package ru.otus.vsh.hw14.hibernate.dao;
 import com.google.common.collect.Lists;
 import org.hibernate.Session;
 import org.slf4j.Logger;
-import ru.otus.vsh.hw14.dbCore.dao.AddressDaoException;
 import ru.otus.vsh.hw14.dbCore.dao.Dao;
+import ru.otus.vsh.hw14.dbCore.dao.DaoException;
 import ru.otus.vsh.hw14.dbCore.model.Model;
 import ru.otus.vsh.hw14.dbCore.sessionmanager.SessionManager;
 import ru.otus.vsh.hw14.hibernate.sessionmanager.DatabaseSessionHibernate;
@@ -58,7 +58,7 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
             return t.getId();
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
-            throw new AddressDaoException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -70,7 +70,7 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
             hibernateSession.merge(t);
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
-            throw new AddressDaoException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -87,7 +87,7 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
             }
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
-            throw new AddressDaoException(e);
+            throw new DaoException(e);
         }
     }
 

@@ -3,15 +3,17 @@ package ru.otus.vsh.hw14.hibernate.sessionmanager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Component;
 import ru.otus.vsh.hw14.dbCore.sessionmanager.SessionManager;
 import ru.otus.vsh.hw14.dbCore.sessionmanager.SessionManagerException;
 
 import javax.persistence.EntityManager;
 
+@Component
 public class SessionManagerHibernate implements SessionManager {
 
-    private DatabaseSessionHibernate databaseSession;
     private final SessionFactory sessionFactory;
+    private DatabaseSessionHibernate databaseSession;
 
     public SessionManagerHibernate(SessionFactory sessionFactory) {
         if (sessionFactory == null) {
