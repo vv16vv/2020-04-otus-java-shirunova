@@ -13,13 +13,6 @@ public class DbServiceRoleImpl extends AbstractDbServiceImpl<Role> implements DB
 
     public DbServiceRoleImpl(RoleDao roleDao) {
         super(roleDao);
-//        var roleUser = new Role(0, "user");
-//        var roleAdmin = new Role(0, "admin");
-//        var roleGuest = new Role(0, "guest");
-//
-//        saveObject(roleUser);
-//        saveObject(roleAdmin);
-//        saveObject(roleGuest);
     }
 
     @Override
