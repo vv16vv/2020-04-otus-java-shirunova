@@ -4,12 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.otus.vsh.hw14.dbCore.dbService.DBServiceRole;
-import ru.otus.vsh.hw14.dbCore.model.Address;
-import ru.otus.vsh.hw14.dbCore.model.Phone;
-import ru.otus.vsh.hw14.dbCore.model.User;
+import ru.otus.vsh.hw14.webCore.controllers.dataClasses.UserData;
 import ru.otus.vsh.hw14.webCore.server.Routes;
-
-import java.util.ArrayList;
 
 @Controller
 public class PageNewUserController {
@@ -25,19 +21,10 @@ public class PageNewUserController {
 
     @GetMapping(Routes.PAGE_NEW_USER)
     public String getNewUserPage(Model model) {
-        var address = new Address();
-        var phone1 = new Phone();
-        var phone2 = new Phone();
-        var user = new User();
-        user.setAddress(address);
-        user.setPhones(new ArrayList<>());
-        user.addPhone(phone1);
-        user.addPhone(phone2);
-
         model.addAttribute(TEMPLATE_ROLES, dbServiceRole.findAll());
         model.addAttribute(TEMPLATE_ROUTE, Routes.API_USER);
 
-        model.addAttribute(TEMPLATE_USER, user);
+        model.addAttribute(TEMPLATE_USER, new UserData());
         return USER_PAGE_TEMPLATE;
     }
 

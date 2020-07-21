@@ -7,10 +7,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.otus.vsh.hw14.dbCore.dbService.DBServiceRole;
 import ru.otus.vsh.hw14.dbCore.dbService.DBServiceUser;
+import ru.otus.vsh.hw14.dbCore.model.Address;
+import ru.otus.vsh.hw14.dbCore.model.Phone;
+import ru.otus.vsh.hw14.dbCore.model.Role;
 import ru.otus.vsh.hw14.dbCore.model.User;
+import ru.otus.vsh.hw14.webCore.controllers.dataClasses.UserData;
 import ru.otus.vsh.hw14.webCore.server.Routes;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ApiUserController {
@@ -29,21 +35,35 @@ public class ApiUserController {
     }
 
     @PostMapping(Routes.API_USER)
-    public RedirectView addUser(@ModelAttribute User user) {
-//        var address = new Address(0, req.getParameter("address"));
-//        var role = dbServiceRole.getObject(Long.valueOf(req.getParameter("role"))).orElseThrow();
-//        var user = new User(0,
-//                req.getParameter("login"),
-//                req.getParameter("name"),
-//                req.getParameter("password1"),
-//                address,
-//                role,
-//                new ArrayList<>());
-//        user.addPhone(new Phone(0, req.getParameter("phone1")));
-//        var phone2 = req.getParameter("phone2");
-//        if (!phone2.isEmpty()) user.addPhone(new Phone(0, phone2));
+    public RedirectView addUser(@ModelAttribute UserData userData) {
+        System.out.println("*** userData = " + userData);
+        var address = new Address(0, userData.getAddress());
+        var roles = dbServiceRole.findAll().stream()
+                .filter(role -> role.getName().equals(userData.getRole()))
+                .collect(Collectors.toList());
+        System.out.println("*** existing roles = " + roles);
+        Role role;
+        if (roles.isEmpty()) {
+            role = new Role(0, userData.getRole());
+            dbServiceRole.saveObject(role);
+            System.out.println("*** create new role = " + role);
+        } else {
+            role = roles.get(0);
+            System.out.println("*** use existing role = " + role);
+        }
+        var user = new User(0,
+                userData.getLogin(),
+                userData.getName(),
+                userData.getPassword(),
+                address,
+                role,
+                new ArrayList<>());
+        user.addPhone(new Phone(0, userData.getPhone1()));
+        var phone2 = userData.getPhone2();
+        if (!phone2.isEmpty()) user.addPhone(new Phone(0, phone2));
+        System.out.println("*** going to add user = " + user);
         dbServiceUser.saveObject(user);
-        return new RedirectView(Routes.PAGE_ACTIONS, true);
+        return new RedirectView(Routes.PAGE_USERS, true);
     }
 
 }

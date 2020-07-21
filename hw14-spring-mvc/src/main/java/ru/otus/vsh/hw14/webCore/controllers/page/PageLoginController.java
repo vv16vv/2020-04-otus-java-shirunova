@@ -3,7 +3,7 @@ package ru.otus.vsh.hw14.webCore.controllers.page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import ru.otus.vsh.hw14.dbCore.model.LoginData;
+import ru.otus.vsh.hw14.webCore.controllers.dataClasses.LoginData;
 import ru.otus.vsh.hw14.webCore.server.Routes;
 
 @Controller

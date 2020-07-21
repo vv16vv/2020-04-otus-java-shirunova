@@ -36,39 +36,35 @@
                 <td><input id="name-input" type="text" name="name" th:value="${user.name}" value="" required></td>
             </tr>
             <tr>
+                <th>Пароль</th>
+                <td><input id="password-input" type="password" name="password" th:value="${user.password}" value=""
+                           required></td>
+            </tr>
+            <tr>
                 <th>Адрес</th>
-                <td><input id="address-input" type="text" name="address" th:value="${user.address.street}" value=""
+                <td><input id="address-input" type="text" name="address" th:value="${user.address}" value=""
                            required></td>
             </tr>
             <tr>
                 <th>Роль</th>
                 <td>
-                    <select id="role" name="role" th:field="${user.role}" required>
-                        <option value="no-select" selected>-- Выберите роль --</option>
-                        <option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.name}">
+                    <input type="text" list="combo-options" id="role-input" name="role" th:value="${user.role}">
+                    <datalist id="combo-options">
+                        <option th:each="r : ${roles}" th:value="${r.name}" th:text="${r.name}">
                         </option>
-                    </select>
+                    </datalist>
                 </td>
             </tr>
             <tr>
                 <th>Основной телефон</th>
-                <td><input id="phone1-input" type="tel" name="phone1" th:value="${user.phones.get(0).number}"
+                <td><input id="phone1-input" type="tel" name="phone1" th:value="${user.phone1}"
                            value="+1(999)888-77-66" pattern="\+\d+\(\d{3}\)\d{3}-\d{2}-\d{2}"
                            required></td>
             </tr>
             <tr>
                 <th>Дополнительный телефон</th>
-                <td><input id="phone2-input" type="tel" name="phone2" th:value="${user.phones.get(1).number}"
+                <td><input id="phone2-input" type="tel" name="phone2" th:value="${user.phone2}"
                            value="+9(111)222-33-44"></td>
-            </tr>
-            <tr>
-                <th>Пароль</th>
-                <td><input id="password1-input" type="password" name="password1" th:value="${user.password}" value=""
-                           required></td>
-            </tr>
-            <tr>
-                <th>Повторите пароль</th>
-                <td><input id="password2-input" type="password" name="password2" value="" required></td>
             </tr>
         </table>
         <input type="submit" value="Добавить">

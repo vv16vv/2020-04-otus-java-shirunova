@@ -9,10 +9,10 @@
     <h3>Данные доступны только для администраторов</h3>
     <form id="login-form" th:action="@{${login}}" th:object="${data}" th:method="post" accept-charset="utf-8">
         <label for="login-input">Логин:</label>
-        <input id="login-input" name="login" type="text" th:value="*{name}" value="vitkus"/>
+        <input id="login-input" name="login" type="text" th:value="${data.login}" value="vitkus"/>
         <br/>
         <label for="password-input">Пароль:</label>
-        <input id="password-input" name="password" type="text" th:value="*{password}" value="12345"/>
+        <input id="password-input" name="password" type="password" th:value="${data.password}" value="12345"/>
         <br/><br/>
         <input type="submit" value="Войти">
     </form>
