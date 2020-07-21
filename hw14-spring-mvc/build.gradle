@@ -41,3 +41,27 @@ war {
     archiveName 'administration.war'
     from 'src/main/resources'
 }
+
+task copyWar(type: Copy, dependsOn: war) {
+    from 'build/libs'
+    include 'administration.war'
+    into "${ORG_GRADLE_PROJECT_tomcat_home}/webapps"
+}
+
+task stopTomcat(type: Exec) {
+    workingDir "${ORG_GRADLE_PROJECT_tomcat_home}/bin"
+    commandLine './shutdown.sh'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task startTomcat(type: Exec, dependsOn: copyWar) {
+    workingDir "${ORG_GRADLE_PROJECT_tomcat_home}/bin"
+    commandLine './startup.sh'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
