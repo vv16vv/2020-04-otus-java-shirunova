@@ -58,13 +58,13 @@
             <tr>
                 <th>Основной телефон</th>
                 <td><input id="phone1-input" type="tel" name="phone1" th:value="${user.phone1}"
-                           value="+1(999)888-77-66" pattern="\+\d+\(\d{3}\)\d{3}-\d{2}-\d{2}"
+                           placeholder="+1(999)888-77-66" pattern="\+\d+\(\d{3}\)\d{3}-\d{2}-\d{2}"
                            required></td>
             </tr>
             <tr>
                 <th>Дополнительный телефон</th>
                 <td><input id="phone2-input" type="tel" name="phone2" th:value="${user.phone2}"
-                           value="+9(111)222-33-44"></td>
+                           placeholder="+9(111)222-33-44"></td>
             </tr>
         </table>
         <input type="submit" value="Добавить">

@@ -3,8 +3,8 @@ package ru.otus.vsh.hw14.webCore.controllers.dataClasses;
 import java.util.Objects;
 
 public class LoginData {
-    private String login = "";
-    private String password = "";
+    private String login = "vitkus";
+    private String password = "12345";
 
     public LoginData() {
     }
