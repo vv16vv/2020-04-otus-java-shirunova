@@ -36,20 +36,16 @@ public class ApiUserController {
 
     @PostMapping(Routes.API_USER)
     public RedirectView addUser(@ModelAttribute UserData userData) {
-        System.out.println("*** userData = " + userData);
         var address = new Address(0, userData.getAddress());
         var roles = dbServiceRole.findAll().stream()
                 .filter(role -> role.getName().equals(userData.getRole()))
                 .collect(Collectors.toList());
-        System.out.println("*** existing roles = " + roles);
         Role role;
         if (roles.isEmpty()) {
             role = new Role(0, userData.getRole());
             dbServiceRole.saveObject(role);
-            System.out.println("*** create new role = " + role);
         } else {
             role = roles.get(0);
-            System.out.println("*** use existing role = " + role);
         }
         var user = new User(0,
                 userData.getLogin(),
@@ -61,7 +57,6 @@ public class ApiUserController {
         user.addPhone(new Phone(0, userData.getPhone1()));
         var phone2 = userData.getPhone2();
         if (!phone2.isEmpty()) user.addPhone(new Phone(0, phone2));
-        System.out.println("*** going to add user = " + user);
         dbServiceUser.saveObject(user);
         return new RedirectView(Routes.PAGE_USERS, true);
     }
