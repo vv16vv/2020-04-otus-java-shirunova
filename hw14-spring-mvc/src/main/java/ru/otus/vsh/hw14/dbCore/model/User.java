@@ -61,6 +61,10 @@ public class User implements Model {
         this.phones = phones;
     }
 
+    public User(String login, String name, String password, Address address, Role role, List<Phone> phones) {
+        this(0L, login, name, password, address, role, phones);
+    }
+
     @Override
     public long getId() {
         return id;

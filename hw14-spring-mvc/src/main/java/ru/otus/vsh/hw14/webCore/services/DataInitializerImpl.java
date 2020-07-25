@@ -24,29 +24,29 @@ public class DataInitializerImpl implements DataInitializer {
 
     @Override
     public void createInitialData() {
-        var roleUser = new Role(0, "user");
-        var roleAdmin = new Role(0, "admin");
-        var roleGuest = new Role(0, "guest");
+        var roleUser = new Role("user");
+        var roleAdmin = new Role("admin");
+        var roleGuest = new Role("guest");
 
         dbServiceRole.saveObject(roleUser);
         dbServiceRole.saveObject(roleAdmin);
         dbServiceRole.saveObject(roleGuest);
 
-        var address1 = new Address(0, "Планерная улица");
-        var address2 = new Address(0, "Проспект Авиаконструкторов");
-        var address3 = new Address(0, "Комендантский проспект");
+        var address1 = new Address("Планерная улица");
+        var address2 = new Address("Проспект Авиаконструкторов");
+        var address3 = new Address("Комендантский проспект");
 
-        var phone1 = new Phone(0, "+7(123)456-78-90");
-        var phone2 = new Phone(0, "+7(987)876-23-23");
-        var phone3 = new Phone(0, "+7(111)222-33-44");
-        var phone4 = new Phone(0, "+7(098)124-63-74");
+        var phone1 = new Phone("+7(123)456-78-90");
+        var phone2 = new Phone("+7(987)876-23-23");
+        var phone3 = new Phone("+7(111)222-33-44");
+        var phone4 = new Phone("+7(098)124-63-74");
 
-        var user1 = new User(0, "vitkus", "Виктория", "12345", address1, roleAdmin, new ArrayList<>());
+        var user1 = new User("vitkus", "Виктория", "12345", address1, roleAdmin, new ArrayList<>());
         user1.addPhone(phone1);
         user1.addPhone(phone2);
-        var user2 = new User(0, "sevantius", "Всеволод", "11111", address2, roleGuest, new ArrayList<>());
+        var user2 = new User("sevantius", "Всеволод", "11111", address2, roleGuest, new ArrayList<>());
         user2.addPhone(phone3);
-        var user3 = new User(0, "koshir", "Константин", "24680", address3, roleUser, new ArrayList<>());
+        var user3 = new User("koshir", "Константин", "24680", address3, roleUser, new ArrayList<>());
         user3.addPhone(phone4);
 
         dbServiceUser.saveObject(user1);

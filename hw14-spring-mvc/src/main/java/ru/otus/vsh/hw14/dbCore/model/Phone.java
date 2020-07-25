@@ -26,6 +26,10 @@ public class Phone implements Model {
         this.number = number;
     }
 
+    public Phone(String number) {
+        this(0L, number);
+    }
+
     @Override
     public long getId() {
         return id;

@@ -37,20 +37,20 @@ public class ApiUserController {
     public RedirectView addUser(@ModelAttribute UserData userData) {
         var role = dbServiceRole.findByName(userData.getRole());
         if (role == null) {
-            role = new Role(0, userData.getRole());
+            role = new Role(userData.getRole());
             dbServiceRole.saveObject(role);
         }
-        var address = new Address(0, userData.getAddress());
-        var user = new User(0,
+        var address = new Address(userData.getAddress());
+        var user = new User(
                 userData.getLogin(),
                 userData.getName(),
                 userData.getPassword(),
                 address,
                 role,
                 new ArrayList<>());
-        user.addPhone(new Phone(0, userData.getPhone1()));
+        user.addPhone(new Phone(userData.getPhone1()));
         var phone2 = userData.getPhone2();
-        if (!phone2.isEmpty()) user.addPhone(new Phone(0, phone2));
+        if (!phone2.isEmpty()) user.addPhone(new Phone(phone2));
         dbServiceUser.saveObject(user);
         return new RedirectView(Routes.PAGE_USERS, true);
     }

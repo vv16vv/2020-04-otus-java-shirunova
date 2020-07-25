@@ -29,6 +29,10 @@ public class Role implements Model {
         this.name = name;
     }
 
+    public Role(String name) {
+        this(0L, name);
+    }
+
     @Override
     public long getId() {
         return id;

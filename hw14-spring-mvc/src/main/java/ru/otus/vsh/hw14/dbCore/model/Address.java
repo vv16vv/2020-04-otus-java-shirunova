@@ -22,6 +22,10 @@ public class Address implements Model {
         this.street = street;
     }
 
+    public Address(String street) {
+        this(0L, street);
+    }
+
     @Override
     public long getId() {
         return id;
