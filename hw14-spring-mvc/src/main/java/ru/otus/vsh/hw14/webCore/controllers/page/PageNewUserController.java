@@ -9,9 +9,9 @@ import ru.otus.vsh.hw14.webCore.server.Routes;
 
 @Controller
 public class PageNewUserController {
-    public static final String TEMPLATE_ROLES = "roles";
-    public static final String TEMPLATE_ROUTE = "route";
-    public static final String TEMPLATE_USER = "user";
+    private static final String TEMPLATE_ROLES = "roles";
+    private static final String TEMPLATE_ROUTE = "route";
+    private static final String TEMPLATE_USER = "user";
     private static final String USER_PAGE_TEMPLATE = "new-user.html";
     private final DBServiceRole dbServiceRole;
 

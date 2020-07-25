@@ -7,8 +7,8 @@ import ru.otus.vsh.hw14.webCore.server.Routes;
 
 @Controller
 public class PageActionsController {
-    public static final String TEMPLATE_NEW_USER = "newUser";
-    public static final String TEMPLATE_ALL_USERS = "allUsers";
+    private static final String TEMPLATE_NEW_USER = "newUser";
+    private static final String TEMPLATE_ALL_USERS = "allUsers";
     private static final String ACTIONS_PAGE_TEMPLATE = "actions.html";
 
     public PageActionsController() {

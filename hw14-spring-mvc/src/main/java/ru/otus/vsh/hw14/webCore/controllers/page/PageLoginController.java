@@ -8,8 +8,8 @@ import ru.otus.vsh.hw14.webCore.server.Routes;
 
 @Controller
 public class PageLoginController {
-    public static final String TEMPLATE_LOGIN_FORM = "login";
-    public static final String TEMPLATE_LOGIN_DATA = "data";
+    private static final String TEMPLATE_LOGIN_FORM = "login";
+    private static final String TEMPLATE_LOGIN_DATA = "data";
     private static final String INDEX_PAGE_TEMPLATE = "index.html";
 
     public PageLoginController() {
