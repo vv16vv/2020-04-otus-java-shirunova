@@ -16,7 +16,6 @@ import ru.otus.vsh.hw14.webCore.server.Routes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class ApiUserController {
@@ -36,17 +35,12 @@ public class ApiUserController {
 
     @PostMapping(Routes.API_USER)
     public RedirectView addUser(@ModelAttribute UserData userData) {
-        var address = new Address(0, userData.getAddress());
-        var roles = dbServiceRole.findAll().stream()
-                .filter(role -> role.getName().equals(userData.getRole()))
-                .collect(Collectors.toList());
-        Role role;
-        if (roles.isEmpty()) {
+        var role = dbServiceRole.findByName(userData.getRole());
+        if (role == null) {
             role = new Role(0, userData.getRole());
             dbServiceRole.saveObject(role);
-        } else {
-            role = roles.get(0);
         }
+        var address = new Address(0, userData.getAddress());
         var user = new User(0,
                 userData.getLogin(),
                 userData.getName(),

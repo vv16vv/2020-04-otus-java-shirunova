@@ -19,4 +19,18 @@ public class RoleDaoHibernate extends AbstractDaoHibernate<Role> implements Role
     protected Logger getLogger() {
         return logger;
     }
+
+    @Override
+    public Role findByName(String name) {
+        try {
+            var entityManager = sessionManager.getEntityManager();
+            return entityManager
+                    .createNamedQuery(Role.GET_ROLE_BY_NAME, Role.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (Exception e) {
+            getLogger().error(e.getMessage(), e);
+        }
+        return null;
+    }
 }

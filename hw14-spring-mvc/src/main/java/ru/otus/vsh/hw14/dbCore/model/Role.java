@@ -3,9 +3,15 @@ package ru.otus.vsh.hw14.dbCore.model;
 import javax.persistence.*;
 import java.util.Objects;
 
+@NamedQuery(
+        name = Role.GET_ROLE_BY_NAME,
+        query = "select r from Role r where name = :name"
+)
 @Entity
 @Table(name = "roles")
 public class Role implements Model {
+    public static final String GET_ROLE_BY_NAME = "get_role_by_name";
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
@@ -14,7 +20,7 @@ public class Role implements Model {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    public Role(){
+    public Role() {
 
     }
 
