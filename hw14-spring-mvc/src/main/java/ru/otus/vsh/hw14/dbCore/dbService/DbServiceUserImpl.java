@@ -27,7 +27,7 @@ public class DbServiceUserImpl extends AbstractDbServiceImpl<User> implements DB
             var user = userDao.findByLogin(loginName);
             sm.commitSession();
 
-            getLogger().info("found user with login = {}: {}", loginName, user);
+            logger.info("found user with login = {}: {}", loginName, user);
             return user;
         }, login);
     }
@@ -38,13 +38,9 @@ public class DbServiceUserImpl extends AbstractDbServiceImpl<User> implements DB
             var users = userDao.findByRole(roleName);
             sm.commitSession();
 
-            getLogger().info("found users with role = {}: {}", roleName, users);
+            logger.info("found users with role = {}: {}", roleName, users);
             return users;
         }, role);
     }
 
-    @Override
-    protected Logger getLogger() {
-        return logger;
-    }
 }

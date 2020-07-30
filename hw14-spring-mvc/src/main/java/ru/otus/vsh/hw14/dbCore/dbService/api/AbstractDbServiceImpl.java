@@ -1,6 +1,7 @@
 package ru.otus.vsh.hw14.dbCore.dbService.api;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.otus.vsh.hw14.dbCore.dao.Dao;
 import ru.otus.vsh.hw14.dbCore.model.Model;
 import ru.otus.vsh.hw14.dbCore.sessionmanager.SessionManager;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 abstract public class AbstractDbServiceImpl<T extends Model> implements DBService<T> {
+    private static final Logger logger = LoggerFactory.getLogger(AbstractDbServiceImpl.class);
     private final Dao<T> dao;
 
     public AbstractDbServiceImpl(Dao<T> dao) {
@@ -22,7 +24,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
             try {
                 return actions.apply(sessionManager, p);
             } catch (Exception e) {
-                getLogger().error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 sessionManager.rollbackSession();
                 throw new DbServiceException(e);
             }
@@ -38,7 +40,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         Long id = dao.insert(t);
         sessionManager.commitSession();
 
-        getLogger().info("created object with id = {}", id);
+        logger.info("created object with id = {}", id);
         return id;
     }
 
@@ -51,7 +53,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         dao.update(t);
         sessionManager.commitSession();
 
-        getLogger().info("edited object with id = {}", t.getId());
+        logger.info("edited object with id = {}", t.getId());
         return null;
     }
 
@@ -65,7 +67,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         Long id = t.getId();
         sessionManager.commitSession();
 
-        getLogger().info("created or edited object with id = {}", id);
+        logger.info("created or edited object with id = {}", id);
         return id;
     }
 
@@ -77,7 +79,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
     protected Optional<T> doGetObject(SessionManager sessionManager, Long id) {
         Optional<T> optional = dao.findById(id);
 
-        getLogger().info("object: {}", optional.orElse(null));
+        logger.info("object: {}", optional.orElse(null));
         return optional;
     }
 
@@ -87,10 +89,9 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
             var objects = dao.findAll();
             sm.commitSession();
 
-            getLogger().info("found all objects {}", objects.toString());
+            logger.info("found all objects {}", objects.toString());
             return objects;
         }, "");
     }
 
-    abstract protected Logger getLogger();
 }

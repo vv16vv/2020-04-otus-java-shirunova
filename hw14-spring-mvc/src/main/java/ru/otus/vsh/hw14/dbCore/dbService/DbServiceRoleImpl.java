@@ -18,17 +18,12 @@ public class DbServiceRoleImpl extends AbstractDbServiceImpl<Role> implements DB
     }
 
     @Override
-    protected Logger getLogger() {
-        return logger;
-    }
-
-    @Override
     public Role findByName(String name) {
         return executeInSession((sm, roleName) -> {
             var role = roleDao.findByName(roleName);
             sm.commitSession();
 
-            getLogger().info("found role with name = {}: {}", roleName, role);
+            logger.info("found role with name = {}: {}", roleName, role);
             return role;
         }, name);
     }
