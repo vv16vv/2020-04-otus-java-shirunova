@@ -1,0 +1,21 @@
+group 'ru.otus.vsh'
+version '0.1'
+
+dependencies {
+    implementation("ch.qos.logback:logback-classic")
+
+    implementation("com.h2database:h2")
+    implementation("org.hibernate:hibernate-core")
+
+    implementation("com.google.code.gson:gson:${ORG_GRADLE_PROJECT_gson_version}")
+
+    implementation("org.eclipse.jetty:jetty-server:${ORG_GRADLE_PROJECT_jetty_version}")
+    implementation("org.eclipse.jetty:jetty-webapp:${ORG_GRADLE_PROJECT_jetty_version}")
+    implementation("org.eclipse.jetty:jetty-security:${ORG_GRADLE_PROJECT_jetty_version}")
+    implementation("org.freemarker:freemarker:${ORG_GRADLE_PROJECT_freemarker_version}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+}
