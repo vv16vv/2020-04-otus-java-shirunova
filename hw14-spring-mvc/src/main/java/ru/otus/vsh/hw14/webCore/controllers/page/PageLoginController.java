@@ -23,12 +23,12 @@ public class PageLoginController {
 
     @GetMapping(Routes.PAGE_INDEX)
     public String getLoginPage(Model model) {
-        model.addAttribute(TEMPLATE_LOGIN_FORM, Routes.API_LOGIN);
+        model.addAttribute(TEMPLATE_LOGIN_FORM, Routes.PAGE_INDEX);
         model.addAttribute(TEMPLATE_LOGIN_DATA, new LoginData());
         return INDEX_PAGE_TEMPLATE;
     }
 
-    @PostMapping(Routes.API_LOGIN)
+    @PostMapping(Routes.PAGE_INDEX)
     public RedirectView processLogin(@ModelAttribute LoginData data) {
         if (userAuthService.authenticate(data.getLogin(), data.getPassword())) {
             return new RedirectView(Routes.PAGE_ACTIONS, true);
