@@ -18,12 +18,4 @@ public interface DBService<T extends Model> {
 
     List<T> findAll();
 
-    Long doSaveObject(SessionManager sessionManager, T t);
-
-    Long doNewObject(SessionManager sessionManager, T t);
-
-    T doEditObject(SessionManager sessionManager, T t);
-
-    Optional<T> doGetObject(SessionManager sessionManager, Long id);
-
 }

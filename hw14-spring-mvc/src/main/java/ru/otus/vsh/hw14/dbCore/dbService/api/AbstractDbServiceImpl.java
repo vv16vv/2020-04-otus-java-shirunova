@@ -34,8 +34,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         return executeInSession(this::doNewObject, t);
     }
 
-    @Override
-    public Long doNewObject(SessionManager sessionManager, T t) {
+    protected Long doNewObject(SessionManager sessionManager, T t) {
         Long id = dao.insert(t);
         sessionManager.commitSession();
 
@@ -48,8 +47,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         executeInSession(this::doEditObject, t);
     }
 
-    @Override
-    public T doEditObject(SessionManager sessionManager, T t) {
+    protected T doEditObject(SessionManager sessionManager, T t) {
         dao.update(t);
         sessionManager.commitSession();
 
@@ -62,8 +60,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         return executeInSession(this::doSaveObject, t);
     }
 
-    @Override
-    public Long doSaveObject(SessionManager sessionManager, T t) {
+    protected Long doSaveObject(SessionManager sessionManager, T t) {
         dao.insertOrUpdate(t);
         Long id = t.getId();
         sessionManager.commitSession();
@@ -77,8 +74,7 @@ abstract public class AbstractDbServiceImpl<T extends Model> implements DBServic
         return executeInSession(this::doGetObject, id);
     }
 
-    @Override
-    public Optional<T> doGetObject(SessionManager sessionManager, Long id) {
+    protected Optional<T> doGetObject(SessionManager sessionManager, Long id) {
         Optional<T> optional = dao.findById(id);
 
         getLogger().info("object: {}", optional.orElse(null));
