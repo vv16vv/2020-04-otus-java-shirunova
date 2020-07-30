@@ -7,7 +7,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import javax.servlet.Filter;
 
-public class AdministrationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return null;
@@ -15,7 +15,7 @@ public class AdministrationInitializer extends AbstractAnnotationConfigDispatche
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class<?>[]{AdministrationConfig.class};
+        return new Class<?>[]{AppWebConfig.class};
     }
 
     @Override

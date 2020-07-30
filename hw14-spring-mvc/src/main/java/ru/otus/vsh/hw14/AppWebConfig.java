@@ -22,11 +22,11 @@ import ru.otus.vsh.hw14.hibernate.HibernateUtils;
 @Configuration
 @ComponentScan
 @EnableWebMvc
-public class AdministrationConfig implements WebMvcConfigurer {
+public class AppWebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
 
-    public AdministrationConfig(ApplicationContext applicationContext) {
+    public AppWebConfig(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
