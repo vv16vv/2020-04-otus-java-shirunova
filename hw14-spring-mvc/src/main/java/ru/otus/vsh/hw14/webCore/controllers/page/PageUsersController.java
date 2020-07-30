@@ -19,10 +19,10 @@ public class PageUsersController {
         this.dbServiceUser = dbServiceUser;
     }
 
-    @GetMapping(Routes.PAGE_USERS)
+    @GetMapping(Routes.USERS)
     public String getUsersPage(Model model) {
         model.addAttribute(TEMPLATE_USERS, dbServiceUser.findAll());
-        model.addAttribute(TEMPLATE_ACTIONS, Routes.PAGE_ACTIONS);
+        model.addAttribute(TEMPLATE_ACTIONS, Routes.ACTIONS);
         return USERS_PAGE_TEMPLATE;
     }
 

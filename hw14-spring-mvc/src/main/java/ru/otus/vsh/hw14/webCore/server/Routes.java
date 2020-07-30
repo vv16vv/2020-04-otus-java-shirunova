@@ -2,9 +2,9 @@ package ru.otus.vsh.hw14.webCore.server;
 
 public final class Routes {
 
-    public static final String PAGE_INDEX = "/";
-    public static final String PAGE_ACTIONS = "/actions";
-    public static final String PAGE_USERS = "/users";
-    public static final String PAGE_NEW_USER = "/new-user";
+    public static final String ROOT = "/";
+    public static final String ACTIONS = "/actions";
+    public static final String USERS = "/users";
+    public static final String NEW_USER = "/new-user";
 
 }

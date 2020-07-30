@@ -14,10 +14,10 @@ public class PageActionsController {
     public PageActionsController() {
     }
 
-    @GetMapping(Routes.PAGE_ACTIONS)
+    @GetMapping(Routes.ACTIONS)
     public String getActionsPage(Model model) {
-        model.addAttribute(TEMPLATE_NEW_USER, Routes.PAGE_NEW_USER);
-        model.addAttribute(TEMPLATE_ALL_USERS, Routes.PAGE_USERS);
+        model.addAttribute(TEMPLATE_NEW_USER, Routes.NEW_USER);
+        model.addAttribute(TEMPLATE_ALL_USERS, Routes.USERS);
         return ACTIONS_PAGE_TEMPLATE;
     }
 

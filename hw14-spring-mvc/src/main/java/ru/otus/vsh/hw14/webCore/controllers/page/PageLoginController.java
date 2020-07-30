@@ -21,19 +21,19 @@ public class PageLoginController {
         this.userAuthService = userAuthService;
     }
 
-    @GetMapping(Routes.PAGE_INDEX)
+    @GetMapping(Routes.ROOT)
     public String getLoginPage(Model model) {
-        model.addAttribute(TEMPLATE_LOGIN_FORM, Routes.PAGE_INDEX);
+        model.addAttribute(TEMPLATE_LOGIN_FORM, Routes.ROOT);
         model.addAttribute(TEMPLATE_LOGIN_DATA, new LoginData());
         return INDEX_PAGE_TEMPLATE;
     }
 
-    @PostMapping(Routes.PAGE_INDEX)
+    @PostMapping(Routes.ROOT)
     public RedirectView processLogin(@ModelAttribute LoginData data) {
         if (userAuthService.authenticate(data.getLogin(), data.getPassword())) {
-            return new RedirectView(Routes.PAGE_ACTIONS, true);
+            return new RedirectView(Routes.ACTIONS, true);
         } else {
-            return new RedirectView(Routes.PAGE_INDEX, true);
+            return new RedirectView(Routes.ROOT, true);
         }
     }
 

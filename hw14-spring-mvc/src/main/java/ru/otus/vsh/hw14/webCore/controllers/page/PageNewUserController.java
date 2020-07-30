@@ -31,16 +31,16 @@ public class PageNewUserController {
         this.dbServiceUser = dbServiceUser;
     }
 
-    @GetMapping(Routes.PAGE_NEW_USER)
+    @GetMapping(Routes.NEW_USER)
     public String getNewUserPage(Model model) {
         model.addAttribute(TEMPLATE_ROLES, dbServiceRole.findAll());
-        model.addAttribute(TEMPLATE_ROUTE, Routes.PAGE_NEW_USER);
+        model.addAttribute(TEMPLATE_ROUTE, Routes.NEW_USER);
 
         model.addAttribute(TEMPLATE_USER, new UserData());
         return USER_PAGE_TEMPLATE;
     }
 
-    @PostMapping(Routes.PAGE_NEW_USER)
+    @PostMapping(Routes.NEW_USER)
     public RedirectView addUser(@ModelAttribute UserData userData) {
         var role = dbServiceRole.findByName(userData.getRole());
         if (role == null) {
@@ -59,7 +59,7 @@ public class PageNewUserController {
         var phone2 = userData.getPhone2();
         if (!phone2.isEmpty()) user.addPhone(new Phone(phone2));
         dbServiceUser.saveObject(user);
-        return new RedirectView(Routes.PAGE_USERS, true);
+        return new RedirectView(Routes.USERS, true);
     }
 
 }
