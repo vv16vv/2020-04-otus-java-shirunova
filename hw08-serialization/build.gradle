@@ -1,0 +1,8 @@
+group 'ru.otus.vsh'
+version '0.1'
+
+dependencies {
+    implementation "javax.json:javax.json-api:$ORG_GRADLE_PROJECT_javax_json_version"
+    implementation "com.google.code.gson:gson:$ORG_GRADLE_PROJECT_gson_version"
+    implementation "org.glassfish:javax.json:$ORG_GRADLE_PROJECT_glassfish_version"
+}
