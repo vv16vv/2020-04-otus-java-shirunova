@@ -1,0 +1,14 @@
+group 'ru.otus.vsh'
+version '0.1'
+
+dependencies {
+    testImplementation group: 'org.assertj', name: 'assertj-core'
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.with {
+        encoding = 'UTF-8'
+    }
+}

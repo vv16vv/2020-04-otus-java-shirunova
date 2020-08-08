@@ -38,5 +38,6 @@ hw09-orm/build
 hw10-hibernate/build
 hw11-cache/build
 hw12-webserver/build
+hw13-ioc/build
 hw14-spring-mvc/build
 hw15-executors/build
