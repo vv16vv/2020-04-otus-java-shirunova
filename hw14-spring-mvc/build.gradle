@@ -1,0 +1,67 @@
+plugins {
+    id 'war'
+}
+
+group 'ru.otus.vsh'
+version '0.1'
+
+dependencies {
+    implementation("ch.qos.logback:logback-classic")
+
+    implementation("com.h2database:h2")
+    implementation("org.hibernate:hibernate-core")
+
+    implementation("com.google.code.gson:gson:${ORG_GRADLE_PROJECT_gson_version}")
+
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework:spring-webmvc")
+    implementation("org.springframework:spring-web")
+    implementation("org.thymeleaf:thymeleaf")
+    implementation("org.thymeleaf:thymeleaf-spring5")
+    providedCompile("javax.servlet:javax.servlet-api")
+
+    implementation("org.eclipse.jetty:jetty-server:${ORG_GRADLE_PROJECT_jetty_version}")
+    implementation("org.eclipse.jetty:jetty-webapp:${ORG_GRADLE_PROJECT_jetty_version}")
+    implementation("org.eclipse.jetty:jetty-security:${ORG_GRADLE_PROJECT_jetty_version}")
+    implementation("org.freemarker:freemarker:${ORG_GRADLE_PROJECT_freemarker_version}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+}
+
+tasks.withType(JavaCompile) {
+    options.with {
+        encoding = 'UTF-8'
+    }
+}
+
+war {
+    archiveName 'administration.war'
+    from 'src/main/resources'
+}
+
+task copyWar(type: Copy, dependsOn: war) {
+    from 'build/libs'
+    include 'administration.war'
+    into "${ORG_GRADLE_PROJECT_tomcat_home}/webapps"
+}
+
+task stopTomcat(type: Exec) {
+    workingDir "${ORG_GRADLE_PROJECT_tomcat_home}/bin"
+    commandLine './shutdown.sh'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task startTomcat(type: Exec, dependsOn: copyWar) {
+    workingDir "${ORG_GRADLE_PROJECT_tomcat_home}/bin"
+    commandLine './startup.sh'
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}

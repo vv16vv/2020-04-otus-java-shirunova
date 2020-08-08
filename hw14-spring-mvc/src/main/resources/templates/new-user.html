@@ -1,0 +1,74 @@
+<html xmlns="http://www.w3.org/1999/xhtml" content="text/html;">
+<head>
+    <title>Login</title>
+    <meta charset="utf-8">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+
+        th {
+            width: 15%;
+            text-align: left;
+        }
+
+        input, select {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="top">
+    <form id="new-user-form" th:action="@{${route}}" th:object="${user}" th:method="post" accept-charset="utf-8">
+
+        <table>
+            <tr>
+                <th>Логин</th>
+                <td><input id="login-input" type="text" name="login" th:value="${user.login}" value="" required></td>
+            </tr>
+            <tr>
+                <th>Имя</th>
+                <td><input id="name-input" type="text" name="name" th:value="${user.name}" value="" required></td>
+            </tr>
+            <tr>
+                <th>Пароль</th>
+                <td><input id="password-input" type="password" name="password" th:value="${user.password}" value=""
+                           required></td>
+            </tr>
+            <tr>
+                <th>Адрес</th>
+                <td><input id="address-input" type="text" name="address" th:value="${user.address}" value=""
+                           required></td>
+            </tr>
+            <tr>
+                <th>Роль</th>
+                <td>
+                    <input type="text" list="combo-options" id="role-input" name="role" th:value="${user.role}">
+                    <datalist id="combo-options">
+                        <option th:each="r : ${roles}" th:value="${r.name}" th:text="${r.name}">
+                        </option>
+                    </datalist>
+                </td>
+            </tr>
+            <tr>
+                <th>Основной телефон</th>
+                <td><input id="phone1-input" type="tel" name="phone1" th:value="${user.phone1}"
+                           placeholder="+1(999)888-77-66" pattern="\+\d+\(\d{3}\)\d{3}-\d{2}-\d{2}"
+                           required></td>
+            </tr>
+            <tr>
+                <th>Дополнительный телефон</th>
+                <td><input id="phone2-input" type="tel" name="phone2" th:value="${user.phone2}"
+                           placeholder="+9(111)222-33-44"></td>
+            </tr>
+        </table>
+        <input type="submit" value="Добавить">
+    </form>
+</div>
+</body>
+</html>
