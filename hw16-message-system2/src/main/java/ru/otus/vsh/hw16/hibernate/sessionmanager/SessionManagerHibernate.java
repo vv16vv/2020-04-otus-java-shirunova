@@ -36,7 +36,7 @@ public class SessionManagerHibernate implements SessionManager {
         checkSessionAndTransaction();
         try {
             databaseSession.getTransaction().commit();
-            databaseSession.getHibernateSession().close();
+            databaseSession.getSession().close();
         } catch (Exception e) {
             throw new SessionManagerException(e);
         }
@@ -47,7 +47,7 @@ public class SessionManagerHibernate implements SessionManager {
         checkSessionAndTransaction();
         try {
             databaseSession.getTransaction().rollback();
-            databaseSession.getHibernateSession().close();
+            databaseSession.getSession().close();
         } catch (Exception e) {
             throw new SessionManagerException(e);
         }
@@ -58,7 +58,7 @@ public class SessionManagerHibernate implements SessionManager {
         if (databaseSession == null) {
             return;
         }
-        Session session = databaseSession.getHibernateSession();
+        Session session = databaseSession.getSession();
         if (session == null || !session.isConnected()) {
             return;
         }
@@ -92,7 +92,7 @@ public class SessionManagerHibernate implements SessionManager {
         if (databaseSession == null) {
             throw new SessionManagerException("DatabaseSession not opened ");
         }
-        Session session = databaseSession.getHibernateSession();
+        Session session = databaseSession.getSession();
         if (session == null || !session.isConnected()) {
             throw new SessionManagerException("Session not opened ");
         }

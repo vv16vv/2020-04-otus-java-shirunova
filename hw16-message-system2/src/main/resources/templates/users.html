@@ -27,25 +27,15 @@
         <td style="width: 10%">Id</td>
         <td style="width: 10%">Логин</td>
         <td style="width: 10%">Пароль</td>
-        <td style="width: 10%">Роль</td>
         <td style="width: 10%">Имя</td>
-        <td style="width: 30%">Адрес</td>
-        <td style="width: 20%">Телефоны</td>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="user : ${users}">
-        <td th:text="${user.id}"></td>
-        <td th:text="${user.login}"></td>
-        <td th:text="${user.password}"></td>
-        <td th:text="${user.role.name}"></td>
-        <td th:text="${user.name}"></td>
-        <td th:text="${user.address.street}"></td>
-        <td>
-            <ul>
-                <li th:each="phone : ${user.phones}" th:text="${phone.number}"></li>
-            </ul>
-        </td>
+    <tr th:each="player : ${players}">
+        <td th:text="${player.id}"></td>
+        <td th:text="${player.login}"></td>
+        <td th:text="${player.password}"></td>
+        <td th:text="${player.name}"></td>
     </tr>
     </tbody>
 </table>

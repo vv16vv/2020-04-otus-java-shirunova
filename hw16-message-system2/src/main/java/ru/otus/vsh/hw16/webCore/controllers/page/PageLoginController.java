@@ -31,7 +31,7 @@ public class PageLoginController {
     @PostMapping(Routes.ROOT)
     public RedirectView processLogin(@ModelAttribute LoginData data) {
         if (userAuthService.authenticate(data.getLogin(), data.getPassword())) {
-            return new RedirectView(Routes.ACTIONS, true);
+            return new RedirectView(Routes.GAME, true);
         } else {
             return new RedirectView(Routes.ROOT, true);
         }

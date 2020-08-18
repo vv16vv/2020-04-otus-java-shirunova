@@ -1,6 +1,6 @@
 package ru.otus.vsh.hw16.dbCore.dbService.api;
 
-import ru.otus.vsh.hw16.dbCore.model.Model;
+import ru.otus.vsh.hw16.model.domain.Model;
 
 import java.util.List;
 import java.util.Optional;

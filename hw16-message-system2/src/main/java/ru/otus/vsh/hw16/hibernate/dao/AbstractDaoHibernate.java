@@ -2,18 +2,19 @@ package ru.otus.vsh.hw16.hibernate.dao;
 
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.slf4j.Logger;
 import ru.otus.vsh.hw16.dbCore.dao.Dao;
 import ru.otus.vsh.hw16.dbCore.dao.DaoException;
-import ru.otus.vsh.hw16.dbCore.model.Model;
 import ru.otus.vsh.hw16.dbCore.sessionmanager.SessionManager;
 import ru.otus.vsh.hw16.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.otus.vsh.hw16.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.vsh.hw16.model.domain.Model;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
 
     protected final SessionManagerHibernate sessionManager;
@@ -28,9 +29,9 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
     public Optional<T> findById(long id) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
-            return Optional.ofNullable(currentSession.getHibernateSession().find(modelClass, id));
+            return Optional.ofNullable(currentSession.getSession().find(modelClass, id));
         } catch (Exception e) {
-            getLogger().error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -44,7 +45,7 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
                     .createQuery(query, modelClass)
                     .getResultList();
         } catch (Exception e) {
-            getLogger().error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return Lists.newArrayList();
     }
@@ -53,11 +54,11 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
     public long insert(T t) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
-            Session hibernateSession = currentSession.getHibernateSession();
+            Session hibernateSession = currentSession.getSession();
             hibernateSession.save(t);
             return t.getId();
         } catch (Exception e) {
-            getLogger().error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new DaoException(e);
         }
     }
@@ -66,10 +67,10 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
     public void update(T t) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
-            Session hibernateSession = currentSession.getHibernateSession();
+            Session hibernateSession = currentSession.getSession();
             hibernateSession.merge(t);
         } catch (Exception e) {
-            getLogger().error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new DaoException(e);
         }
     }
@@ -78,7 +79,7 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
     public void insertOrUpdate(T t) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
-            Session hibernateSession = currentSession.getHibernateSession();
+            Session hibernateSession = currentSession.getSession();
             if (t.getId() > 0) {
                 hibernateSession.merge(t);
             } else {
@@ -86,16 +87,14 @@ abstract public class AbstractDaoHibernate<T extends Model> implements Dao<T> {
                 hibernateSession.flush();
             }
         } catch (Exception e) {
-            getLogger().error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new DaoException(e);
         }
     }
-
 
     @Override
     public SessionManager getSessionManager() {
         return sessionManager;
     }
 
-    protected abstract Logger getLogger();
 }
