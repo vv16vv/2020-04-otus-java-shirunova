@@ -3,9 +3,6 @@ package ru.otus.vsh.hw16.webCore.services;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import ru.otus.vsh.hw16.dbCore.dbService.DBServicePlayer;
-import ru.otus.vsh.hw16.dbCore.msClient.DataBaseMSClient;
-import ru.otus.vsh.hw16.dbCore.msClient.GetPlayerDataHandler;
 import ru.otus.vsh.hw16.messagesystem.HandlersStore;
 import ru.otus.vsh.hw16.messagesystem.HandlersStoreImpl;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;
@@ -26,17 +23,6 @@ public class MsClientsInitializerImpl implements MsClientsInitializer {
     @Bean
     public CallbackRegistry callbackRegistry(){
         return new CallbackRegistryImpl();
-    }
-
-    @Override
-    @Bean
-    public DataBaseMSClient dataBaseMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry, DBServicePlayer dbServicePlayer) {
-        HandlersStore store = new HandlersStoreImpl();
-        store.addHandler(MessageType.GET_PLAYER, new GetPlayerDataHandler(dbServicePlayer));
-        val databaseMsClient = new DataBaseMSClient(messageSystem, store, callbackRegistry);
-        messageSystem.addClient(databaseMsClient);
-
-        return databaseMsClient;
     }
 
     @Override

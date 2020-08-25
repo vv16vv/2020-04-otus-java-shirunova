@@ -1,7 +1,6 @@
 package ru.otus.vsh.hw16.webCore.services.auth;
 
 
-import lombok.Getter;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.hw16.messagesystem.HandlersStore;
@@ -12,8 +11,8 @@ import ru.otus.vsh.hw16.messagesystem.client.CallbackRegistry;
 import ru.otus.vsh.hw16.messagesystem.common.CallbackReceiveRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
-import ru.otus.vsh.hw16.model.domain.messageDataTypes.GetPlayerData;
-import ru.otus.vsh.hw16.model.domain.messageDataTypes.GetPlayerReplyData;
+import ru.otus.vsh.hw16.dbCore.messageSystemClient.GetPlayerData;
+import ru.otus.vsh.hw16.dbCore.messageSystemClient.GetPlayerReplyData;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
 import java.util.concurrent.atomic.AtomicReference;

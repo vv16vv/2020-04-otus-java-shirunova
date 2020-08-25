@@ -1,4 +1,4 @@
-package ru.otus.vsh.hw16.dbCore.msClient;
+package ru.otus.vsh.hw16.dbCore.messageSystemClient;
 
 import ru.otus.vsh.hw16.messagesystem.HandlersStore;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;
