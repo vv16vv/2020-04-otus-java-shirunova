@@ -19,13 +19,18 @@ public class NewPlayerDataHandler extends SimpleReceiveRequestHandler<NewPlayerD
 
     @Override
     public Optional<Message<NewPlayerReplyData>> handle(Message<NewPlayerData> msg) {
-        val newPlayer = Player.builder()
-                .login(msg.getBody().getLogin())
-                .name(msg.getBody().getName())
-                .password(msg.getBody().getPassword())
-                .get();
-
-        val newId = dbServicePlayer.newObject(newPlayer);
-        return Optional.of(Message.buildReplyMessage(msg, new NewPlayerReplyData(newId > 0)));
+        val existPlayer = dbServicePlayer.findByLogin(msg.getBody().getLogin());
+        var result = existPlayer.isEmpty();
+        if (existPlayer.isEmpty()) {
+            val newPlayer = Player.builder()
+                    .login(msg.getBody().getLogin())
+                    .name(msg.getBody().getName())
+                    .password(msg.getBody().getPassword())
+                    .id(0)
+                    .get();
+            val newId = dbServicePlayer.newObject(newPlayer);
+            result = newId > 0;
+        }
+        return Optional.of(Message.buildReplyMessage(msg, new NewPlayerReplyData(result)));
     }
 }
