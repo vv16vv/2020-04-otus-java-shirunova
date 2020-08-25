@@ -22,5 +22,8 @@ public class HandlersStoreImpl implements HandlersStore {
         handlers.put(messageType, handler);
     }
 
-
+    @Override
+    public boolean isEmpty() {
+        return handlers.isEmpty();
+    }
 }

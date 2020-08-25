@@ -8,4 +8,6 @@ public interface HandlersStore {
     RequestHandler<? extends MessageData, ? extends MessageData> getHandlerByType(MessageType messageType);
 
     void addHandler(MessageType messageType, RequestHandler<? extends MessageData, ? extends MessageData> handler);
+
+    boolean isEmpty();
 }
