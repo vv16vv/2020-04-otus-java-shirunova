@@ -1,4 +1,4 @@
-package ru.otus.vsh.hw16.webCore.controllers.page;
+package ru.otus.vsh.hw16.webCore.msClients;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

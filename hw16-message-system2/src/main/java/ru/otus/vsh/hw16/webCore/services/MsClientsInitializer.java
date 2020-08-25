@@ -9,9 +9,5 @@ public interface MsClientsInitializer {
 
     MsClient gameProcessorMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry);
 
-    MsClient loginControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry);
-
-    MsClient newPlayerControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry);
-
     MsClient gameControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry);
 }

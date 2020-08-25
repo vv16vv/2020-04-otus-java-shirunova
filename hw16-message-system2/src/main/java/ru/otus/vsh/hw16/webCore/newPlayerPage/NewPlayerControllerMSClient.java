@@ -1,4 +1,4 @@
-package ru.otus.vsh.hw16.webCore.msClients;
+package ru.otus.vsh.hw16.webCore.newPlayerPage;
 
 import ru.otus.vsh.hw16.messagesystem.HandlersStore;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;

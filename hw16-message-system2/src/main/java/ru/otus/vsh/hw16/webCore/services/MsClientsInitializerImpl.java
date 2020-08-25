@@ -8,20 +8,14 @@ import ru.otus.vsh.hw16.messagesystem.HandlersStoreImpl;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;
 import ru.otus.vsh.hw16.messagesystem.client.CallbackRegistry;
 import ru.otus.vsh.hw16.messagesystem.client.CallbackRegistryImpl;
-import ru.otus.vsh.hw16.messagesystem.common.CallbackReceiveRequestHandler;
-import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 import ru.otus.vsh.hw16.model.GameProcessorMSClient;
 import ru.otus.vsh.hw16.webCore.msClients.GameControllerMSClient;
-import ru.otus.vsh.hw16.webCore.msClients.LoginControllerMSClient;
-import ru.otus.vsh.hw16.webCore.msClients.NewPlayerControllerMSClient;
-import ru.otus.vsh.hw16.webCore.services.auth.AuthData;
-import ru.otus.vsh.hw16.webCore.services.auth.AuthReplyData;
 
 @Component
 public class MsClientsInitializerImpl implements MsClientsInitializer {
     @Override
     @Bean
-    public CallbackRegistry callbackRegistry(){
+    public CallbackRegistry callbackRegistry() {
         return new CallbackRegistryImpl();
     }
 
@@ -34,28 +28,6 @@ public class MsClientsInitializerImpl implements MsClientsInitializer {
         messageSystem.addClient(gameProcessorMSClient);
 
         return gameProcessorMSClient;
-    }
-
-    @Override
-    @Bean
-    public LoginControllerMSClient loginControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry) {
-        HandlersStore store = new HandlersStoreImpl();
-        store.addHandler(MessageType.LOGIN, new CallbackReceiveRequestHandler<AuthData, AuthReplyData>(callbackRegistry));
-        val loginControllerMSClient = new LoginControllerMSClient(messageSystem, store, callbackRegistry);
-        messageSystem.addClient(loginControllerMSClient);
-
-        return loginControllerMSClient;
-    }
-
-    @Override
-    @Bean
-    // not ready
-    public NewPlayerControllerMSClient newPlayerControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry) {
-        HandlersStore store = new HandlersStoreImpl();
-        val newPlayerControllerMSClient = new NewPlayerControllerMSClient(messageSystem, store, callbackRegistry);
-        messageSystem.addClient(newPlayerControllerMSClient);
-
-        return newPlayerControllerMSClient;
     }
 
     @Override

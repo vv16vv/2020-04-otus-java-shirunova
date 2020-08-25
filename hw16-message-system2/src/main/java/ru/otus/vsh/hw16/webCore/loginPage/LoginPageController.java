@@ -1,4 +1,4 @@
-package ru.otus.vsh.hw16.webCore.controllers.page;
+package ru.otus.vsh.hw16.webCore.loginPage;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -12,7 +12,6 @@ import ru.otus.vsh.hw16.messagesystem.MessageSystemHelper;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 import ru.otus.vsh.hw16.webCore.services.auth.AuthData;
 import ru.otus.vsh.hw16.webCore.services.auth.AuthReplyData;
-import ru.otus.vsh.hw16.webCore.msClients.LoginControllerMSClient;
 import ru.otus.vsh.hw16.webCore.server.Routes;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
@@ -20,13 +19,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 @AllArgsConstructor
-public class PageLoginController {
+public class LoginPageController {
     private static final String TEMPLATE_LOGIN_FORM = "login";
     private static final String TEMPLATE_LOGIN_SIGNON = "signon";
     private static final String TEMPLATE_LOGIN_DATA = "data";
     private static final String INDEX_PAGE_TEMPLATE = "index.html";
 
-    private final LoginControllerMSClient loginControllerMSClient;
+    private final LoginPageControllerMSClient loginPageControllerMSClient;
 
     @GetMapping(Routes.ROOT)
     public String getLoginPage(Model model) {
@@ -39,12 +38,12 @@ public class PageLoginController {
     @PostMapping(Routes.ROOT)
     public RedirectView processLogin(@ModelAttribute AuthData data) {
         AtomicReference<AuthReplyData> answer = new AtomicReference<>(null);
-        val message = loginControllerMSClient.produceMessage(
+        val message = loginPageControllerMSClient.produceMessage(
                 MsClientNames.AUTH_SERVICE.name(),
                 data, MessageType.LOGIN,
                 replay -> answer.set((AuthReplyData) replay)
         );
-        loginControllerMSClient.sendMessage(message);
+        loginPageControllerMSClient.sendMessage(message);
 
         MessageSystemHelper.waitForAnswer(answer,
                 ref -> ref.get() != null);

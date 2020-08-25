@@ -1,9 +1,11 @@
 package ru.otus.vsh.hw16.dbCore.messageSystemClient;
 
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.otus.vsh.hw16.messagesystem.common.MessageData;
 
-@Value
+@Data
+@NoArgsConstructor
 public class NewPlayerData implements MessageData {
     String login;
     String password;
