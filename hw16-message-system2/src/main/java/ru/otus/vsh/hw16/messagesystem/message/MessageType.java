@@ -5,6 +5,7 @@ public enum MessageType {
     LOGIN,
     GET_PLAYER,
     NEW_PLAYER,
+    PLAYERS,
     NEW_GAME,
     TASK,
     ANSWER,

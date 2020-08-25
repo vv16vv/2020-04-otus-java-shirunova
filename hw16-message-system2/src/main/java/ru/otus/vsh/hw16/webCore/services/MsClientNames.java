@@ -13,6 +13,7 @@ public enum MsClientNames {
     GAME_CONTROLLER("GameControllerMSClient"),
     LOGIN_CONTROLLER("LoginControllerMSClient"),
     NEW_PLAYER_CONTROLLER("NewPlayerControllerMSClient"),
+    PLAYERS_CONTROLLER("PlayersControllerMSClient"),
     ;
 
     @Getter

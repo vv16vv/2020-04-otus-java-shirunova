@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.otus.vsh.hw16.messagesystem.MessageSystemHelper;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
-import ru.otus.vsh.hw16.webCore.services.auth.AuthData;
-import ru.otus.vsh.hw16.webCore.services.auth.AuthReplyData;
 import ru.otus.vsh.hw16.webCore.server.Routes;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
+import ru.otus.vsh.hw16.webCore.services.auth.AuthData;
+import ru.otus.vsh.hw16.webCore.services.auth.AuthReplyData;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LoginPageController {
     private static final String TEMPLATE_LOGIN_FORM = "login";
     private static final String TEMPLATE_LOGIN_SIGNON = "signon";
+    private static final String TEMPLATE_LOGIN_PLAYERS = "players";
     private static final String TEMPLATE_LOGIN_DATA = "data";
     private static final String INDEX_PAGE_TEMPLATE = "index.html";
 
@@ -31,6 +32,7 @@ public class LoginPageController {
     public String getLoginPage(Model model) {
         model.addAttribute(TEMPLATE_LOGIN_FORM, Routes.ROOT);
         model.addAttribute(TEMPLATE_LOGIN_SIGNON, Routes.NEW_PLAYER);
+        model.addAttribute(TEMPLATE_LOGIN_PLAYERS, Routes.PLAYERS);
         model.addAttribute(TEMPLATE_LOGIN_DATA, new AuthData());
         return INDEX_PAGE_TEMPLATE;
     }

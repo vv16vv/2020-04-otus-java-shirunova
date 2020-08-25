@@ -7,6 +7,8 @@
 <div class="top">
     <br/>
     <a th:href="@{${signon}}">Завести нового пользователя</a>
+    <br/>
+    <a th:href="@{${players}}">Все пользователи</a>
     <h3>Войдите, чтобы начать игру:</h3>
     <form id="login-form" th:action="@{${login}}" th:object="${data}" th:method="post" accept-charset="utf-8">
         <label for="login-input">Логин:</label>
