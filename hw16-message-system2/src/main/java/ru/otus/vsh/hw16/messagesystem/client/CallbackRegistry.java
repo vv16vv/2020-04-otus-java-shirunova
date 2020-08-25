@@ -3,7 +3,7 @@ package ru.otus.vsh.hw16.messagesystem.client;
 import ru.otus.vsh.hw16.messagesystem.common.MessageData;
 
 public interface CallbackRegistry {
-    void put(CallbackId id, MessageCallback<? extends MessageData> callback);
+    <T extends MessageData> void put(CallbackId id, MessageCallback<T> callback);
 
-    MessageCallback<? extends MessageData> getAndRemove(CallbackId id);
+    <T extends MessageData> MessageCallback<T> getAndRemove(CallbackId id);
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.otus.vsh.hw16.dbCore.dbService.DBServicePlayer;
 import ru.otus.vsh.hw16.model.domain.Player;
-import ru.otus.vsh.hw16.webCore.controllers.dataClasses.UserData;
+import ru.otus.vsh.hw16.model.domain.messageDataTypes.UserData;
 import ru.otus.vsh.hw16.webCore.server.Routes;
 
 @Controller
@@ -39,7 +39,7 @@ public class PageNewUserController {
                 .get();
 
         dbServicePlayer.saveObject(player);
-        return new RedirectView(Routes.PLAYERS, true);
+        return new RedirectView(Routes.ROOT, true);
     }
 
 }

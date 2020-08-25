@@ -3,9 +3,10 @@ package ru.otus.vsh.hw16.messagesystem.client;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import ru.otus.vsh.hw16.messagesystem.HandlersStore;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;
-import ru.otus.vsh.hw16.messagesystem.RequestHandler;
+import ru.otus.vsh.hw16.messagesystem.common.RequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 import ru.otus.vsh.hw16.messagesystem.common.MessageData;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
@@ -26,7 +27,7 @@ public class MsClientImpl implements MsClient {
     }
 
     @Override
-    public boolean sendMessage(Message msg) {
+    public <T extends MessageData> boolean sendMessage(Message<T> msg) {
         boolean result = messageSystem.newMessage(msg);
         if (!result) {
             log.error("the last message was rejected: {}", msg);
@@ -51,17 +52,11 @@ public class MsClientImpl implements MsClient {
     }
 
     @Override
-    public <T extends MessageData> Message produceMessage(String to,
+    public <T extends MessageData, R extends MessageData> Message<T> produceMessage(String to,
                                                           T data,
                                                           MessageType msgType,
-                                                          MessageCallback<T> callback) {
-        Message message = Message.builder()
-                .from(name)
-                .to(to)
-                .body(data)
-                .type(msgType)
-                .callbackId(new CallbackId())
-                .get();
+                                                          MessageCallback<R> callback) {
+        val message = Message.produceMessage(name, to, msgType, data, new CallbackId());
         callbackRegistry.put(message.getCallbackId(), callback);
         return message;
     }

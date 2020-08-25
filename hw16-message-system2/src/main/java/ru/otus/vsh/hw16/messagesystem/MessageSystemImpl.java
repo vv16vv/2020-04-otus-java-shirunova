@@ -1,7 +1,10 @@
 package ru.otus.vsh.hw16.messagesystem;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.stereotype.Component;
 import ru.otus.vsh.hw16.messagesystem.client.MsClient;
+import ru.otus.vsh.hw16.messagesystem.common.MessageData;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 
 import java.util.Map;
@@ -11,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Slf4j
+@Component
 public final class MessageSystemImpl implements MessageSystem {
     private static final int MESSAGE_QUEUE_SIZE = 100_000;
     private static final int MSG_HANDLER_THREAD_LIMIT = 2;
@@ -18,7 +22,7 @@ public final class MessageSystemImpl implements MessageSystem {
     private final AtomicBoolean runFlag = new AtomicBoolean(true);
 
     private final Map<String, MsClient> clientMap = new ConcurrentHashMap<>();
-    private final BlockingQueue<Message> messageQueue = new ArrayBlockingQueue<>(MESSAGE_QUEUE_SIZE);
+    private final BlockingQueue<Message<? extends MessageData>> messageQueue = new ArrayBlockingQueue<>(MESSAGE_QUEUE_SIZE);
     private final ExecutorService msgProcessor = Executors.newSingleThreadExecutor(runnable -> {
         Thread thread = new Thread(runnable);
         thread.setName("msg-processor-thread");
@@ -79,7 +83,7 @@ public final class MessageSystemImpl implements MessageSystem {
     }
 
     @Override
-    public boolean newMessage(Message msg) {
+    public boolean newMessage(Message<? extends MessageData> msg) {
         if (runFlag.get()) {
             return messageQueue.offer(msg);
         } else {
@@ -107,7 +111,7 @@ public final class MessageSystemImpl implements MessageSystem {
         log.info("msgProcessor started, {}", currentQueueSize());
         while (runFlag.get() || !messageQueue.isEmpty()) {
             try {
-                Message msg = messageQueue.take();
+                Message<? extends MessageData> msg = messageQueue.take();
                 if (msg == Message.getVOID_MESSAGE()) {
                     log.info("received the stop message");
                 } else {
@@ -139,7 +143,7 @@ public final class MessageSystemImpl implements MessageSystem {
     }
 
 
-    private void handleMessage(MsClient msClient, Message msg) {
+    private void handleMessage(MsClient msClient, Message<? extends MessageData> msg) {
         try {
             msClient.handle(msg);
         } catch (Exception ex) {

@@ -2,44 +2,68 @@ package ru.otus.vsh.hw16.messagesystem.message;
 
 import lombok.*;
 import ru.otus.vsh.hw16.messagesystem.client.CallbackId;
+import ru.otus.vsh.hw16.messagesystem.common.EmptyMessageData;
 import ru.otus.vsh.hw16.messagesystem.common.MessageData;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 @Value
-@Builder(buildMethodName = "get", builderClassName = "Builder")
-public class Message implements Serializable {
+@Builder(buildMethodName = "get", builderClassName = "Builder", toBuilder = true)
+public class Message<T extends MessageData> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Getter
-    private static final Message VOID_MESSAGE =
-            new Message.Builder()
+    private static final Message<EmptyMessageData> VOID_MESSAGE =
+            new Builder<EmptyMessageData>()
                     .from("")
                     .to("")
                     .type(MessageType.VOID)
+                    .body(new EmptyMessageData())
                     .get();
 
-    @With
     String from;
-    @With
     String to;
 
     MessageType type;
 
     @lombok.Builder.Default
     MessageId id = new MessageId();
-    @With
     MessageId sourceMessageId;
 
-    @With
-    MessageData body;
+    T body;
 
+    @With
     CallbackId callbackId;
 
-    public static <T extends MessageData> Message buildReplyMessage(Message message, T data) {
-        return message
-                .withFrom(message.to)
-                .withTo(message.from)
-                .withSourceMessageId(message.id)
-                .withBody(data);
+    @NonNull
+    public static <T extends MessageData, R extends MessageData> Message<R> buildReplyMessage(@Nonnull Message<T> message, @Nonnull R data) {
+        return buildReplyMessage(message, message.type, data);
+    }
+
+    @NonNull
+    public static <T extends MessageData, R extends MessageData> Message<R> buildReplyMessage(@Nonnull Message<T> message, @Nonnull MessageType newType, @Nonnull R data) {
+        return new Builder<R>()
+                .from(message.to)
+                .to(message.from)
+                .type(newType)
+                .sourceMessageId(message.id)
+                .body(data)
+                .callbackId(message.callbackId)
+                .get();
+    }
+
+    @NonNull
+    public static <T extends MessageData, R extends MessageData> Message<T> produceMessage(@Nonnull String from,
+                                                                                           @Nonnull String to,
+                                                                                           @Nonnull MessageType type,
+                                                                                           @Nonnull T data,
+                                                                                           @Nonnull CallbackId callbackId) {
+        return new Builder<T>()
+                .from(from)
+                .to(to)
+                .type(type)
+                .body(data)
+                .callbackId(callbackId)
+                .get();
     }
 }

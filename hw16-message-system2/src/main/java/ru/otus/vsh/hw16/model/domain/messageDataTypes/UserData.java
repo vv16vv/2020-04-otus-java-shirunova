@@ -1,4 +1,4 @@
-package ru.otus.vsh.hw16.webCore.controllers.dataClasses;
+package ru.otus.vsh.hw16.model.domain.messageDataTypes;
 
 import lombok.*;
 

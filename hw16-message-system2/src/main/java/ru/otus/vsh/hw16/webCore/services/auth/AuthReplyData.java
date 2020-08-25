@@ -1,9 +1,9 @@
-package ru.otus.vsh.hw16.model.domain.messageDataTypes;
+package ru.otus.vsh.hw16.webCore.services.auth;
 
 import lombok.Value;
 import ru.otus.vsh.hw16.messagesystem.common.MessageData;
 
 @Value
-public class LoginReplyData implements MessageData {
+public class AuthReplyData implements MessageData {
     boolean isAccessAllowed;
 }
