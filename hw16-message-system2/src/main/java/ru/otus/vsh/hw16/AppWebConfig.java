@@ -11,6 +11,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import ru.otus.vsh.hw16.model.domain.Player;
 import ru.otus.vsh.hw16.hibernate.HibernateUtils;
+import ru.otus.vsh.hw16.model.domain.Session;
 
 @Configuration
 @ComponentScan
@@ -36,7 +37,7 @@ public class AppWebConfig implements WebSocketMessageBrokerConfigurer {
 
     @Bean
     public SessionFactory sessionFactory() {
-        return HibernateUtils.buildSessionFactory("hibernate.cfg.xml", Player.class);
+        return HibernateUtils.buildSessionFactory("hibernate.cfg.xml", Player.class, Session.class);
     }
 
 }

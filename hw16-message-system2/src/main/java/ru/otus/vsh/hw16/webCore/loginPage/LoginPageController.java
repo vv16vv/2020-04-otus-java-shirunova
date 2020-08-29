@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.view.RedirectView;
+import ru.otus.vsh.hw16.dbCore.messageSystemClient.GetPlayerByLoginReplyData;
+import ru.otus.vsh.hw16.dbCore.messageSystemClient.NewSessionData;
 import ru.otus.vsh.hw16.messagesystem.MessageSystemHelper;
+import ru.otus.vsh.hw16.messagesystem.common.Id;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 import ru.otus.vsh.hw16.webCore.server.Routes;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
@@ -40,18 +43,26 @@ public class LoginPageController {
     @PostMapping(Routes.ROOT)
     public RedirectView processLogin(@ModelAttribute AuthData data) {
         AtomicReference<AuthReplyData> answer = new AtomicReference<>(null);
-        val message = loginPageControllerMSClient.produceMessage(
+        val authMessage = loginPageControllerMSClient.produceMessage(
                 MsClientNames.AUTH_SERVICE.name(),
                 data, MessageType.LOGIN,
                 replay -> answer.set((AuthReplyData) replay)
         );
-        loginPageControllerMSClient.sendMessage(message);
+        loginPageControllerMSClient.sendMessage(authMessage);
 
         MessageSystemHelper.waitForAnswer(answer,
                 ref -> ref.get() != null);
 
+        val sessionId = new Id().getInnerId();
+        val sessionMessage = loginPageControllerMSClient.produceMessage(
+                MsClientNames.DATA_BASE.name(),
+                new NewSessionData(data.getLogin(),sessionId), MessageType.NEW_SESSION,
+                replay -> { }
+        );
+        loginPageControllerMSClient.sendMessage(sessionMessage);
+
         if (answer.get().isAccessAllowed()) {
-            return new RedirectView(Routes.GAME, true);
+            return new RedirectView(Routes.GAME + "/" + sessionId, true);
         } else {
             return new RedirectView(Routes.ROOT, true);
         }

@@ -10,16 +10,16 @@ import java.util.Optional;
 
 /**
  * Исполняется клиентом [DataBaseMSClient]
- * при обработке сообщения GET_PLAYER
+ * при обработке сообщения GET_PLAYER_BY_LOGIN
  */
 @AllArgsConstructor
-public class GetPlayerDataHandler extends SimpleReceiveRequestHandler<GetPlayerData, GetPlayerReplyData> {
+public class GetPlayerByLoginDataHandler extends SimpleReceiveRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData> {
     private final DBServicePlayer dbServicePlayer;
 
     @Override
-    public Optional<Message<GetPlayerReplyData>> handle(Message<GetPlayerData> msg) {
+    public Optional<Message<GetPlayerByLoginReplyData>> handle(Message<GetPlayerByLoginData> msg) {
         val login = msg.getBody().getLogin();
         val player = dbServicePlayer.findByLogin(login);
-        return Optional.of(Message.buildReplyMessage(msg, new GetPlayerReplyData(player)));
+        return Optional.of(Message.buildReplyMessage(msg, new GetPlayerByLoginReplyData(player)));
     }
 }

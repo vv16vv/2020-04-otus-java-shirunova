@@ -3,6 +3,7 @@ package ru.otus.vsh.hw16.webCore.services.auth;
 
 import lombok.val;
 import org.springframework.stereotype.Component;
+import ru.otus.vsh.hw16.dbCore.messageSystemClient.GetPlayerByLoginReplyData;
 import ru.otus.vsh.hw16.messagesystem.HandlersStore;
 import ru.otus.vsh.hw16.messagesystem.HandlersStoreImpl;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;
@@ -11,8 +12,7 @@ import ru.otus.vsh.hw16.messagesystem.client.CallbackRegistry;
 import ru.otus.vsh.hw16.messagesystem.common.CallbackReceiveRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
-import ru.otus.vsh.hw16.dbCore.messageSystemClient.GetPlayerData;
-import ru.otus.vsh.hw16.dbCore.messageSystemClient.GetPlayerReplyData;
+import ru.otus.vsh.hw16.dbCore.messageSystemClient.GetPlayerByLoginData;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
                                                    CallbackRegistry callbackRegistry) {
         HandlersStore store = new HandlersStoreImpl();
         store.addHandler(MessageType.LOGIN, new AuthDataHandler(this));
-        store.addHandler(MessageType.GET_PLAYER, new CallbackReceiveRequestHandler<GetPlayerData, GetPlayerReplyData>(callbackRegistry));
+        store.addHandler(MessageType.GET_PLAYER_BY_LOGIN, new CallbackReceiveRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData>(callbackRegistry));
         val authServiceMSClient = new AuthServiceMSClient(messageSystem, store, callbackRegistry);
         messageSystem.addClient(authServiceMSClient);
 
@@ -39,12 +39,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean authenticate(String login, String password) {
-        AtomicReference<GetPlayerReplyData> answerFromDb = new AtomicReference<>(null);
-        val data = new GetPlayerData(login);
-        Message<GetPlayerData> message = authServiceMSClient.produceMessage(
+        AtomicReference<GetPlayerByLoginReplyData> answerFromDb = new AtomicReference<>(null);
+        val data = new GetPlayerByLoginData(login);
+        Message<GetPlayerByLoginData> message = authServiceMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
-                data, MessageType.GET_PLAYER,
-                replay -> answerFromDb.set((GetPlayerReplyData) replay)
+                data, MessageType.GET_PLAYER_BY_LOGIN,
+                replay -> answerFromDb.set((GetPlayerByLoginReplyData) replay)
         );
         authServiceMSClient.sendMessage(message);
 

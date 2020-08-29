@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Value
-public class GetPlayerReplyData implements MessageData {
+public class GetPlayerByLoginReplyData implements MessageData {
     Optional<Player> player;
 }
