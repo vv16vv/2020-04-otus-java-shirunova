@@ -6,23 +6,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import ru.otus.vsh.hw16.model.domain.Player;
 import ru.otus.vsh.hw16.hibernate.HibernateUtils;
+import ru.otus.vsh.hw16.model.domain.Player;
 import ru.otus.vsh.hw16.model.domain.Session;
 
 @Configuration
 @ComponentScan
-@EnableWebMvc
 public class AppWebConfig implements WebSocketMessageBrokerConfigurer {
-
-    private final ApplicationContext applicationContext;
-
-    public AppWebConfig(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {

@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Administration</title>
+    <meta charset="utf-8">
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/app.css" rel="stylesheet"/>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+
+<body>
+<h4>Добро пожаловать [[${game.player.name}]]!</h4>
+<div>
+    <div th:if="${game.number == 0}">
+        <form id="new-game-form" th:action="@{${startGame}}" th:object="${game}" th:method="post"
+              accept-charset="utf-8">
+            <table class="layoutTable">
+                <tr>
+                    <th>Введите число от 1 до 10</th>
+                    <td><input id="number-input" type="number" name="number" th:value="${game.number}" value="" min="1" max="10"
+                               required></td>
+                    <td><input id="number-button" type="submit" value="Начать"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div th:unless="${game.number == 0}">
+        <form id="game-form" th:action="@{${contGame}}" th:object="${game}" th:method="post"
+              accept-charset="utf-8">
+            <label for="number-input">Проверяем таблицу умножения и деления на ${game.number}:</label>
+            <ul>
+                <li th:each="equat : ${game.equations}">
+                    <label>${equat.number1}</label>
+                    <label>${equat.operation.toString() == "MULTIPLICATION"} ? '*' : '/'</label>
+                    <label>${equat.number2}</label>
+                    <label>=</label>
+                    <div th:if="${equat.result == 0}">
+                        <input  id="result-input" type="number" name="result" th:value="${equat.result}" value="" min="1" max="10" required/>
+                        <input id="result-button" type="submit" value="Ответить">
+                    </div>
+                    <label th:unless="${equat.result == 0}">${equat.result}</label>
+                </li>
+            </ul>
+        </form>
+
+    </div>
+
+</div>
+<a th:href="@{${login}}">Назад</a>
+</body>
+</html>
