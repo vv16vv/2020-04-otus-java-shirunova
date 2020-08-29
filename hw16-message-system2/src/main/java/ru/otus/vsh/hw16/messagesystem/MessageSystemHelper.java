@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 @UtilityClass
 public class MessageSystemHelper {
     public <T> void waitForAnswer(@Nullable T t, @Nonnull Predicate<T> predicate) {
-        waitForAnswer(Duration.ofSeconds(5), t, predicate);
+        waitForAnswer(Duration.ofSeconds(30), t, predicate);
     }
 
     public <T> void waitForAnswer(@Nonnull Duration duration, @Nullable T t, @Nonnull Predicate<T> predicate) {
