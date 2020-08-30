@@ -23,9 +23,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @AllArgsConstructor
 public class GamePageController {
 
-    private static final String TEMPLATE_GAME = "game";
-    private static final String TEMPLATE_START = "startGame";
-    private static final String TEMPLATE_CONT = "contGame";
+    private static final String TEMPLATE_PLAYER_NAME = "player-name";
+    private static final String TEMPLATE_SESSION_ID = "sessionId";
     private static final String GAME_PAGE_TEMPLATE = "game.html";
 
     private final GameControllerMSClient gameControllerMSClient;
@@ -44,12 +43,10 @@ public class GamePageController {
         MessageSystemHelper.waitForAnswer(answer,
                 ref -> ref.get() != null);
 
-        //
-        val game = new GameData(answer.get().getPlayer().get());
+        val player = answer.get().getPlayer().orElseThrow();
 
-        model.addAttribute(TEMPLATE_GAME, game);
-        model.addAttribute(TEMPLATE_START, Routes.API_START);
-        model.addAttribute(TEMPLATE_CONT, Routes.API_CONT);
+        model.addAttribute(TEMPLATE_PLAYER_NAME, player.getName());
+        model.addAttribute(TEMPLATE_SESSION_ID, sessionId);
         return GAME_PAGE_TEMPLATE;
     }
 

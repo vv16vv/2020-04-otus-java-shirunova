@@ -11,43 +11,27 @@
 </head>
 
 <body>
-<h4>Добро пожаловать [[${game.player.name}]]!</h4>
+<h4>Добро пожаловать [[${player-name}]]!</h4>
 <div>
-    <div th:if="${game.number == 0}">
-        <form id="new-game-form" th:action="@{${startGame}}" th:object="${game}" th:method="post"
-              accept-charset="utf-8">
+    <div id="game-start">
+        <form id="new-game-form" accept-charset="utf-8">
             <table class="layoutTable">
                 <tr>
-                    <th>Введите число от 1 до 10</th>
-                    <td><input id="number-input" type="number" name="number" th:value="${game.number}" value="" min="1" max="10"
-                               required></td>
-                    <td><input id="number-button" type="submit" value="Начать"></td>
+                    <th style="width: 50%">Введите число от 1 до 10</th>
+                    <td style="width: 30%"><input id="number-input" type="number" name="number" value="" min="1" max="10" required></td>
+                    <td><input id="number-button" type="submit" value="Начать" onclick="start('${sessionId}')"></td>
                 </tr>
             </table>
         </form>
     </div>
-    <div th:unless="${game.number == 0}">
-        <form id="game-form" th:action="@{${contGame}}" th:object="${game}" th:method="post"
-              accept-charset="utf-8">
-            <label for="number-input">Проверяем таблицу умножения и деления на ${game.number}:</label>
-            <ul>
-                <li th:each="equat : ${game.equations}">
-                    <label>${equat.number1}</label>
-                    <label>${equat.operation.toString() == "MULTIPLICATION"} ? '*' : '/'</label>
-                    <label>${equat.number2}</label>
-                    <label>=</label>
-                    <div th:if="${equat.result == 0}">
-                        <input  id="result-input" type="number" name="result" th:value="${equat.result}" value="" min="1" max="10" required/>
-                        <input id="result-button" type="submit" value="Ответить">
-                    </div>
-                    <label th:unless="${equat.result == 0}">${equat.result}</label>
-                </li>
-            </ul>
-        </form>
-
+    <div id="game-result">
+        <label id="label-result"></label>
     </div>
-
+    <div id="game-process">
+        <table class="layoutTable">
+            <tbody id="game-equation"></tbody>
+        </table>
+    </div>
 </div>
-<a th:href="@{${login}}">Назад</a>
 </body>
 </html>
