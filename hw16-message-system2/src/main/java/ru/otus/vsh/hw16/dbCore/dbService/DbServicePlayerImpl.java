@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.otus.vsh.hw16.dbCore.dao.PlayerDao;
 import ru.otus.vsh.hw16.dbCore.dbService.api.AbstractDbServiceImpl;
-import ru.otus.vsh.hw16.model.domain.Player;
+import ru.otus.vsh.hw16.domain.model.Player;
 
 import java.util.Optional;
 

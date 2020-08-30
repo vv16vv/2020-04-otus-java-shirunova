@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.otus.vsh.hw16.dbCore.dao.SessionDao;
 import ru.otus.vsh.hw16.dbCore.dbService.api.AbstractDbServiceImpl;
-import ru.otus.vsh.hw16.model.domain.Session;
+import ru.otus.vsh.hw16.domain.model.Session;
 
 import java.util.Optional;
 

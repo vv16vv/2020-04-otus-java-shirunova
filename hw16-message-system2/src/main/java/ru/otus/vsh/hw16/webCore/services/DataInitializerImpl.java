@@ -2,7 +2,7 @@ package ru.otus.vsh.hw16.webCore.services;
 
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.hw16.dbCore.dbService.DBServicePlayer;
-import ru.otus.vsh.hw16.model.domain.Player;
+import ru.otus.vsh.hw16.domain.model.Player;
 
 @Component
 public class DataInitializerImpl implements DataInitializer {

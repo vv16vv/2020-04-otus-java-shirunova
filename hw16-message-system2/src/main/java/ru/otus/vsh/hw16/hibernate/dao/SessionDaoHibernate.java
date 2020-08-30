@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.hw16.dbCore.dao.SessionDao;
 import ru.otus.vsh.hw16.hibernate.sessionmanager.SessionManagerHibernate;
-import ru.otus.vsh.hw16.model.domain.Session;
+import ru.otus.vsh.hw16.domain.model.Session;
 
 import javax.annotation.Nonnull;
 import java.util.List;

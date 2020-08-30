@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.hw16.dbCore.dbService.DBServicePlayer;
 import ru.otus.vsh.hw16.dbCore.dbService.DBServiceSession;
+import ru.otus.vsh.hw16.dbCore.messageSystemClient.handlers.*;
 import ru.otus.vsh.hw16.messagesystem.HandlersStore;
 import ru.otus.vsh.hw16.messagesystem.HandlersStoreImpl;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;

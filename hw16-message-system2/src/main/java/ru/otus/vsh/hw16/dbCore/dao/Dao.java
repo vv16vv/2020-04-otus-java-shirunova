@@ -1,6 +1,6 @@
 package ru.otus.vsh.hw16.dbCore.dao;
 
-import ru.otus.vsh.hw16.model.domain.Model;
+import ru.otus.vsh.hw16.domain.model.Model;
 import ru.otus.vsh.hw16.dbCore.sessionmanager.SessionManager;
 
 import java.util.List;

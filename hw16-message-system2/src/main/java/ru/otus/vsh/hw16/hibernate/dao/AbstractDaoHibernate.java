@@ -9,7 +9,7 @@ import ru.otus.vsh.hw16.dbCore.dao.DaoException;
 import ru.otus.vsh.hw16.dbCore.sessionmanager.SessionManager;
 import ru.otus.vsh.hw16.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.otus.vsh.hw16.hibernate.sessionmanager.SessionManagerHibernate;
-import ru.otus.vsh.hw16.model.domain.Model;
+import ru.otus.vsh.hw16.domain.model.Model;
 
 import java.util.List;
 import java.util.Optional;

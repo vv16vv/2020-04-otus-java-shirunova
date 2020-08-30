@@ -3,7 +3,7 @@ package ru.otus.vsh.hw16.dbCore.dbService.api;
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.vsh.hw16.dbCore.dao.Dao;
 import ru.otus.vsh.hw16.dbCore.sessionmanager.SessionManager;
-import ru.otus.vsh.hw16.model.domain.Model;
+import ru.otus.vsh.hw16.domain.model.Model;
 
 import java.util.List;
 import java.util.Optional;
