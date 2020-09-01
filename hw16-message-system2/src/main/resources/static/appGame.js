@@ -7,6 +7,7 @@ const trPlaceholder = 'tr-';
 const websocketUrl = '/api/game-ws';
 const topicEquation = '/topic/equation';
 const topicResult = '/topic/result';
+const topicCorrect = '/topic/correct';
 
 const topicAnswer = '/api/answer';
 const topicGameStart = '/api/game-start';
@@ -33,6 +34,7 @@ const start = (sessionId) => {
         console.log("start: gameId = ", gameId)
         stompClient.subscribe(`${topicEquation}.${gameId}`, (equation) => showEquation(JSON.parse(equation.body)));
         stompClient.subscribe(`${topicResult}.${gameId}`, (result) => showResult(JSON.parse(result.body)));
+        stompClient.subscribe(`${topicCorrect}.${gameId}`, (result) => showCorrect(JSON.parse(result.body)));
 
         stompClient.send(`${topicGameStart}.${sessionId}`, {}, JSON.stringify({
             'gameId': gameId,
@@ -54,10 +56,25 @@ const showResult = (result) => {
     }
 }
 
+// Expected values in result:
+// gameId: String
+// eqIndex: Integer
+// isCorrect: Boolean
+const showCorrect = (result) => {
+    console.log("show correct = ", result)
+    if (result.eqIndex >= 0) {
+        const eqTr = $(`#${trPlaceholder}${result.eqIndex}`)
+        if(!result.correct){
+            eqTr.addClass("mistake")
+        }
+    }
+}
+
 const gameOver = (result) => {
     console.log("game over = ", result)
     stompClient.unsubscribe(`${topicEquation}.${result.gameId}`);
     stompClient.unsubscribe(`${topicResult}.${result.gameId}`);
+    stompClient.unsubscribe(`${topicCorrect}.${result.gameId}`);
     const gameOverDiv = $("#game-over")
     const mark = Math.round(result.numberOfSuccess / result.numberOfAll * 100);
     const letsBegin = "Начать с начала?";

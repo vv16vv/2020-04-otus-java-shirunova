@@ -15,5 +15,6 @@ public final class Routes {
     public static final String API_TOPIC = "/topic";
     public static final String API_TOPIC_EQUATION = API_TOPIC + "/equation";
     public static final String API_TOPIC_RESULT = API_TOPIC + "/result";
+    public static final String API_TOPIC_CORRECT = API_TOPIC + "/correct";
 
 }

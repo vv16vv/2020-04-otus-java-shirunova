@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerBySessionData;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerBySessionReplyData;
-import ru.otus.vsh.hw16.domain.messageSystemClient.data.NewGameData;
 import ru.otus.vsh.hw16.domain.messageSystemClient.data.GameData;
+import ru.otus.vsh.hw16.domain.messageSystemClient.data.NewGameData;
 import ru.otus.vsh.hw16.messagesystem.MessageSystemHelper;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
+import ru.otus.vsh.hw16.webCore.gamePage.data.CorrectToClient;
 import ru.otus.vsh.hw16.webCore.gamePage.data.EquationToClient;
 import ru.otus.vsh.hw16.webCore.gamePage.data.ResultFromClient;
 import ru.otus.vsh.hw16.webCore.gamePage.data.ResultToClient;
@@ -93,8 +94,15 @@ public class GamePageController {
     }
 
 
-    private void sendGameDataToClient(@Nonnull GameData data){
-        if(!data.isGameOver()) {
+    private void sendGameDataToClient(@Nonnull GameData data) {
+        if (data.index() > 0) {
+            template.convertAndSend(Routes.API_TOPIC_CORRECT + "." + data.gameId().getId(), new CorrectToClient(
+                    data.gameId().getId(),
+                    data.index() - 1,
+                    data.equations().get(data.index() - 1).isCorrect()
+            ));
+        }
+        if (!data.isGameOver()) {
             template.convertAndSend(Routes.API_TOPIC_EQUATION + "." + data.gameId().getId(), new EquationToClient(
                     data.gameId().getId(),
                     data.index(),

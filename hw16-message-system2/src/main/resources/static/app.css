@@ -3,7 +3,7 @@ table .layoutTable {
     width: 100%;
 }
 
-.borderedTable{
+.borderedTable {
     border: 1px solid darkblue;
 }
 
@@ -16,8 +16,12 @@ input, select {
     width: 100%;
 }
 
-body{
+body {
     background-color: beige;
     padding: 20px;
     margin: 10px;
+}
+
+.mistake {
+    color: firebrick;
 }
