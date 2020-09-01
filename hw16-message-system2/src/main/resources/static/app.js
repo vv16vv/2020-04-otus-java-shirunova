@@ -47,13 +47,14 @@ const start = (sessionId) => {
 }
 
 // Expected values in result:
-// gameId : String
-// numberOfSuccess : Integer
-// numberOfAll : Integer
+// gameId: String
+// numberOfSuccess: Integer
+// numberOfAll: Integer
+// eqIndex: Integer
 const showResult = (result) => {
     console.log("show result = ", result)
     $("label-result").text(`Количество правильных ответов ${result.numberOfSuccess} из ${result.numberOfAll}`)
-    if (result.numberOfSuccess === result.numberOfAll) {
+    if (result.eqIndex === result.numberOfAll) {
         stompClient.unsubscribe(`${topicEquation}.${result.gameId}`);
         stompClient.unsubscribe(`${topicResult}.${result.gameId}`);
         disconnect()
@@ -62,29 +63,29 @@ const showResult = (result) => {
 
 // Expected values in equation:
 // gameId : String
-// eqId : Integer
+// eqIndex : Integer
 // eqText : String
 const showEquation = (equation) => {
     console.log("show equation = ", equation);
-    const answerInputId = answerInputPlaceholder + equation.eqId;
-    const answerButtonId = answerButtonPlaceholder + equation.eqId;
-    const trId = trPlaceholder + equation.eqId;
+    const answerInputId = answerInputPlaceholder + equation.eqIndex;
+    const answerButtonId = answerButtonPlaceholder + equation.eqIndex;
+    const trId = trPlaceholder + equation.eqIndex;
     $("#game-equation")
         .append(`<tr id='${trId}'><th>${equation.eqText}</th><td><input id='${answerInputId}' type='number' min='0' max='100' value=''></td><td><input id='${answerButtonId}' type='submit' value='Ответить' onclick='sendAnswer(equation)'></td></tr>`)
 }
 
 const sendAnswer = (equation) => {
-    const answerInput = $(`#${answerInputPlaceholder}${equation.eqId}`);
+    const answerInput = $(`#${answerInputPlaceholder}${equation.eqIndex}`);
     const answer = answerInput.val();
     console.log("send answer = ", answer);
 
     answerInput.parent().remove();
-    $(`#${answerButtonPlaceholder}${equation.eqId}`).parent().remove();
-    $(`#${trPlaceholder}${equation.eqId}`).append(`<td><label>${answer}</label></td>`);
+    $(`#${answerButtonPlaceholder}${equation.eqIndex}`).parent().remove();
+    $(`#${trPlaceholder}${equation.eqIndex}`).append(`<td><label>${answer}</label></td>`);
 
     stompClient.send(`${topicAnswer}.${equation.gameId}`, {}, JSON.stringify({
         'gameId': equation.gameId,
-        'eqId': equation.eqId,
+        'eqIndex': equation.eqIndex,
         'answer': answer
     }))
 }

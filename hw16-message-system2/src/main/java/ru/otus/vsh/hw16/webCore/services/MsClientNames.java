@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors
 public enum MsClientNames {
     DATA_BASE("DataBaseMSClient"),
-    GAME_PROCESSOR("GameProcessorMSClient"),
+    EQUATION_PREPARER("EquationPreparerMSClient"),
     AUTH_SERVICE("AuthServiceMSClient"),
     GAME_CONTROLLER("GameControllerMSClient"),
     LOGIN_CONTROLLER("LoginControllerMSClient"),
