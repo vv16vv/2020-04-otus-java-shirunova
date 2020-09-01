@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerBySessionData;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerBySessionReplyData;
+import ru.otus.vsh.hw16.domain.messageSystemClient.data.NewGameData;
 import ru.otus.vsh.hw16.domain.messageSystemClient.data.GameData;
-import ru.otus.vsh.hw16.domain.messageSystemClient.data.GameReplayData;
 import ru.otus.vsh.hw16.messagesystem.MessageSystemHelper;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 import ru.otus.vsh.hw16.webCore.gamePage.data.EquationToClient;
@@ -24,6 +24,7 @@ import ru.otus.vsh.hw16.webCore.gamePage.data.ResultToClient;
 import ru.otus.vsh.hw16.webCore.server.Routes;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
@@ -59,12 +60,12 @@ public class GamePageController {
     }
 
     @PostMapping(Routes.GAME + "/{sessionId}")
-    public void startGame(@PathVariable String sessionId, @ModelAttribute GameData gameData) {
-        AtomicReference<GameReplayData> answer = new AtomicReference<>(null);
+    public void startGame(@PathVariable String sessionId, @ModelAttribute NewGameData newGameData) {
+        AtomicReference<GameData> answer = new AtomicReference<>(null);
         val message = gameControllerMSClient.produceMessage(
-                MsClientNames.EQUATION_PREPARER.name(),
-                gameData, MessageType.NEW_GAME,
-                replay -> answer.set((GameReplayData) replay)
+                MsClientNames.GAME_KEEPER.name(),
+                newGameData, MessageType.NEW_GAME,
+                replay -> answer.set((GameData) replay)
         );
         gameControllerMSClient.sendMessage(message);
 
@@ -72,36 +73,39 @@ public class GamePageController {
                 answer,
                 ref -> ref.get() != null);
 
-        val data = answer.get();
-        template.convertAndSend(Routes.API_TOPIC_EQUATION, new EquationToClient(
-                gameData.getGameId(),
-                0,
-                data.getEquations().get(0).getEquation().toString()
-        ));
-        template.convertAndSend(Routes.API_TOPIC_RESULT, new ResultToClient(
-                gameData.getGameId(),
-                data.getNumberOfSuccess(),
-                data.getNumberOfEquations(),
-                0
-        ));
+        sendGameDataToClient(answer.get());
     }
 
     @MessageMapping(Routes.API_TOPIC_ANSWER + ".{gameId}")
     public void processEquationResult(@DestinationVariable String gameId, ResultFromClient resultFromClient) {
         log.info("got resultFromClient:{}, gameId:{}", resultFromClient, gameId);
-        // go to DB to get the object with all equations
-        val data = answer.get();
-        template.convertAndSend(Routes.API_TOPIC_EQUATION, new EquationToClient(
-                gameData.getGameId(),
-                0,
-                data.getEquations().get(0).getEquation().toString()
-        ));
-        template.convertAndSend(Routes.API_TOPIC_RESULT, new ResultToClient(
-                gameData.getGameId(),
-                data.getNumberOfSuccess(),
-                data.getNumberOfEquations(),
-                0
-        ));
+        AtomicReference<GameData> answer = new AtomicReference<>(null);
+        val message = gameControllerMSClient.produceMessage(
+                MsClientNames.GAME_KEEPER.name(),
+                resultFromClient, MessageType.NEXT_TASK,
+                replay -> answer.set((GameData) replay)
+        );
+        gameControllerMSClient.sendMessage(message);
+
+        MessageSystemHelper.waitForAnswer(
+                answer,
+                ref -> ref.get() != null);
+
+        sendGameDataToClient(answer.get());
     }
 
+
+    private void sendGameDataToClient(@Nonnull GameData data){
+        template.convertAndSend(Routes.API_TOPIC_EQUATION, new EquationToClient(
+                data.gameId().getId(),
+                data.index(),
+                data.equations().get(data.index()).equation().toString()
+        ));
+        template.convertAndSend(Routes.API_TOPIC_RESULT, new ResultToClient(
+                data.gameId().getId(),
+                data.numberOfSuccess(),
+                data.numberOfEquations(),
+                data.index()
+        ));
+    }
 }

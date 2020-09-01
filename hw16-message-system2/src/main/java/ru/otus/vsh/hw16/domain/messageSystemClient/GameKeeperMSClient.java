@@ -7,8 +7,8 @@ import ru.otus.vsh.hw16.messagesystem.client.MsClient;
 import ru.otus.vsh.hw16.messagesystem.client.MsClientImpl;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
-public class EquationPreparerMSClient extends MsClientImpl implements MsClient {
-    public EquationPreparerMSClient(MessageSystem messageSystem, HandlersStore handlersStore, CallbackRegistry callbackRegistry) {
-        super(MsClientNames.EQUATION_PREPARER.name(), messageSystem, handlersStore, callbackRegistry);
+public class GameKeeperMSClient extends MsClientImpl implements MsClient {
+    public GameKeeperMSClient(MessageSystem messageSystem, HandlersStore handlersStore, CallbackRegistry callbackRegistry) {
+        super(MsClientNames.GAME_KEEPER.name(), messageSystem, handlersStore, callbackRegistry);
     }
 }

@@ -38,7 +38,6 @@ const start = (sessionId) => {
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify({
-                'sessionId': sessionId,
                 'gameId': gameId,
                 'number': number
             })

@@ -9,7 +9,7 @@ public enum MessageType {
     NEW_PLAYER,
     PLAYERS,
     NEW_GAME,
-    TASK,
+    NEXT_TASK,
     ANSWER,
     END_GAME;
 
