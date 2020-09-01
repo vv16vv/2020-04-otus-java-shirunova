@@ -18,13 +18,17 @@
             <table class="layoutTable">
                 <tr>
                     <th style="width: 50%">Введите число от 1 до 10</th>
-                    <td style="width: 30%"><input id="number-input" type="number" name="number" value="" min="1" max="10" required></td>
-                    <td><input id="number-button" type="submit" value="Начать" th:onclick="start([[${sessionId}]])"></td>
+                    <td style="width: 30%"><input
+                            id="number-input"
+                            type="number" name="number"
+                            value="1" min="1" max="10" required></td>
+                    <td><input id="number-button" type="submit" value="Начать" th:onclick="start([[${sessionId}]])">
+                    </td>
                 </tr>
             </table>
         </form>
     </div>
-    <div id="game-result" >
+    <div id="game-result">
         <h5 id="game-header"></h5>
         <label id="label-result"></label>
     </div>
@@ -33,6 +37,7 @@
             <tbody id="game-equation"></tbody>
         </table>
     </div>
+    <div id="game-over"></div>
 </div>
 </body>
 </html>

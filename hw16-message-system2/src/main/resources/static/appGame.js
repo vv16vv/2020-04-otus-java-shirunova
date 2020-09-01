@@ -12,11 +12,10 @@ const topicAnswer = '/api/answer';
 const topicGameStart = '/api/game-start';
 
 const setConnected = (connected) => {
+    initPage(!connected)
     if (connected) {
-        $("#game-start").hide();
         $("#game-process").show();
     } else {
-        $("#game-start").show();
         $("#game-process").hide();
     }
 }
@@ -24,6 +23,7 @@ const setConnected = (connected) => {
 const start = (sessionId) => {
     stompClient = Stomp.over(new SockJS(websocketUrl));
     stompClient.connect({}, (frame) => {
+        $("#game-result").show()
         const number = $("#number-input").val()
         console.log("start: number = ", number)
         setConnected(true);
@@ -50,9 +50,56 @@ const showResult = (result) => {
     console.log("show result = ", result)
     $("#label-result").text(`Количество правильных ответов ${result.numberOfSuccess} из ${result.numberOfAll}`)
     if (result.eqIndex === result.numberOfAll) {
-        stompClient.unsubscribe(`${topicEquation}.${result.gameId}`);
-        stompClient.unsubscribe(`${topicResult}.${result.gameId}`);
-        disconnect()
+        gameOver(result)
+    }
+}
+
+const gameOver = (result) => {
+    console.log("game over = ", result)
+    stompClient.unsubscribe(`${topicEquation}.${result.gameId}`);
+    stompClient.unsubscribe(`${topicResult}.${result.gameId}`);
+    const gameOverDiv = $("#game-over")
+    const mark = Math.round(result.numberOfSuccess / result.numberOfAll * 100);
+    const letsBegin = "Начать с начала?";
+    let restartTitle;
+    switch (true) {
+        case mark > 96: {
+            restartTitle = "Отлично! Ни одной ошибки! (5) " + letsBegin;
+            break;
+        }
+        case mark > 79: {
+            restartTitle = "Очень неплохо! (4) " + letsBegin;
+            break;
+        }
+        case mark > 49: {
+            restartTitle = "Неплохо! (3) " + letsBegin;
+            break;
+        }
+        case mark > 29: {
+            restartTitle = "Можно и получше! (2) " + letsBegin;
+            break;
+        }
+        default: {
+            restartTitle = "Стоит еще подучить! (1) " + letsBegin;
+            break;
+        }
+
+    }
+    gameOverDiv.append(`<input id="restart" type="submit" value="${restartTitle}" onclick="restart(${result.numberOfAll})"/>`)
+    $("#restart").focus();
+    gameOverDiv.show()
+}
+
+const restart = (n) => {
+    disconnect()
+    $("#game-start").show()
+    $("#game-result").hide()
+    $("#game-process").hide()
+    $("#game-over").hide()
+    $("#restart").remove()
+    $("#game-header").text("")
+    for (let i = 0; i < n; i++) {
+        $(`#${trPlaceholder}${i}`).remove()
     }
 }
 
@@ -67,6 +114,28 @@ const showEquation = (equation) => {
     const trId = trPlaceholder + equation.eqIndex;
     $("#game-equation")
         .append(`<tr id='${trId}'><td>${equation.eqIndex + 1}).</td><th>${equation.eqText}</th><td><input id='${answerInputId}' type='number' min='0' max='100' value=''></td><td><input id='${answerButtonId}' type='submit' value='Ответить' onclick='sendAnswer("${equation.gameId}", ${equation.eqIndex})'></td></tr>`)
+    setFocusAndEnter(answerInputId, answerButtonId)
+}
+
+const setFocusAndEnter = (inputId, buttonId) => {
+    console.log(`setFocusAndEnter on ${inputId} for ${buttonId}`)
+    const inputControl = $(`#${inputId}`)
+    inputControl.focus();
+    inputControl.keypress(function (event) {
+        console.log(`keypress on ${buttonId} key code = `, event.keyCode)
+        if (event.keyCode === 13) {
+            $(`#${buttonId}`).click();
+        }
+    });
+}
+
+const initPage = (shown) => {
+    if (shown) {
+        $("#game-start").show();
+        $("#number-input").focus();
+    } else {
+        $("#game-start").hide();
+    }
 }
 
 // Expected types:
