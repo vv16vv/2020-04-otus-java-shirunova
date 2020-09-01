@@ -5,11 +5,11 @@ const answerButtonPlaceholder = 'answer-button-';
 const trPlaceholder = 'tr-';
 
 const websocketUrl = '/api/game-ws';
-const topicEquation = '/api/topic/equation';
-const topicResult = '/api/topic/result';
-const topicAnswer = '/api/topic/answer';
+const topicEquation = '/topic/equation';
+const topicResult = '/topic/result';
 
-const gameUrl = '/game';
+const topicAnswer = '/api/answer';
+const topicGameStart = '/api/game-start';
 
 const setConnected = (connected) => {
     if (connected) {
@@ -27,21 +27,17 @@ const start = (sessionId) => {
         const number = $("#number-input").val()
         console.log("start: number = ", number)
         setConnected(true);
+        $("#game-header").append("Повторим таблицу умножения на " + number);
         console.log('Connected: ' + frame);
         const gameId = sessionId + Date.now();
         console.log("start: gameId = ", gameId)
         stompClient.subscribe(`${topicEquation}.${gameId}`, (equation) => showEquation(JSON.parse(equation.body)));
         stompClient.subscribe(`${topicResult}.${gameId}`, (result) => showResult(JSON.parse(result.body)));
-        fetch(`${gameUrl}/${sessionId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({
-                'gameId': gameId,
-                'number': number
-            })
-        });
+
+        stompClient.send(`${topicGameStart}.${sessionId}`, {}, JSON.stringify({
+            'gameId': gameId,
+            'number': number
+        }))
     });
 }
 
@@ -52,7 +48,7 @@ const start = (sessionId) => {
 // eqIndex: Integer
 const showResult = (result) => {
     console.log("show result = ", result)
-    $("label-result").text(`Количество правильных ответов ${result.numberOfSuccess} из ${result.numberOfAll}`)
+    $("#label-result").text(`Количество правильных ответов ${result.numberOfSuccess} из ${result.numberOfAll}`)
     if (result.eqIndex === result.numberOfAll) {
         stompClient.unsubscribe(`${topicEquation}.${result.gameId}`);
         stompClient.unsubscribe(`${topicResult}.${result.gameId}`);
@@ -70,21 +66,25 @@ const showEquation = (equation) => {
     const answerButtonId = answerButtonPlaceholder + equation.eqIndex;
     const trId = trPlaceholder + equation.eqIndex;
     $("#game-equation")
-        .append(`<tr id='${trId}'><th>${equation.eqText}</th><td><input id='${answerInputId}' type='number' min='0' max='100' value=''></td><td><input id='${answerButtonId}' type='submit' value='Ответить' onclick='sendAnswer(equation)'></td></tr>`)
+        .append(`<tr id='${trId}'><td>${equation.eqIndex + 1}).</td><th>${equation.eqText}</th><td><input id='${answerInputId}' type='number' min='0' max='100' value=''></td><td><input id='${answerButtonId}' type='submit' value='Ответить' onclick='sendAnswer("${equation.gameId}", ${equation.eqIndex})'></td></tr>`)
 }
 
-const sendAnswer = (equation) => {
-    const answerInput = $(`#${answerInputPlaceholder}${equation.eqIndex}`);
+// Expected types:
+// eqIndex : Integer
+// eqText : String
+const sendAnswer = (gameId, eqIndex) => {
+    console.log("send answer: gameId = ", gameId, "; eqIndex = ", eqIndex);
+    const answerInput = $(`#${answerInputPlaceholder}${eqIndex}`);
     const answer = answerInput.val();
     console.log("send answer = ", answer);
 
     answerInput.parent().remove();
-    $(`#${answerButtonPlaceholder}${equation.eqIndex}`).parent().remove();
-    $(`#${trPlaceholder}${equation.eqIndex}`).append(`<td><label>${answer}</label></td>`);
+    $(`#${answerButtonPlaceholder}${eqIndex}`).parent().remove();
+    $(`#${trPlaceholder}${eqIndex}`).append(`<td>${answer}</td>`);
 
-    stompClient.send(`${topicAnswer}.${equation.gameId}`, {}, JSON.stringify({
-        'gameId': equation.gameId,
-        'eqIndex': equation.eqIndex,
+    stompClient.send(`${topicAnswer}.${gameId}`, {}, JSON.stringify({
+        'gameId': gameId,
+        'eqIndex': eqIndex,
         'answer': answer
     }))
 }

@@ -31,7 +31,7 @@ public class NextTaskDataHandler extends SimpleReceiveRequestHandler<ResultFromC
         if (isCorrect) {
             data.numberOfSuccess(data.numberOfSuccess() + 1);
         }
-        data.index(resultFromClient.getEqIndex());
+        data.index(resultFromClient.getEqIndex() + 1);
 
         if (data.isGameOver()) {
             gameRegistry.remove(data.gameId());

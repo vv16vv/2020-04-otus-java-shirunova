@@ -9,9 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerBySessionData;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerBySessionReplyData;
 import ru.otus.vsh.hw16.domain.messageSystemClient.data.NewGameData;
@@ -32,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class GamePageController {
 
-    private static final String TEMPLATE_PLAYER_NAME = "player-name";
+    private static final String TEMPLATE_PLAYER_NAME = "playerName";
     private static final String TEMPLATE_SESSION_ID = "sessionId";
     private static final String GAME_PAGE_TEMPLATE = "game.html";
 
@@ -59,8 +57,8 @@ public class GamePageController {
         return GAME_PAGE_TEMPLATE;
     }
 
-    @PostMapping(Routes.GAME + "/{sessionId}")
-    public void startGame(@PathVariable String sessionId, @ModelAttribute NewGameData newGameData) {
+    @MessageMapping(Routes.API_GAME_START + ".{sessionId}")
+    public void startGame(@PathVariable String sessionId, NewGameData newGameData) {
         AtomicReference<GameData> answer = new AtomicReference<>(null);
         val message = gameControllerMSClient.produceMessage(
                 MsClientNames.GAME_KEEPER.name(),
@@ -76,7 +74,7 @@ public class GamePageController {
         sendGameDataToClient(answer.get());
     }
 
-    @MessageMapping(Routes.API_TOPIC_ANSWER + ".{gameId}")
+    @MessageMapping(Routes.API_ANSWER + ".{gameId}")
     public void processEquationResult(@DestinationVariable String gameId, ResultFromClient resultFromClient) {
         log.info("got resultFromClient:{}, gameId:{}", resultFromClient, gameId);
         AtomicReference<GameData> answer = new AtomicReference<>(null);
@@ -96,12 +94,12 @@ public class GamePageController {
 
 
     private void sendGameDataToClient(@Nonnull GameData data){
-        template.convertAndSend(Routes.API_TOPIC_EQUATION, new EquationToClient(
+        template.convertAndSend(Routes.API_TOPIC_EQUATION + "." + data.gameId().getId(), new EquationToClient(
                 data.gameId().getId(),
                 data.index(),
                 data.equations().get(data.index()).equation().toString()
         ));
-        template.convertAndSend(Routes.API_TOPIC_RESULT, new ResultToClient(
+        template.convertAndSend(Routes.API_TOPIC_RESULT + "." + data.gameId().getId(), new ResultToClient(
                 data.gameId().getId(),
                 data.numberOfSuccess(),
                 data.numberOfEquations(),

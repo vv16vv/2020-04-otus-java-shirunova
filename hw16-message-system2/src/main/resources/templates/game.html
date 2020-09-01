@@ -7,11 +7,11 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/app.js"></script>
+    <script src="/appGame.js"></script>
 </head>
 
 <body>
-<h4>Добро пожаловать [[${player-name}]]!</h4>
+<h2>Добро пожаловать [[${playerName}]]!</h2>
 <div>
     <div id="game-start">
         <form id="new-game-form" accept-charset="utf-8">
@@ -19,12 +19,13 @@
                 <tr>
                     <th style="width: 50%">Введите число от 1 до 10</th>
                     <td style="width: 30%"><input id="number-input" type="number" name="number" value="" min="1" max="10" required></td>
-                    <td><input id="number-button" type="submit" value="Начать" onclick="start('${sessionId}')"></td>
+                    <td><input id="number-button" type="submit" value="Начать" th:onclick="start([[${sessionId}]])"></td>
                 </tr>
             </table>
         </form>
     </div>
-    <div id="game-result">
+    <div id="game-result" >
+        <h5 id="game-header"></h5>
         <label id="label-result"></label>
     </div>
     <div id="game-process">
