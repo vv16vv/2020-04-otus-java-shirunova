@@ -60,37 +60,23 @@ public class GamePageController {
 
     @MessageMapping(Routes.API_GAME_START + ".{sessionId}")
     public void startGame(@PathVariable String sessionId, NewGameData newGameData) {
-        AtomicReference<GameData> answer = new AtomicReference<>(null);
         val message = gameControllerMSClient.produceMessage(
                 MsClientNames.GAME_KEEPER.name(),
                 newGameData, MessageType.NEW_GAME,
-                replay -> answer.set((GameData) replay)
+                replay -> sendGameDataToClient((GameData) replay)
         );
         gameControllerMSClient.sendMessage(message);
-
-        MessageSystemHelper.waitForAnswer(
-                answer,
-                ref -> ref.get() != null);
-
-        sendGameDataToClient(answer.get());
     }
 
     @MessageMapping(Routes.API_ANSWER + ".{gameId}")
     public void processEquationResult(@DestinationVariable String gameId, ResultFromClient resultFromClient) {
         log.info("got resultFromClient:{}, gameId:{}", resultFromClient, gameId);
-        AtomicReference<GameData> answer = new AtomicReference<>(null);
         val message = gameControllerMSClient.produceMessage(
                 MsClientNames.GAME_KEEPER.name(),
                 resultFromClient, MessageType.NEXT_TASK,
-                replay -> answer.set((GameData) replay)
+                replay -> sendGameDataToClient((GameData) replay)
         );
         gameControllerMSClient.sendMessage(message);
-
-        MessageSystemHelper.waitForAnswer(
-                answer,
-                ref -> ref.get() != null);
-
-        sendGameDataToClient(answer.get());
     }
 
 
