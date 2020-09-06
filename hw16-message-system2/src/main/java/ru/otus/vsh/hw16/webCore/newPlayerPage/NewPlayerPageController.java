@@ -15,6 +15,7 @@ import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 import ru.otus.vsh.hw16.webCore.server.Routes;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
@@ -29,30 +30,29 @@ public class NewPlayerPageController {
     @GetMapping(Routes.NEW_PLAYER)
     public String getNewUserPage(Model model) {
         model.addAttribute(TEMPLATE_ROUTE, Routes.NEW_PLAYER);
-
         model.addAttribute(TEMPLATE_PLAYER, new NewPlayerData());
         return PLAYER_PAGE_TEMPLATE;
     }
 
     @PostMapping(Routes.NEW_PLAYER)
     public RedirectView addUser(@ModelAttribute NewPlayerData playerData) {
-        AtomicReference<NewPlayerReplyData> answer = new AtomicReference<>(null);
+        val latch = new CountDownLatch(1);
+        AtomicReference<String> redirectView = new AtomicReference<>(Routes.ROOT);
         val message = newPlayerControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
                 playerData, MessageType.NEW_PLAYER,
-                replay -> answer.set((NewPlayerReplyData) replay)
+                replay -> {
+                    if (!((NewPlayerReplyData) replay).isUserAdded()) {
+                        redirectView.set(Routes.NEW_PLAYER);
+                    }
+                    latch.countDown();
+                }
         );
         newPlayerControllerMSClient.sendMessage(message);
 
-        MessageSystemHelper.waitForAnswer(answer,
-                ref -> ref.get() != null);
+        MessageSystemHelper.waitForAnswer(latch);
 
-        if (answer.get().isUserAdded()) {
-            return new RedirectView(Routes.ROOT, true);
-        } else {
-            return new RedirectView(Routes.NEW_PLAYER, true);
-        }
-
+        return new RedirectView(redirectView.get(), true);
     }
 
 }

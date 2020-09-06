@@ -17,6 +17,7 @@ import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 import ru.otus.vsh.hw16.webCore.services.auth.AuthData;
 import ru.otus.vsh.hw16.webCore.services.auth.AuthReplyData;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
@@ -41,30 +42,32 @@ public class LoginPageController {
 
     @PostMapping(Routes.ROOT)
     public RedirectView processLogin(@ModelAttribute AuthData data) {
-        AtomicReference<AuthReplyData> answer = new AtomicReference<>(null);
+        val latch = new CountDownLatch(1);
+        AtomicReference<String> redirectView = new AtomicReference<>(Routes.ROOT);
         val authMessage = loginPageControllerMSClient.produceMessage(
                 MsClientNames.AUTH_SERVICE.name(),
                 data, MessageType.LOGIN,
-                replay -> answer.set((AuthReplyData) replay)
+                replay -> {
+                    if (((AuthReplyData) replay).isAccessAllowed()) {
+                        val sessionId = new Id().getInnerId();
+                        val sessionMessage = loginPageControllerMSClient.produceMessage(
+                                MsClientNames.DATA_BASE.name(),
+                                new NewSessionData(data.getLogin(), sessionId), MessageType.NEW_SESSION,
+                                noReplay -> {
+                                }
+                        );
+                        loginPageControllerMSClient.sendMessage(sessionMessage);
+                        redirectView.set(Routes.GAME + "/" + sessionId);
+                    }
+
+                    latch.countDown();
+                }
         );
         loginPageControllerMSClient.sendMessage(authMessage);
 
-        MessageSystemHelper.waitForAnswer(answer,
-                ref -> ref.get() != null);
+        MessageSystemHelper.waitForAnswer(latch);
 
-        val sessionId = new Id().getInnerId();
-        val sessionMessage = loginPageControllerMSClient.produceMessage(
-                MsClientNames.DATA_BASE.name(),
-                new NewSessionData(data.getLogin(),sessionId), MessageType.NEW_SESSION,
-                replay -> { }
-        );
-        loginPageControllerMSClient.sendMessage(sessionMessage);
-
-        if (answer.get().isAccessAllowed()) {
-            return new RedirectView(Routes.GAME + "/" + sessionId, true);
-        } else {
-            return new RedirectView(Routes.ROOT, true);
-        }
+        return new RedirectView(redirectView.get(), true);
     }
 
 }

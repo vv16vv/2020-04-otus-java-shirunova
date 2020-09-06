@@ -24,6 +24,7 @@ import ru.otus.vsh.hw16.webCore.server.Routes;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
@@ -40,21 +41,21 @@ public class GamePageController {
 
     @GetMapping(Routes.GAME + "/{sessionId}")
     public String getGamePage(Model model, @PathVariable String sessionId) {
-        AtomicReference<GetPlayerBySessionReplyData> answer = new AtomicReference<>(null);
+        val latch = new CountDownLatch(1);
+
         val message = gameControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
                 new GetPlayerBySessionData(sessionId), MessageType.GET_PLAYER_BY_SESSION,
-                replay -> answer.set((GetPlayerBySessionReplyData) replay)
-        );
+                replay -> {
+                    val player = ((GetPlayerBySessionReplyData) replay).getPlayer().orElseThrow();
+                    model.addAttribute(TEMPLATE_PLAYER_NAME, player.getName());
+                    model.addAttribute(TEMPLATE_SESSION_ID, sessionId);
+                    latch.countDown();
+                });
         gameControllerMSClient.sendMessage(message);
 
-        MessageSystemHelper.waitForAnswer(answer,
-                ref -> ref.get() != null);
+        MessageSystemHelper.waitForAnswer(latch);
 
-        val player = answer.get().getPlayer().orElseThrow();
-
-        model.addAttribute(TEMPLATE_PLAYER_NAME, player.getName());
-        model.addAttribute(TEMPLATE_SESSION_ID, sessionId);
         return GAME_PAGE_TEMPLATE;
     }
 

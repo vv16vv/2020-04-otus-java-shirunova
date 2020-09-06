@@ -12,7 +12,7 @@ import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 import ru.otus.vsh.hw16.webCore.server.Routes;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.CountDownLatch;
 
 @Controller
 @AllArgsConstructor
@@ -26,19 +26,20 @@ public class PlayersPageController {
 
     @GetMapping(Routes.PLAYERS)
     public String getPlayersPage(Model model) {
-        AtomicReference<PlayersReplyData> answer = new AtomicReference<>(null);
+        val latch = new CountDownLatch(1);
         val message = playersControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
                 new EmptyMessageData(), MessageType.PLAYERS,
-                replay -> answer.set((PlayersReplyData) replay)
+                replay -> {
+                    model.addAttribute(TEMPLATE_LOGIN, Routes.ROOT);
+                    model.addAttribute(TEMPLATE_PLAYERS, ((PlayersReplyData) replay).getPlayers());
+                    latch.countDown();
+                }
         );
         playersControllerMSClient.sendMessage(message);
 
-        MessageSystemHelper.waitForAnswer(answer,
-                ref -> ref.get() != null);
+        MessageSystemHelper.waitForAnswer(latch);
 
-        model.addAttribute(TEMPLATE_LOGIN, Routes.ROOT);
-        model.addAttribute(TEMPLATE_PLAYERS, answer.get().getPlayers());
         return PLAYERS_PAGE_TEMPLATE;
     }
 
