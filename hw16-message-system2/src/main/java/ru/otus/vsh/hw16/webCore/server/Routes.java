@@ -13,14 +13,14 @@ public final class Routes {
     private static final String SESSION_ID_PARAM = "{sessionId}";
 
     public static final String API = "/api";
-    public static final String API_GAME_WS = API + "/game-ws";
+    public static final String API_GAME_WS = "/api/game-ws";
     public static final String API_GAME_START = "/game-start.{sessionId}";
     public static final String API_ANSWER = "/answer.{gameId}";
 
     public static final String TOPIC = "/topic";
-    public static final String TOPIC_EQUATION = TOPIC + "/equation";
-    public static final String TOPIC_RESULT = TOPIC + "/result";
-    public static final String TOPIC_CORRECT = TOPIC + "/correct";
+    public static final String TOPIC_EQUATION = "/topic/equation";
+    public static final String TOPIC_RESULT = "/topic/result";
+    public static final String TOPIC_CORRECT = "/topic/correct";
 
     @Nonnull
     public static String gameUrl(@Nonnull String sessionId) {
