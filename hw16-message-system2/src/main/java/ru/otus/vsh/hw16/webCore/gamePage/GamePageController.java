@@ -25,7 +25,6 @@ import ru.otus.vsh.hw16.webCore.services.MsClientNames;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 @AllArgsConstructor
@@ -39,7 +38,7 @@ public class GamePageController {
     private final SimpMessagingTemplate template;
     private final GameControllerMSClient gameControllerMSClient;
 
-    @GetMapping(Routes.GAME + "/{sessionId}")
+    @GetMapping(Routes.GAME_TEMPLATE)
     public String getGamePage(Model model, @PathVariable String sessionId) {
         val latch = new CountDownLatch(1);
 
@@ -59,7 +58,7 @@ public class GamePageController {
         return GAME_PAGE_TEMPLATE;
     }
 
-    @MessageMapping(Routes.API_GAME_START + ".{sessionId}")
+    @MessageMapping(Routes.API_GAME_START)
     public void startGame(@PathVariable String sessionId, NewGameData newGameData) {
         val message = gameControllerMSClient.produceMessage(
                 MsClientNames.GAME_KEEPER.name(),
@@ -69,7 +68,7 @@ public class GamePageController {
         gameControllerMSClient.sendMessage(message);
     }
 
-    @MessageMapping(Routes.API_ANSWER + ".{gameId}")
+    @MessageMapping(Routes.API_ANSWER)
     public void processEquationResult(@DestinationVariable String gameId, ResultFromClient resultFromClient) {
         log.info("got resultFromClient:{}, gameId:{}", resultFromClient, gameId);
         val message = gameControllerMSClient.produceMessage(

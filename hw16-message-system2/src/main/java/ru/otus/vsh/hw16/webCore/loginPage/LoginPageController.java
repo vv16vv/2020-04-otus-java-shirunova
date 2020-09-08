@@ -57,7 +57,7 @@ public class LoginPageController {
                                 }
                         );
                         loginPageControllerMSClient.sendMessage(sessionMessage);
-                        redirectView.set(Routes.GAME + "/" + sessionId);
+                        redirectView.set(Routes.gameUrl(sessionId));
                     }
 
                     latch.countDown();
