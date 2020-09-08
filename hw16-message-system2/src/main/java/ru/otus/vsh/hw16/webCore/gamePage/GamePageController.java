@@ -82,20 +82,20 @@ public class GamePageController {
 
     private void sendGameDataToClient(@Nonnull GameData data) {
         if (data.index() > 0) {
-            template.convertAndSend(Routes.API_TOPIC_CORRECT + "." + data.gameId().getId(), new CorrectToClient(
+            template.convertAndSend(Routes.TOPIC_CORRECT + "." + data.gameId().getId(), new CorrectToClient(
                     data.gameId().getId(),
                     data.index() - 1,
                     data.equations().get(data.index() - 1).isCorrect()
             ));
         }
         if (!data.isGameOver()) {
-            template.convertAndSend(Routes.API_TOPIC_EQUATION + "." + data.gameId().getId(), new EquationToClient(
+            template.convertAndSend(Routes.TOPIC_EQUATION + "." + data.gameId().getId(), new EquationToClient(
                     data.gameId().getId(),
                     data.index(),
                     data.equations().get(data.index()).equation().toString()
             ));
         }
-        template.convertAndSend(Routes.API_TOPIC_RESULT + "." + data.gameId().getId(), new ResultToClient(
+        template.convertAndSend(Routes.TOPIC_RESULT + "." + data.gameId().getId(), new ResultToClient(
                 data.gameId().getId(),
                 data.numberOfSuccess(),
                 data.numberOfEquations(),

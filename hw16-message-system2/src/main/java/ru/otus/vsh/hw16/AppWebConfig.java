@@ -20,7 +20,7 @@ public class AppWebConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker(Routes.API_TOPIC);
+        config.enableSimpleBroker(Routes.TOPIC);
         config.setApplicationDestinationPrefixes(Routes.API);
     }
 

@@ -17,10 +17,10 @@ public final class Routes {
     public static final String API_GAME_START = "/game-start.{sessionId}";
     public static final String API_ANSWER = "/answer.{gameId}";
 
-    public static final String API_TOPIC = "/topic";
-    public static final String API_TOPIC_EQUATION = API_TOPIC + "/equation";
-    public static final String API_TOPIC_RESULT = API_TOPIC + "/result";
-    public static final String API_TOPIC_CORRECT = API_TOPIC + "/correct";
+    public static final String TOPIC = "/topic";
+    public static final String TOPIC_EQUATION = TOPIC + "/equation";
+    public static final String TOPIC_RESULT = TOPIC + "/result";
+    public static final String TOPIC_CORRECT = TOPIC + "/correct";
 
     @Nonnull
     public static String gameUrl(@Nonnull String sessionId) {
