@@ -5,7 +5,7 @@ import lombok.val;
 import ru.otus.vsh.hw16.dbCore.dbService.DBServicePlayer;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.PlayersReplyData;
 import ru.otus.vsh.hw16.messagesystem.common.EmptyMessageData;
-import ru.otus.vsh.hw16.messagesystem.common.SimpleReceiveRequestHandler;
+import ru.otus.vsh.hw16.messagesystem.common.ResponseProduceRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * при обработке сообщения PLAYERS
  */
 @AllArgsConstructor
-public class PlayersDataHandler extends SimpleReceiveRequestHandler<EmptyMessageData, PlayersReplyData> {
+public class PlayersDataHandler implements ResponseProduceRequestHandler<EmptyMessageData, PlayersReplyData> {
     private final DBServicePlayer dbServicePlayer;
 
     @Override

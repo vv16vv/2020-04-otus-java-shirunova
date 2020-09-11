@@ -2,7 +2,7 @@ package ru.otus.vsh.hw16.webCore.services.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
-import ru.otus.vsh.hw16.messagesystem.common.SimpleReceiveRequestHandler;
+import ru.otus.vsh.hw16.messagesystem.common.ResponseProduceRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 
 import java.util.Optional;
@@ -13,7 +13,7 @@ import java.util.Optional;
  * А в нем идет запрос GET_PLAYER к [DataBaseMSClient]
  */
 @AllArgsConstructor
-public class AuthDataHandler extends SimpleReceiveRequestHandler<AuthData, AuthReplyData> {
+public class AuthDataHandler implements ResponseProduceRequestHandler<AuthData, AuthReplyData> {
     private final AuthService authService;
 
     @Override

@@ -5,7 +5,7 @@ import lombok.val;
 import ru.otus.vsh.hw16.dbCore.dbService.DBServicePlayer;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerByLoginData;
 import ru.otus.vsh.hw16.dbCore.messageSystemClient.data.GetPlayerByLoginReplyData;
-import ru.otus.vsh.hw16.messagesystem.common.SimpleReceiveRequestHandler;
+import ru.otus.vsh.hw16.messagesystem.common.ResponseProduceRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * при обработке сообщения GET_PLAYER_BY_LOGIN
  */
 @AllArgsConstructor
-public class GetPlayerByLoginDataHandler extends SimpleReceiveRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData> {
+public class GetPlayerByLoginDataHandler implements ResponseProduceRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData> {
     private final DBServicePlayer dbServicePlayer;
 
     @Override

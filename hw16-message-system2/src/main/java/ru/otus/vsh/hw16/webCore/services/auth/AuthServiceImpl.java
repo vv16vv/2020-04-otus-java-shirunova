@@ -10,7 +10,7 @@ import ru.otus.vsh.hw16.messagesystem.HandlersStoreImpl;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;
 import ru.otus.vsh.hw16.messagesystem.MessageSystemHelper;
 import ru.otus.vsh.hw16.messagesystem.client.CallbackRegistry;
-import ru.otus.vsh.hw16.messagesystem.common.CallbackReceiveRequestHandler;
+import ru.otus.vsh.hw16.messagesystem.common.CallbackCallRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 import ru.otus.vsh.hw16.webCore.services.MsClientNames;
@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
                                                     CallbackRegistry callbackRegistry) {
         HandlersStore store = new HandlersStoreImpl();
         store.addHandler(MessageType.LOGIN, new AuthDataHandler(this));
-        store.addHandler(MessageType.GET_PLAYER_BY_LOGIN, new CallbackReceiveRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData>(callbackRegistry));
+        store.addHandler(MessageType.GET_PLAYER_BY_LOGIN, new CallbackCallRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData>(callbackRegistry));
         val authServiceMSClient = new AuthServiceMSClient(messageSystem, store, callbackRegistry);
         messageSystem.addClient(authServiceMSClient);
 

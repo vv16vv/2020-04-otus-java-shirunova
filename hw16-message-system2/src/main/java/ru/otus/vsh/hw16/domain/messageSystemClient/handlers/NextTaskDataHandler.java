@@ -5,7 +5,7 @@ import lombok.val;
 import ru.otus.vsh.hw16.domain.messageSystemClient.GameRegistry;
 import ru.otus.vsh.hw16.domain.messageSystemClient.data.GameData;
 import ru.otus.vsh.hw16.domain.messageSystemClient.data.GameId;
-import ru.otus.vsh.hw16.messagesystem.common.SimpleReceiveRequestHandler;
+import ru.otus.vsh.hw16.messagesystem.common.ResponseProduceRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.Message;
 import ru.otus.vsh.hw16.webCore.gamePage.data.ResultFromClient;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
  * при обработке сообщения NEXT_TASK
  */
 @AllArgsConstructor
-public class NextTaskDataHandler extends SimpleReceiveRequestHandler<ResultFromClient, GameData> {
+public class NextTaskDataHandler implements ResponseProduceRequestHandler<ResultFromClient, GameData> {
     private final GameRegistry gameRegistry;
 
     @Override

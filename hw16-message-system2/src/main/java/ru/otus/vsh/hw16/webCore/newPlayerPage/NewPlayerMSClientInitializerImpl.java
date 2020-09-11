@@ -9,7 +9,7 @@ import ru.otus.vsh.hw16.messagesystem.HandlersStore;
 import ru.otus.vsh.hw16.messagesystem.HandlersStoreImpl;
 import ru.otus.vsh.hw16.messagesystem.MessageSystem;
 import ru.otus.vsh.hw16.messagesystem.client.CallbackRegistry;
-import ru.otus.vsh.hw16.messagesystem.common.CallbackReceiveRequestHandler;
+import ru.otus.vsh.hw16.messagesystem.common.CallbackCallRequestHandler;
 import ru.otus.vsh.hw16.messagesystem.message.MessageType;
 
 @Component
@@ -18,7 +18,7 @@ public class NewPlayerMSClientInitializerImpl implements NewPlayerMSClientInitia
     @Bean
     public NewPlayerControllerMSClient newPlayerControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry) {
         HandlersStore store = new HandlersStoreImpl();
-        store.addHandler(MessageType.NEW_PLAYER, new CallbackReceiveRequestHandler<NewPlayerData, NewPlayerReplyData>(callbackRegistry));
+        store.addHandler(MessageType.NEW_PLAYER, new CallbackCallRequestHandler<NewPlayerData, NewPlayerReplyData>(callbackRegistry));
         val newPlayerControllerMSClient = new NewPlayerControllerMSClient(messageSystem, store, callbackRegistry);
         messageSystem.addClient(newPlayerControllerMSClient);
 
