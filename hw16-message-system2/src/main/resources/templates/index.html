@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml" content="text/html;">
+<head>
+    <title>Administration</title>
+    <meta charset="utf-8">
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/app.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="top">
+    <br/>
+    <a th:href="@{${signon}}">Завести нового пользователя</a>
+    <br/>
+    <a th:href="@{${players}}">Все пользователи</a>
+    <h3>Войдите, чтобы начать игру:</h3>
+    <form id="login-form" th:action="@{${login}}" th:object="${data}" th:method="post" accept-charset="utf-8">
+        <table class="layoutTable">
+            <tr style="width: 20%">
+                <th><label for="login-input">Логин</label></th>
+                <td><input id="login-input" name="login" type="text" th:value="${data.login}" value="vitkus"/></td>
+            </tr>
+            <tr>
+                <th><label for="password-input">Пароль</label></th>
+                <td><input id="password-input" name="password" type="password" th:value="${data.password}" value="12345"/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="Войти"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>
